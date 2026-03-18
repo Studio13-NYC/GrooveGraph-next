@@ -5,6 +5,7 @@ Store repeat-use visual assets, examples, and future campaign artifacts here.
 ## Subdirectories
 
 - `examples/`: reference pieces and template outputs
+- `posts/`: narrative campaign and editorial post surfaces
 
 ## Notes
 

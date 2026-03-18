@@ -35,10 +35,10 @@ When files drift, use this precedence:
 - `.cursor/agents/` for role cards
 - `.cursor/rules/` for durable Cursor behavior
 - `.cursor/skills/` for reusable operational helpers
-- `docs/posts/` for narrative updates and framework blog posts
+- `assets/posts/` for narrative updates and framework blog posts
 
 ## Posts
 
 | File | Purpose |
 |---|---|
-| `posts/2026-03-18-the-janitor-gets-a-badge.md` | Narrative post on making hygiene a first-class lane and turning cleanup into a real, proposal-first workflow |
+| `../assets/posts/2026-03-18-the-janitor-gets-a-badge.md` | Narrative post on making hygiene a first-class lane and turning cleanup into a real, proposal-first workflow |

@@ -12,6 +12,7 @@
 | `GITHUB_STRATEGY.md` | Canonical successor-repo and remote strategy |
 | `AZURE_BASELINE.md` | Current Azure environment, preservation rules, and overwrite boundaries |
 | `HYGIENE.md` | Canonical cleanup workflow, `hygienist` lane, and proposal-first removal policy |
+| `OBSERVABILITY.md` | Canonical traceability, logging, and Azure runtime observability guidance |
 | `DECISION_LOG.md` | Durable record of governing decisions |
 | `SUBAGENT_MAINTENANCE.md` | Checklist for adding or changing subagents |
 | `HEADCOUNT.md` | Canonical serial and async orchestration test suite for current agents |
@@ -26,9 +27,10 @@ When files drift, use this precedence:
 3. `docs/CONTEXT_PACKETS.md` for packet fields and delegation boundaries
 4. `docs/USAGE_ACCOUNTING.md` for rough usage, cost reference, and telemetry persistence rules
 5. `docs/HYGIENE.md` for cleanup tooling, proposal format, and deletion guardrails
-6. `docs/VISUAL_STYLE_GUIDE.md` for graphics and visual regime decisions
-7. `AGENTS.md` as the repo-level operating summary
-8. `.cursor/rules/*.mdc` as executable mirrors that must stay in sync with the docs
+6. `docs/OBSERVABILITY.md` for traceability, runtime logging, and Azure telemetry guidance
+7. `docs/VISUAL_STYLE_GUIDE.md` for graphics and visual regime decisions
+8. `AGENTS.md` as the repo-level operating summary
+9. `.cursor/rules/*.mdc` as executable mirrors that must stay in sync with the docs
 
 ## Related surfaces
 

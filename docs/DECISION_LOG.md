@@ -46,3 +46,7 @@ Rough slice-level cost reference is a first-class framework concern. Agents shou
 ### D008 - Hygienist lane
 
 Cleanup analysis is a first-class lane rather than an informal shell ritual. A dedicated `hygienist` subagent owns `npm prune`, `npx knip`, and proposal-first removal guidance, using `GPT-5.4-nano` because the work is bounded triage rather than architecture.
+
+### D009 - Full traceability stance
+
+Local JSONL cost summaries are necessary but not sufficient. The framework now explicitly distinguishes rough local slice-cost telemetry from full observability and treats structured identifiers, stage-level runtime logs, and Application Insights-backed correlation as the default direction for end-to-end traceability.

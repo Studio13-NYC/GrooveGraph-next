@@ -1,0 +1,129 @@
+# Observability
+
+## Purpose
+
+`GrooveGraph Next` should be traceable across three layers:
+
+- framework orchestration work
+- product runtime behavior
+- Azure-hosted deployment surfaces
+
+The goal is not maximum log volume. The goal is end-to-end correlation with enough detail to explain what happened, where it happened, and how much it cost.
+
+## Current state
+
+Today the repo has:
+
+- local slice-cost telemetry in `.telemetry/slice-costs.jsonl`
+- rough `cost_summary` guidance in `docs/USAGE_ACCOUNTING.md`
+- validation artifacts in `research/`
+
+That is useful, but it is not yet a full observability contract.
+
+## Required traceability stance
+
+Every significant workflow should be traceable by:
+
+- `session_id`
+- `slice_id`
+- `chunk_id` when a task is broken into sub-work
+- `agent`
+- `model`
+- `measurement_mode`
+- timestamp
+- outcome
+
+For runtime request flows, also capture:
+
+- request or trace id
+- route or entrypoint
+- stage name
+- latency in milliseconds
+- success or failure
+- error class and concise message when relevant
+
+## Logging rules
+
+- prefer structured logs over prose blocks
+- use stable field names across agents and runtime surfaces
+- log stage transitions, not every intermediate variable
+- include explicit start, success, and failure events for orchestrated workflows
+- never log secrets, raw credentials, or full user-private payloads
+
+## Local framework telemetry
+
+Local framework telemetry remains the first-line evidence surface:
+
+- append rough slice summaries to `.telemetry/slice-costs.jsonl`
+- persist human-readable run artifacts in `research/`
+- keep `docs/WORKFLOW_VALIDATION.md` aligned with the latest meaningful evidence
+
+## Azure runtime telemetry
+
+Use the existing `appi-groovegraph` resource as the default runtime observability sink.
+
+Current baseline facts:
+
+- Azure already has `appi-groovegraph`
+- the App Service already exposes telemetry setting names for Application Insights
+- the current Application Insights component is workspace-based (`ingestionMode: LogAnalytics`)
+
+## Recommended implementation split
+
+### Node and server runtime
+
+For App Service or any Node-hosted backend/runtime surface:
+
+- use Azure Monitor OpenTelemetry for JavaScript in Node environments
+- send traces, requests, dependencies, exceptions, and selected logs to Application Insights
+- set explicit sampling rather than leaving everything at full volume
+
+### Browser runtime
+
+For browser-side UX telemetry:
+
+- use the Application Insights JavaScript SDK
+- enable distributed tracing and correlation headers only for the relevant GrooveGraph domains
+- capture page views, fetch or AJAX dependencies, uncaught exceptions, and selected custom events
+- inject the Application Insights connection string intentionally for browser telemetry rather than assuming server-side App Service settings reach a static client surface
+- validate browser telemetry from the real deployed origin when cross-origin API calls are involved, because localhost can expose CORS limits that do not match the deployed route
+
+## Free-plan discipline
+
+The current shell is cost-sensitive, so observability should follow these rules:
+
+- start with traces, exceptions, requests, and the smallest set of custom events that explain workflow state
+- use sampling aggressively for routine success traffic
+- keep verbose debug logging local unless a short-lived investigation requires more
+- favor Application Insights over adding more Azure services immediately
+
+## Recommended first custom events
+
+When runtime observability is wired, start with:
+
+- `workflow_started`
+- `workflow_stage_completed`
+- `workflow_failed`
+- `review_session_created`
+- `deployment_smoke_passed`
+- `deployment_smoke_failed`
+
+Each should include only the fields needed for correlation and diagnosis.
+
+## What is not required yet
+
+Do not add more Azure services just for the feeling of completeness.
+
+Not required for the current phase:
+
+- separate dedicated observability services beyond existing Application Insights
+- high-volume persistent debug logging
+- custom dashboards before the event schema is stable
+
+## Trigger for expansion
+
+Consider additional Azure observability surfaces only when one of these becomes true:
+
+- Application Insights cost or volume becomes difficult to control with sampling
+- cross-resource alerting requirements exceed the current shell
+- long-term analytics need more than the current default retained data

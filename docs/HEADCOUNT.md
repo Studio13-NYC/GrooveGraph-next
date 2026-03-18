@@ -193,4 +193,11 @@ Use this document as the human-readable runbook.
 
 ## Current evidence note
 
-The recorded runs on `2026-03-18` predate the `hygienist` lane. They still validate the pre-hygienist framework shape, but the next `headcount` rerun should include the hygiene step so the evidence matches the current lane set.
+The `001` recorded runs on `2026-03-18` predate the `hygienist` lane and remain useful historical evidence for the earlier framework shape.
+
+Current evidence is now refreshed by:
+
+- `research/headcount/headcount-serial-run-002.md`
+- `research/headcount/headcount-async-launch-pack-002.md`
+
+Use the `002` artifacts as the best evidence for the current lane set.

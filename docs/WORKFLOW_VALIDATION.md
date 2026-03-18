@@ -187,3 +187,42 @@ Framework response:
 - updated routing, orchestration, and maintenance docs to include the hygiene lane
 - updated `docs/HEADCOUNT.md` and `framework/src/headcount.ts` so the current agent set is represented honestly
 - added `research/hygiene/hygiene-run-001.md`
+
+## Validation 10: refreshed serial headcount evidence
+
+Validation method:
+
+- reran the serial `headcount-serial-release-packet` workflow against the current lane set
+- used one bounded implementation surface: `product/swa-smoke/index.html`
+- validated the rendered result through a local browser-served static page
+
+Observed result:
+
+- pass
+- the rerun exercised the full current serial lane set, including `hygienist`
+- the run converged on a real one-file SWA smoke-page parity revision
+- browser-visible evidence confirmed the explanatory `body` line now renders beneath the red status banner
+- local browser testing also exposed a real boundary: localhost validation cannot prove remote App Service hydration because the static page hits a CORS restriction from `http://localhost:3001`
+- the bounded hygiene step returned no cleanup action
+
+Framework response:
+
+- added `research/headcount/headcount-serial-run-002.md`
+
+## Validation 11: refreshed async headcount evidence
+
+Validation method:
+
+- reran the async `headcount-async-launch-pack` evidence pass against the current typed and documented contract
+- synthesized a refreshed framework-only launch pack that explicitly includes `hygienist`
+
+Observed result:
+
+- pass
+- all current async lanes are now represented in the refreshed evidence
+- the framework-only boundary remains explicit and intact
+- the cost summary remains rough-reference telemetry with explicit `estimated` and `unknown` labels only
+
+Framework response:
+
+- added `research/headcount/headcount-async-launch-pack-002.md`

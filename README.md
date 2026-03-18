@@ -30,6 +30,10 @@ The framework treats rough slice-level cost reference as a core capability, not 
 
 By default, persisted slice summaries are appended locally to `.telemetry/slice-costs.jsonl`.
 
+## Traceability
+
+The repo now distinguishes rough local slice-cost telemetry from full observability. See `docs/OBSERVABILITY.md` for the traceability contract, structured logging expectations, and the recommended use of the existing Azure Application Insights resource.
+
 ## Agent model map
 
 - `orchestrator` -> `GPT-5.4`
@@ -57,3 +61,4 @@ The default visual language for future "new regime" maps, diagrams, and governan
 7. `docs/INDEX.md`
 8. `docs/AZURE_BASELINE.md`
 9. `docs/HYGIENE.md`
+10. `docs/OBSERVABILITY.md`

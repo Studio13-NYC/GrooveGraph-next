@@ -11,6 +11,7 @@ Use the `hygienist` subagent for:
 - `npm prune`
 - `npx knip`
 - local tool-cache and scratch-surface review
+- `.gitignore` coverage audits for known tool-generated local surfaces
 - interpreting unused-surface results
 - turning tool output into a human-reviewable proposal instead of silent deletion
 
@@ -20,13 +21,14 @@ Preferred model: `GPT-5.4-nano`
 
 1. Run `npm prune`
 2. Run `npx knip`
-3. Review local tool/cache surfaces and ensure non-source artifacts are ignored or proposed for removal
-4. Summarize findings in a proposal table with:
+3. Audit `.gitignore` against known tool/cache surfaces and flag any missing ignore coverage
+4. Review local tool/cache surfaces and ensure non-source artifacts are ignored or proposed for removal
+5. Summarize findings in a proposal table with:
    - `Path`
    - `Reason`
    - `Estimated lines removed`
    - `Action`
-5. Do not delete anything until a human explicitly approves the proposal
+6. Do not delete anything until a human explicitly approves the proposal
 
 ## Local tool surfaces
 
@@ -42,6 +44,12 @@ Preferred treatment:
 - ignore them in `.gitignore` when they are clearly machine-local
 - remove them only with human approval if they were accidentally committed
 
+Known audit targets should include:
+
+- `.firecrawl/`
+- `.telemetry/`
+- future machine-local tool directories introduced by repo tooling, plugins, or research workflows
+
 ## Repo script
 
 The root repo script for this workflow is:
@@ -55,4 +63,5 @@ npm run cleanup:check
 - hygiene is a repeatable framework workflow, not an ad hoc shell habit
 - `knip` findings are advisory until reviewed by a human
 - machine-local tool artifacts should be ignored before they become hygiene debt
+- missing `.gitignore` coverage for known local tool surfaces is itself a hygiene finding
 - doc cleanup and code cleanup should be reported together when they affect the same slice

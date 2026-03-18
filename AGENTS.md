@@ -56,6 +56,13 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - Label local token/cost calculations as `estimated` or `unknown`, never as official accounting.
 - Persist slice summaries locally as append-only JSONL in `.telemetry/slice-costs.jsonl` when the runtime supports it.
 
+## Observability
+
+- Full traceability requires more than local slice-cost logging.
+- Use structured identifiers such as `session_id`, `slice_id`, `chunk_id`, `agent`, and `model` across orchestrated work.
+- Use the existing Azure Application Insights resource as the default runtime telemetry sink when product/runtime observability is added.
+- Prefer sampled traces, requests, exceptions, and selected custom events over indiscriminate high-volume logs.
+
 ## Visual default
 
 Use the NYCTA-inspired transit/signage system for authoritative "new regime" graphics. Use the whiteboard/cartoon style only for retrospective critique of legacy behavior.

@@ -83,6 +83,14 @@
         color: var(--red-route);
       }
 
+      .body {
+        margin: 4px 0 0;
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--slate);
+        text-align: left;
+      }
+
       .graphic {
         padding: 28px;
       }
@@ -105,6 +113,9 @@
           </div>
           <h1 id="banner">THIS APP IS NOW UNDER THE CONTROL OF THE CZA</h1>
           <div class="status" id="status">Service Suspended</div>
+          <p class="body" id="body">
+            This is the minimum viable smoke test: one homepage, one API, one graphic, and one very clear transfer of authority.
+          </p>
         </div>
 
         <div class="graphic">
@@ -121,6 +132,7 @@
           const data = await response.json();
           document.getElementById("banner").textContent = data.banner;
           document.getElementById("status").textContent = data.status;
+          document.getElementById("body").textContent = data.body;
         } catch {
           // Fallback copy is already rendered.
         }

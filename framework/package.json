@@ -1,0 +1,12 @@
+{
+  "name": "@groovegraph-next/framework",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "validate:framework": "node -e \"const fs=require('fs'); ['src/index.ts','src/context-packets.ts','src/headcount.ts','src/subagent-registry.ts','src/usage-accounting.ts','src/telemetry-log.ts'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('framework sources present')\""
+  }
+}

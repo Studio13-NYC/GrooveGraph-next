@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <rect width="1600" height="900" fill="#F2E9D8" />
+  <text x="72" y="112" font-family="Helvetica, Arial, sans-serif" font-size="78" font-weight="800" fill="#111111">COUNTY</text>
+  <text x="72" y="192" font-family="Helvetica, Arial, sans-serif" font-size="78" font-weight="800" fill="#111111">ZONING</text>
+  <text x="72" y="242" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="700" fill="#111111">The first map with actual authority</text>
+  <rect x="64" y="328" width="280" height="268" rx="28" fill="none" stroke="#8E8B84" stroke-width="6"/>
+  <text x="96" y="390" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#111111">Read-Only</text>
+  <text x="96" y="426" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700" fill="#111111">Legacy Reference</text>
+  <text x="96" y="476" font-family="Helvetica, Arial, sans-serif" font-size="18" fill="#5E6670">Reference Only</text>
+  <path d="M380 250 C520 250, 520 250, 660 250 L760 250 C900 250, 900 150, 1040 150 L1240 150" fill="none" stroke="#1B67C9" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M380 290 C540 290, 540 290, 700 290 L860 290 C1020 290, 1020 390, 1180 390 L1380 390" fill="none" stroke="#D7332F" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M380 520 C560 520, 560 520, 740 520 L900 520 C1100 520, 1100 680, 1300 680" fill="none" stroke="#11804B" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M520 620 C680 620, 680 620, 840 620 L1000 620 C1160 620, 1160 540, 1320 540" fill="none" stroke="#C433A8" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M760 700 C880 700, 880 700, 1000 700 L1140 700 C1260 700, 1260 620, 1380 620" fill="none" stroke="#E97722" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="380" cy="250" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="660" cy="250" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="1040" cy="150" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="700" cy="290" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="1180" cy="390" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="740" cy="520" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="1000" cy="620" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <circle cx="1000" cy="700" r="12" fill="#F2E9D8" stroke="#111111" stroke-width="6"/>
+  <text x="330" y="236" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#111111">Orchestrator</text>
+  <text x="555" y="236" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Composer Meta Lane</text>
+  <text x="950" y="136" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Codex Build Lane</text>
+  <text x="620" y="328" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Mini Specialist Lane</text>
+  <text x="1120" y="378" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Research</text>
+  <text x="660" y="556" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Nano Utility Lane</text>
+  <text x="930" y="606" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Framework</text>
+  <text x="935" y="686" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Prototypes</text>
+  <text x="1328" y="526" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="700" fill="#111111">Product</text>
+  <text x="420" y="420" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#111111">Writable Surface Begins Here</text>
+  <text x="420" y="454" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#111111">No Cross-Traffic Without Approval</text>
+  <text x="420" y="488" font-family="Helvetica, Arial, sans-serif" font-size="20" fill="#111111">Experiments Routed Separately</text>
+  <line x1="64" y1="820" x2="1536" y2="820" stroke="#111111" stroke-width="2"/>
+  <text x="72" y="866" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700" fill="#111111">Roads are now laid before traffic begins improvising them.</text>
+</svg>

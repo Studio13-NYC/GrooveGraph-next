@@ -1,0 +1,22 @@
+{
+  "name": "groovegraph-next",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "framework",
+    "product"
+  ],
+  "scripts": {
+    "validate:repo": "node -e \"console.log('groovegraph-next repo scaffold ready')\"",
+    "validate:docs": "node -e \"const fs=require('fs'); ['README.md','AGENTS.md','docs/AGENT_ORCHESTRATION.md','docs/MODEL_ROUTING.md','docs/CONTEXT_PACKETS.md','docs/USAGE_ACCOUNTING.md','docs/HYGIENE.md','docs/VISUAL_STYLE_GUIDE.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('docs present')\"",
+    "validate:visual-system": "node -e \"const fs=require('fs'); ['framework/src/visual-system/tokens.ts','assets/examples/new-regime-governance-map.svg','assets/examples/old-regime-satire-panel.svg','assets/examples/graphic-brief-template.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system assets present')\"",
+    "validate:framework": "npm run validate:framework -w @groovegraph-next/framework",
+    "cleanup:check": "npm prune && npx knip",
+    "dev:product": "npm run dev -w @groovegraph-next/product",
+    "build:product": "npm run build -w @groovegraph-next/product",
+    "start:product": "npm run start -w @groovegraph-next/product"
+  },
+  "devDependencies": {
+    "knip": "^5.88.0"
+  }
+}

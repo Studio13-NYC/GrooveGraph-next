@@ -1,0 +1,23 @@
+# Context Passing
+
+Every delegation must use an explicit packet.
+
+## Required packet fields
+
+- `goal`
+- `why_now`
+- `scope`
+- `inputs`
+- `constraints`
+- `reference_boundary`
+- `expected_output`
+- `stop_conditions`
+- `follow_on_hints`
+
+## Rules
+
+- Do not delegate vague work.
+- Do not omit writable vs read-only boundaries.
+- Keep packets small enough that the agent can act immediately.
+- If the packet is unclear, tighten it before delegation.
+- Include `tracking` only when the runtime actually intends to aggregate slice costs.

@@ -1,0 +1,12 @@
+---
+description: Preserve Azure baseline while allowing safe overwrite of application deployment surfaces
+alwaysApply: true
+---
+
+# Infrastructure And Deployment Baseline
+
+- Treat `rg-groovegraph` as preserved shared infrastructure.
+- Do not destroy the resource group, App Service plan, or Application Insights unless explicitly instructed.
+- It is acceptable to overwrite app-host surfaces such as the existing Static Web App and App Service.
+- For first deployments, prefer the smallest smoke-test path that proves hosting, routing, env wiring, and homepage/API integration.
+- Document preserved resources, overwritten surfaces, required secrets, and smoke validation steps together.

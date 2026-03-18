@@ -1,0 +1,12 @@
+# Reference Boundary
+
+The legacy `GrooveGraph` repository is read-only reference material for GrooveGraph Next.
+
+## Rules
+
+- Do not treat legacy files as the new source of truth.
+- Do not port old rules or prompts without explicit review.
+- Distinguish clearly between:
+  - read-only research inputs
+  - writable framework outputs
+- Prefer fresh structure over inherited complexity.

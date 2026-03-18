@@ -1,0 +1,42 @@
+# Subagent Routing
+
+Use these routing rules for all GrooveGraph Next work.
+
+## 1. Default hierarchy
+
+- `GPT-5.4` stays at the top as orchestrator.
+- `Composer 1.5` handles Cursor-native meta work.
+- `GPT-5.4-mini` handles research, review, testing analysis, and graphics direction.
+- `GPT-5.4-nano` handles triage, compression, and routing.
+- `GPT-5.3-codex` handles bounded implementation.
+
+## 2. Route by work type
+
+- rules, prompts, skills, and tool contracts -> `composer-meta`
+- exploration -> `explorer`
+- bounded code work -> `implementer`
+- review -> `reviewer`
+- workflow validation -> `tester`
+- cleanup analysis and removal proposals -> `hygienist`
+- graphics and visual briefs -> `graphic-artist`
+- Azure baseline, deployment, and preservation work -> `infrastructure-deployment`
+
+## 2a. Agent to model assignment
+
+- `orchestrator` -> `GPT-5.4`
+- `composer-meta` -> `Composer 1.5`
+- `explorer` -> `GPT-5.4-mini`
+- `implementer` -> `GPT-5.3-codex`
+- `reviewer` -> `GPT-5.4-mini`
+- `tester` -> `GPT-5.4-mini`
+- `hygienist` -> `GPT-5.4-nano`
+- `graphic-artist` -> `GPT-5.4-mini`
+- `infrastructure-deployment` -> `GPT-5.4-mini`
+
+## 3. Escalation
+
+Escalate to the orchestrator when:
+
+- multiple outputs conflict
+- scope changes materially
+- the user needs a cross-domain synthesis

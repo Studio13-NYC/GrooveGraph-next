@@ -38,6 +38,7 @@ The key idea is simple:
 - specialist lanes own bounded work
 - every delegation uses an explicit packet
 - every meaningful slice produces evidence
+- the orchestrator should delegate downward whenever a cheaper lane can preserve quality
 
 ## 2. Non-negotiable principles
 
@@ -54,6 +55,10 @@ One agent is user-facing and owns:
 - escalation decisions
 
 Subagents do not declare the work complete across domains. The orchestrator does.
+
+The orchestrator should not be the default executor.
+
+It should be the default delegator.
 
 ### 2.2 Bounded delegation
 
@@ -292,6 +297,7 @@ Routing rules:
 
 - use the strongest model only where it adds real leverage
 - do not use the top model for routine mechanical work
+- if a cheaper lane can do the work reliably inside a bounded packet, delegation is the default choice
 - do not send vague coding work to the implementer
 - escalate back to the orchestrator when outputs conflict or scope changes
 
@@ -366,8 +372,8 @@ Packet quality checklist:
 Use this loop for most work:
 
 1. Orchestrator defines the desired outcome.
-2. Explorer gathers only enough context to act.
-3. Orchestrator chooses the next bounded lane.
+2. Orchestrator pushes the work to the cheapest reliable lane that can handle the next bounded step.
+3. Explorer gathers only enough context to act when exploration is needed.
 4. Meta lane clarifies the contract if repo behavior is changing.
 5. Implementer changes only the bounded surface.
 6. Reviewer checks risks and regressions.
@@ -662,6 +668,7 @@ Avoid these:
 - logging everything without correlation
 - keeping no evidence because “we remember what happened”
 - using the strongest model for every step
+- letting the orchestrator absorb ordinary lane work because it feels safer
 - hiding uncertainty behind confident summaries
 - pretending estimated usage is exact billing
 - letting local tool artifacts drift into source control
@@ -671,6 +678,7 @@ Avoid these:
 A good setup feels like this:
 
 - the orchestrator is decisive
+- the orchestrator delegates aggressively but responsibly
 - the lanes are specialized
 - the packets are clear
 - the evidence is fresh

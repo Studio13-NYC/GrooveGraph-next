@@ -10,6 +10,13 @@ Use these routing rules for all GrooveGraph Next work.
 - `GPT-5.4-nano` handles triage, compression, and routing.
 - `GPT-5.3-codex` handles bounded implementation.
 
+## 1a. Default delegation stance
+
+- Assume the orchestrator should delegate unless a stronger reason exists not to.
+- If a cheaper lane can do the work reliably within a bounded scope, route the work there.
+- Keep `GPT-5.4` focused on decomposition, conflict resolution, acceptance-criteria control, and final synthesis.
+- Do not let the orchestrator hold ordinary exploration, review, hygiene, or bounded implementation work out of habit.
+
 ## 2. Route by work type
 
 - rules, prompts, skills, and tool contracts -> `composer-meta`

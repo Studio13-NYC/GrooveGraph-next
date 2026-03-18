@@ -20,6 +20,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 ## Required behavior
 
 - Use explicit context packets when delegating.
+- Delegate downward by default when a cheaper lane can do the work within a clear boundary.
 - Keep one active writable surface per task.
 - Prefer framework-first changes over product speculation.
 - Preserve clean boundaries between `framework/`, `product/`, `prototypes/`, and `research/`.
@@ -35,6 +36,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - Cleanup analysis and removal proposals: `hygienist`
 - Implementation after criteria are fixed: `GPT-5.3-codex`
 - Azure baseline, deployment flow, and preservation rules: `infrastructure-deployment`
+- `GPT-5.4` should keep only synthesis, conflict resolution, and materially cross-domain judgment unless a lower-cost lane would risk quality
 
 ## Agent model map
 

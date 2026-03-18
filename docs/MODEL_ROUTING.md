@@ -4,6 +4,19 @@
 
 Use the strongest model only where it creates leverage. Everything else should be routed to the cheapest model that can reliably do the job.
 
+## Default stance
+
+The orchestrator should assume delegation first, not personal execution first.
+
+If a cheaper lane can perform the work within a clear boundary and preserve the quality bar, route the work downward.
+
+Reserve the top model for:
+
+- user-facing synthesis
+- cross-domain judgment
+- conflicting outputs
+- materially changing acceptance criteria
+
 ## Canonical source
 
 This document is the canonical source for routing decisions in GrooveGraph Next.
@@ -62,12 +75,14 @@ Route down to `GPT-5.4-nano` when:
 - default to mini or nano when possible
 - use codex only after the task boundary is explicit
 - use `GPT-5.4` for orchestration, not for routine mechanical work
+- if a cheaper lane can do the work cleanly, delegating is the preferred behavior rather than an optional optimization
 - avoid parallel high-cost subagents unless the speed benefit is real
 - ask each agent for a rough `cost_summary` whenever the runtime can provide one
 
 ## Anti-patterns
 
 - using `GPT-5.4` for every step because it feels safer
+- leaving work at the orchestrator layer when a cheaper lane is clearly suitable
 - asking `nano` to make architecture calls
 - sending under-specified code tasks to codex
 - using the meta lane for ordinary implementation

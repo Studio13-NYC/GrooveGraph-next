@@ -20,6 +20,8 @@ It owns:
 - final synthesis for the user
 - escalation decisions when scope or ambiguity grows
 
+It should default to delegation whenever a cheaper lane can do the work cleanly inside a bounded packet.
+
 ### Meta lane
 
 `Composer 1.5` is the Cursor-native meta lane.
@@ -78,6 +80,12 @@ Subagents should:
 - avoid silent expansion of scope
 - return explicit outputs instead of partial thoughts
 - stop when their stop conditions are reached
+
+The orchestrator should:
+
+- delegate downward by default
+- avoid retaining ordinary lane work out of caution alone
+- keep expensive top-model work focused on judgment and synthesis
 
 ## Subagent set
 
@@ -155,6 +163,7 @@ Subagents should:
 ## What good orchestration looks like
 
 - fewer, sharper handoffs
+- downward delegation whenever a cheaper lane can preserve quality
 - explicit ownership
 - explicit rough cost summaries when available
 - stable naming
@@ -164,6 +173,7 @@ Subagents should:
 ## What bad orchestration looks like
 
 - delegating vague tasks
+- treating the orchestrator as the default executor instead of the default delegator
 - hiding unresolved assumptions inside implementation work
 - mixing policy authoring with product coding
 - letting legacy reference material silently control new work

@@ -7,5 +7,6 @@ coverage/
 !.env.example
 *.log
 .telemetry/
+.firecrawl/
 .DS_Store
 Thumbs.db

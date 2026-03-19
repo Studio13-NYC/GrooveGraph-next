@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import type {
   ResearchSession,
   ReviewDecisionRequest,
@@ -282,7 +284,7 @@ export default function HomePage() {
                           <strong style={{ textTransform: "capitalize" }}>{entry.role}</strong>
                           <span style={{ fontSize: "12px", color: "var(--muted)" }}>{formatTimestamp(entry.createdAt)}</span>
                         </div>
-                        <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.55 }}>{entry.content}</div>
+                        <MarkdownMessage content={entry.content} />
                       </article>
                     ))
                   )}
@@ -464,6 +466,14 @@ function Panel({
       </div>
       <div style={{ padding: "14px" }}>{children}</div>
     </section>
+  );
+}
+
+function MarkdownMessage({ content }: { content: string }) {
+  return (
+    <div className="markdown-message">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
   );
 }
 

@@ -84,6 +84,101 @@ Hierarchy:
 - floating-glass dashboard aesthetics
 - decorative complexity without meaning
 
+## Motion direction
+
+When a GrooveGraph artifact needs animation or interactive motion, treat motion as part of the visual system rather than an afterthought.
+
+### Core motion traits
+
+- directional rather than decorative
+- tied to structure, hierarchy, and sequence
+- paced clearly enough to read at a glance
+- strong on transforms and opacity before paint-heavy effects
+
+### New-regime motion
+
+Use motion that feels like route logic becoming visible:
+
+- route or diagram strokes drawing into place
+- station-like nodes snapping into alignment
+- measured staggered typography
+- section-by-section story progression
+- clean layout transitions instead of chaotic element drift
+
+Recommended GSAP families:
+
+- `DrawSVGPlugin`
+- `ScrollTrigger`
+- `SplitText`
+- `Flip`
+- `ScrollToPlugin`
+
+### Old-regime satire motion
+
+If the goal is critique or historical absurdity, motion may become more frantic, but it should still communicate intentionally:
+
+- jitter
+- over-busy annotation reveals
+- awkward bounce or wiggle used as commentary
+- intentionally messy timing to underscore systemic disorder
+
+Recommended GSAP families:
+
+- `ScrambleTextPlugin`
+- `RoughEase`
+- `CustomWiggle`
+- `CustomBounce`
+- `Observer`
+
+### Implementation stance
+
+- prefer `gsap` plus `@gsap/react` for React or Next.js motion surfaces
+- register plugins explicitly
+- centralize shared plugin registration when multiple components use GSAP
+- import the smallest plugin set that serves the artifact unless you are building a deliberate motion sandbox
+- respect reduced-motion preferences and ensure the artifact still communicates without animation
+
+## Graph data visualization
+
+Treat graph data visualization as a first-class GrooveGraph surface, not a special-effect layer.
+
+Starting reference:
+
+- [Cytoscape](https://cytoscape.org/)
+
+This reference matters because it treats complex networks, attribute mapping, and exploratory analysis as one design problem instead of reducing graph work to decorative node clouds.
+
+### Core graph-viz traits
+
+- investigative clarity over spectacle
+- progressive disclosure over hairball-by-default density
+- topology plus attributes, not topology alone
+- graph plus evidence, not graph in isolation
+- visible review state, confidence, and provisional status where relevant
+
+### Default graph view grammar
+
+- use node-link views for relationship exploration
+- prefer restrained edge vocabulary
+- let labels appear selectively based on focus, hover, or zoom
+- pair the graph with side panels for evidence, metadata, and review actions
+- use filtering, search, and neighborhood expansion as primary interaction tools
+
+### Node and edge mapping
+
+- use color for durable type or status
+- use size only when a metric genuinely matters
+- use opacity for confidence or de-emphasis
+- use border, badge, or halo for active selection and review state
+- use line style only for clearly distinct relationship classes
+
+### GrooveGraph-specific stance
+
+- discovery-first graph surfaces should make provisional structure obvious
+- accepted, deferred, and proposed states should not look identical
+- provenance should be easy to inspect from the selected node, edge, or companion panel
+- a graph should help the user decide what to keep, not merely prove that connections exist
+
 ## Legacy satire mode
 
 For retrospective critique of the old regime, switch to a different system:

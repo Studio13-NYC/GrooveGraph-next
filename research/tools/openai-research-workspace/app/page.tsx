@@ -490,19 +490,6 @@ export default function HomePage() {
     return latestAssistant?.id ?? null;
   }, [selectedSession]);
 
-  useEffect(() => {
-    if (!latestAssistantMessageId || !latestAssistantMessageRef.current) {
-      return;
-    }
-
-    requestAnimationFrame(() => {
-      latestAssistantMessageRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    });
-  }, [latestAssistantMessageId]);
-
   return (
     <main style={{ minHeight: "100vh", padding: "16px 20px 24px" }}>
       <section
@@ -554,11 +541,12 @@ export default function HomePage() {
               className="workspace-header-controls"
               style={{
                 display: "grid",
-                gridTemplateColumns: "500px 375px",
+                gridTemplateColumns: "350px 300px",
                 gap: "16px",
                 alignItems: "start",
                 justifyContent: "end",
-                width: "100%",
+                justifySelf: "end",
+                width: "fit-content",
                 maxWidth: "100%",
               }}
             >
@@ -569,7 +557,7 @@ export default function HomePage() {
                   padding: "10px",
                   display: "grid",
                   gap: "8px",
-                  width: "500px",
+                width: "350px",
                   height: "125px",
                 }}
               >
@@ -620,7 +608,7 @@ export default function HomePage() {
                   padding: "10px",
                   display: "grid",
                   gap: "8px",
-                  width: "375px",
+                width: "300px",
                   height: "125px",
                   overflow: "auto",
                 }}

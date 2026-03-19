@@ -12,18 +12,23 @@ Verified baseline:
 
 Current resources:
 
-- `swa-groovegraph` - Static Web App
-- `plan-groovegraph` - App Service plan
-- `as-groovegraph-api` - App Service
+- `swa-groovegraph` - Static Web App (default `*.azurestaticapps.net` hostname only; custom domain not used for the live product surface)
+- `plan-groovegraph` - App Service plan (**Basic B1** Linux — required for App Service managed TLS on custom hostnames)
+- `as-groovegraph-api` - App Service — hosts the **OpenAI research workbench** (Next.js `output: "standalone"`) and answers **`https://groovegraph.s13.nyc`**
 - `appi-groovegraph` - Application Insights
 - `Failure Anomalies - appi-groovegraph` - smart detector alert rule
+
+DNS (public zone `s13.nyc` in `rg-s13`, not in `rg-groovegraph`):
+
+- `groovegraph` CNAME → `as-groovegraph-api.azurewebsites.net`
+- `asuid.groovegraph` TXT → App Service domain verification ID (as required when binding the hostname)
 
 ## Preservation rule
 
 Preserve:
 
 - `rg-groovegraph`
-- `plan-groovegraph`
+- `plan-groovegraph` (resource; SKU may change with workload needs)
 - `appi-groovegraph`
 - the alerting resource unless explicitly changed
 
@@ -32,21 +37,18 @@ May be overwritten by GrooveGraph Next:
 - `swa-groovegraph`
 - `as-groovegraph-api`
 
-## First deployment stance
+## Live deploy path (research workbench)
 
-Use the smallest smoke-test deployment path first.
+The research app under `research/tools/openai-research-workspace` uses dynamic App Router API routes; it is deployed as a **Node standalone** package to App Service, not as a static SWA export.
 
-Recommended first step:
+From repo root:
 
-- deploy a single App Service-hosted Next.js smoke app that serves:
-  - homepage takeover message
-  - `/api/smoke`
+```powershell
+.\scripts\deploy-appservice-research-workbench.ps1
+```
 
-This proves:
+Requires App Service app settings (at minimum): `OPENAI_API_KEY` (see workspace server config).
 
-- Azure app-host access
-- runtime env wiring
-- homepage rendering
-- API route behavior
+## Historical note
 
-Only after that should the split SWA plus App Service path be revisited.
+Early smoke validation used a static SWA placeholder and/or a minimal App Service Next app. The **canonical live URL** for the research workbench is **`https://groovegraph.s13.nyc`** on **`as-groovegraph-api`**.

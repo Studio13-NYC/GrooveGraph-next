@@ -7,6 +7,7 @@ import type {
   ReviewDecisionRequest,
   SessionEvent,
   SessionMessage,
+  UpdateGraphCandidateRequest,
 } from "@/src/types/research-session";
 
 function workspaceRoot(): string {
@@ -162,4 +163,61 @@ export function appendReviewDecision(
   );
 
   return decision;
+}
+
+export function applyGraphCandidateUpdate(
+  session: ResearchSession,
+  request: UpdateGraphCandidateRequest,
+) {
+  if (request.candidateType === "entity") {
+    const entity = session.entityCandidates.find((item) => item.id === request.candidateId);
+    if (!entity) {
+      throw new Error("Entity candidate not found.");
+    }
+
+    entity.displayName = request.displayName;
+    entity.provisionalKind = request.provisionalKind;
+    entity.aliases = request.aliases;
+
+    session.events.push(
+      createEvent(
+        "candidate_updated",
+        "success",
+        "/api/sessions/[sessionId]/candidates",
+        "Entity candidate updated.",
+        {
+          session_id: session.id,
+          candidate_id: request.candidateId,
+          candidate_type: request.candidateType,
+        },
+      ),
+    );
+
+    return entity;
+  }
+
+  const relationship = session.relationshipCandidates.find(
+    (item) => item.id === request.candidateId,
+  );
+  if (!relationship) {
+    throw new Error("Relationship candidate not found.");
+  }
+
+  relationship.verb = request.verb;
+
+  session.events.push(
+    createEvent(
+      "candidate_updated",
+      "success",
+      "/api/sessions/[sessionId]/candidates",
+      "Relationship candidate updated.",
+      {
+        session_id: session.id,
+        candidate_id: request.candidateId,
+        candidate_type: request.candidateType,
+      },
+    ),
+  );
+
+  return relationship;
 }

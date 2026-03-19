@@ -44,6 +44,7 @@ When files drift, use this precedence:
 - `.cursor/agents/` for role cards
 - `.cursor/rules/` for durable Cursor behavior
 - `.cursor/skills/` for reusable operational helpers
+- `../refs/` for short `@...` aliases that point back to canonical docs and rules
 - `assets/posts/` for narrative updates and framework blog posts
 - `research/` for validation evidence, reboot briefs, and experimental product surfaces
 

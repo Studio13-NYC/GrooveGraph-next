@@ -29,7 +29,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 
 ## Routing defaults
 
-- Architecture, planning, and synthesis: orchestrator
+- Architecture, planning, and synthesis: orchestrator `GPT-5.4`
 - Cursor rules, skills, and prompt authoring: `Composer 1.5`
 - Research, reviews, and graphics direction: `GPT-5.4-mini`
 - Discovery-first product framing and reboot briefs: `product-manager`

@@ -37,8 +37,19 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
 a {
   color: inherit;
+}
+
+/* Keep the Next dev portal from anchoring to the top-left corner in preview. */
+nextjs-portal {
+  left: unset !important;
+  top: unset !important;
 }
 
 .markdown-message {
@@ -105,4 +116,313 @@ a {
   margin-left: 0;
   padding-left: 0.9em;
   color: var(--muted);
+}
+
+.triplet-proposition {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.triplet-card {
+  box-shadow: 0 1px 0 rgba(17, 17, 17, 0.04);
+}
+
+.triplet-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.triplet-card-kicker {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.triplet-entity-summary {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.triplet-entity-summary-start {
+  justify-items: start;
+  text-align: left;
+}
+
+.triplet-entity-summary-end {
+  justify-items: end;
+  text-align: right;
+}
+
+.triplet-entity-name {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 750;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  word-break: break-word;
+}
+
+.triplet-entity-name-dangling {
+  color: var(--route-red);
+}
+
+.triplet-entity-kind {
+  margin: 0;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.triplet-entity-aliases {
+  max-width: 100%;
+}
+
+.triplet-entity-aliases summary {
+  color: var(--route-blue);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.triplet-entity-aliases ul {
+  justify-content: inherit;
+}
+
+.triplet-dangling-note {
+  margin: 0;
+  font-size: 12px;
+  color: var(--route-red);
+}
+
+.triplet-verb {
+  align-self: start;
+  padding-top: 4px;
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 650;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-align: center;
+}
+
+.triplet-inline-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+}
+
+.triplet-inline-input:focus {
+  outline: 2px solid rgba(27, 103, 201, 0.18);
+  outline-offset: 1px;
+}
+
+.triplet-entity-name.triplet-inline-input {
+  padding: 4px 8px;
+}
+
+.triplet-entity-kind.triplet-inline-input {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.triplet-inline-verb-input {
+  align-self: start;
+  text-align: center;
+  padding: 4px 8px;
+  min-width: 120px;
+}
+
+.triplet-proposition .entity-aliases summary {
+  font-size: 11px;
+}
+
+.triplet-proposition .entity-aliases ul,
+.triplet-proposition .entity-aliases p {
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.triplet-proposition .entity-aliases ul {
+  padding-left: 16px;
+}
+
+.triplet-proposition .entity-aliases p {
+  color: var(--muted);
+}
+
+.entity-aliases summary {
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--route-blue);
+}
+
+.entity-aliases ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.entity-aliases p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.triplet-action-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.workspace-splitter {
+  position: relative;
+  align-self: stretch;
+  margin: 0 -8px;
+  width: 10px;
+  cursor: col-resize;
+  border-radius: 999px;
+  background: transparent;
+  touch-action: none;
+}
+
+.workspace-splitter:hover,
+.workspace-splitter-active {
+  background: rgba(27, 103, 201, 0.16);
+}
+
+.workspace-splitter-grip {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+  background: rgba(17, 17, 17, 0.3);
+  border-radius: 999px;
+}
+
+.workspace-splitter:hover .workspace-splitter-grip,
+.workspace-splitter-active .workspace-splitter-grip {
+  background: rgba(17, 17, 17, 0.6);
+}
+
+.triplet-alias-editor {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.triplet-alias-label {
+  margin: 2px 0 0;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.triplet-alias-list {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+}
+
+.triplet-alias-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  width: 100%;
+}
+
+.triplet-alias-input {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.triplet-alias-remove,
+.triplet-alias-add {
+  border: 1px solid var(--border);
+  background: #ffffff;
+  color: var(--ink);
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.triplet-alias-remove {
+  color: var(--route-red);
+}
+
+.triplet-alias-add-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+}
+
+.triplet-alias-empty {
+  margin: 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+@media (max-width: 1200px) {
+  .workspace-header-controls {
+    max-width: none !important;
+    flex-basis: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .triplet-proposition {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .triplet-verb {
+    text-align: left;
+    padding-top: 0;
+  }
+
+  .triplet-entity-summary-end {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .triplet-meta-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .triplet-inline-verb-input {
+    text-align: left;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .workspace-header-controls {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .workspace-main-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .workspace-splitter {
+    display: none;
+  }
 }

@@ -1,7 +1,8 @@
 ---
-name: orchestrator
-description: Top-level GrooveGraph Next orchestrator. Owns decomposition, routing, synthesis, and completion.
 preferred_model: GPT-5.4
+name: orchestrator
+model: gpt-5.4-medium
+description: Top-level GrooveGraph Next orchestrator. Owns decomposition, routing, synthesis, and completion.
 ---
 
 You are the top-level orchestrator for GrooveGraph Next.

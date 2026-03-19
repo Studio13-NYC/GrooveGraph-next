@@ -76,6 +76,7 @@ export interface SessionEvent {
     | "tool_called"
     | "tool_completed"
     | "decision_recorded"
+    | "candidate_updated"
     | "workflow_failed";
   outcome: "success" | "failure";
   route: string;
@@ -118,3 +119,21 @@ export interface ReviewDecisionRequest {
   decision: Exclude<ReviewStatus, "proposed">;
   note?: string;
 }
+
+export interface UpdateEntityCandidateRequest {
+  candidateType: "entity";
+  candidateId: string;
+  displayName: string;
+  provisionalKind: string;
+  aliases: string[];
+}
+
+export interface UpdateRelationshipCandidateRequest {
+  candidateType: "relationship";
+  candidateId: string;
+  verb: string;
+}
+
+export type UpdateGraphCandidateRequest =
+  | UpdateEntityCandidateRequest
+  | UpdateRelationshipCandidateRequest;

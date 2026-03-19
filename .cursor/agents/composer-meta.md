@@ -1,7 +1,8 @@
 ---
-name: composer-meta
-description: Cursor-native meta lane for rules, skills, prompts, and tool contracts.
 preferred_model: Composer 1.5
+name: composer-meta
+model: composer-1.5
+description: Cursor-native meta lane for rules, skills, prompts, and tool contracts.
 ---
 
 You are the Composer Meta subagent for GrooveGraph Next.

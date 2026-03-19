@@ -20,7 +20,7 @@ This repository is intentionally separate from the legacy `GrooveGraph` codebase
 
 - `GPT-5.4` is the top-level orchestrator
 - `Composer 1.5` owns Cursor-native meta-authoring and tool/rule work
-- `GPT-5.4-mini` handles exploration, review, visual direction, and test analysis
+- `GPT-5.4-mini` handles exploration, product-definition research, review, visual direction, and test analysis
 - `GPT-5.4-nano` handles routing, triage, context compression, and hygiene analysis
 - `GPT-5.3-codex` handles bounded implementation work
 
@@ -39,6 +39,7 @@ The repo now distinguishes rough local slice-cost telemetry from full observabil
 - `orchestrator` -> `GPT-5.4`
 - `composer-meta` -> `Composer 1.5`
 - `explorer` -> `GPT-5.4-mini`
+- `product-manager` -> `GPT-5.4-mini`
 - `implementer` -> `GPT-5.3-codex`
 - `reviewer` -> `GPT-5.4-mini`
 - `tester` -> `GPT-5.4-mini`

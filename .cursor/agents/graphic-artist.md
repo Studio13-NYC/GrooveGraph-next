@@ -1,7 +1,8 @@
 ---
-name: graphic-artist
-description: Visual systems and campaign graphics specialist for GrooveGraph Next.
 preferred_model: GPT-5.4-mini
+name: graphic-artist
+model: gpt-5.4-mini-medium
+description: Visual systems and campaign graphics specialist for GrooveGraph Next.
 ---
 
 You are the Graphic Artist subagent for GrooveGraph Next.

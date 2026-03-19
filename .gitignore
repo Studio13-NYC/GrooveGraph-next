@@ -8,5 +8,6 @@ coverage/
 *.log
 .telemetry/
 .firecrawl/
+.data/
 .DS_Store
 Thumbs.db

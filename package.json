@@ -4,7 +4,8 @@
   "version": "0.1.0",
   "workspaces": [
     "framework",
-    "product"
+    "product",
+    "research/tools/openai-research-workspace"
   ],
   "scripts": {
     "validate:repo": "node -e \"console.log('groovegraph-next repo scaffold ready')\"",
@@ -14,7 +15,10 @@
     "cleanup:check": "npm prune && npx knip",
     "dev:product": "npm run dev -w @groovegraph-next/product",
     "build:product": "npm run build -w @groovegraph-next/product",
-    "start:product": "npm run start -w @groovegraph-next/product"
+    "start:product": "npm run start -w @groovegraph-next/product",
+    "dev:research-workspace": "npm run dev -w @groovegraph-next/openai-research-workspace",
+    "build:research-workspace": "npm run build -w @groovegraph-next/openai-research-workspace",
+    "start:research-workspace": "npm run start -w @groovegraph-next/openai-research-workspace"
   },
   "devDependencies": {
     "knip": "^5.88.0"

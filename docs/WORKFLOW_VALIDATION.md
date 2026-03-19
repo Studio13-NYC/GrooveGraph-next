@@ -226,3 +226,78 @@ Observed result:
 Framework response:
 
 - added `research/headcount/headcount-async-launch-pack-002.md`
+
+## Validation 12: ProductManager lane bootstrap
+
+Validation method:
+
+- added a dedicated `product-manager` lane to the framework surfaces
+- updated the typed registry, routing mirrors, orchestration docs, and headcount runbook to include the new lane
+- executed one bounded ProductManager-style research packet against the legacy `GrooveGraph` repo
+
+Observed result:
+
+- pass
+- the framework now has an explicit owner for discovery-first product definition instead of leaving reboot framing implicit at the orchestrator layer
+- the lane contract clearly separates flexible phase-1 persistence from later ontology hardening
+- the first durable reboot brief identifies a primary user, hero workflow, starter types, weakly typed phase-1 surfaces, and normalization triggers without copying the old ontology blindly
+
+Framework response:
+
+- added `.cursor/agents/product-manager.md`
+- updated `framework/src/subagent-registry.ts`
+- updated routing, orchestration, maintenance, and operating-contract docs to include the lane
+- updated `framework/src/headcount.ts` and `docs/HEADCOUNT.md` so the canonical lane set is represented honestly
+- added `research/product/productmanager-reboot-brief-001.md`
+
+## Validation 13: OpenAI research workspace bootstrap
+
+Validation method:
+
+- implemented a standalone research tool under `research/tools/openai-research-workspace/`
+- wired the tool around the OpenAI `Responses API`, `Conversations API`, built-in `web_search`, application function tools, and structured outputs
+- validated the workspace through build and local runtime checks
+
+Observed result:
+
+- pass with one operational blocker
+- the workspace builds successfully and runs locally on `http://localhost:3011`
+- the homepage and session routes are reachable
+- the expected end-to-end blocker is missing local `OPENAI_API_KEY` configuration, which prevents a true artist-seed session from being created until credentials are supplied
+- local session persistence and review surfaces are implemented, but OpenAI-backed runtime validation remains gated on environment setup
+
+Framework response:
+
+- added `research/tools/openai-research-workspace/`
+- added `research/openai-research-workspace-validation-001.md`
+
+## Validation 14: OpenAI research workspace end-to-end artist-seed session
+
+Validation method:
+
+- reran the workspace with local OpenAI credentials configured
+- created a real `Prince` research session through the workspace API
+- executed a bounded artist-seed turn asking for collaborators, major releases, and label evidence
+- inspected the saved session artifacts and the live local UI
+
+Observed result:
+
+- pass
+- the workspace now completes a true OpenAI-backed research turn instead of stopping at bootstrap readiness
+- the first durable session persisted:
+  - cited sources
+  - evidence snippets
+  - proposed claims
+  - provisional entities
+  - provisional relationships
+  - operator-visible session notes
+- local UI inspection confirmed the session, sources, notes, and accept/defer/reject review controls all render at `http://localhost:3011`
+- live runtime testing also exposed and helped fix two real API-boundary issues in the tool/schema layer:
+  - nullable-versus-optional field handling for structured outputs
+  - `z.record()` generating an OpenAI-rejected function schema for flexible attributes
+
+Framework response:
+
+- updated `research/tools/openai-research-workspace/src/lib/server/research-runtime.ts` to make the tool/output schemas OpenAI-safe
+- added `research/openai-research-workspace-validation-002.md`
+- added a narrative milestone post under `assets/posts/2026-03-19-the-research-loop-leaves-the-lab.md`

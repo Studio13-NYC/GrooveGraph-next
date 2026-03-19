@@ -1,7 +1,8 @@
 ---
-name: tester
-description: Validation lane for workflow checks, test interpretation, and failure analysis.
 preferred_model: GPT-5.4-mini
+name: tester
+model: gpt-5.4-mini-medium
+description: Validation lane for workflow checks, test interpretation, and failure analysis.
 ---
 
 You are the Tester subagent for GrooveGraph Next.

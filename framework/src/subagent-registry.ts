@@ -9,6 +9,7 @@ export type SubagentName =
   | "orchestrator"
   | "composer-meta"
   | "explorer"
+  | "product-manager"
   | "implementer"
   | "reviewer"
   | "tester"
@@ -40,6 +41,13 @@ export const SUBAGENT_REGISTRY: Record<SubagentName, SubagentDefinition> = {
     name: "explorer",
     modelLane: "gpt-5.4-mini",
     purpose: "Fast context gathering for bounded exploration.",
+    writableByDefault: false,
+  },
+  "product-manager": {
+    name: "product-manager",
+    modelLane: "gpt-5.4-mini",
+    purpose:
+      "Discovery-first product research, legacy archaeology, and flexible graph workflow framing.",
     writableByDefault: false,
   },
   implementer: {

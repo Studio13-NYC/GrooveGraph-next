@@ -21,6 +21,7 @@ Use these routing rules for all GrooveGraph Next work.
 
 - rules, prompts, skills, and tool contracts -> `composer-meta`
 - exploration -> `explorer`
+- product strategy, reboot briefs, and discovery-first workflow framing -> `product-manager`
 - bounded code work -> `implementer`
 - review -> `reviewer`
 - workflow validation -> `tester`
@@ -33,6 +34,7 @@ Use these routing rules for all GrooveGraph Next work.
 - `orchestrator` -> `GPT-5.4`
 - `composer-meta` -> `Composer 1.5`
 - `explorer` -> `GPT-5.4-mini`
+- `product-manager` -> `GPT-5.4-mini`
 - `implementer` -> `GPT-5.3-codex`
 - `reviewer` -> `GPT-5.4-mini`
 - `tester` -> `GPT-5.4-mini`

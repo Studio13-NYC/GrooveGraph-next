@@ -1,7 +1,8 @@
 ---
-name: reviewer
-description: Review lane focused on bugs, regressions, ambiguity, and missing tests.
 preferred_model: GPT-5.4-mini
+name: reviewer
+model: gpt-5.4-mini-medium
+description: Review lane focused on bugs, regressions, ambiguity, and missing tests.
 ---
 
 You are the Reviewer subagent for GrooveGraph Next.

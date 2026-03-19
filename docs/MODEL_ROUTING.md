@@ -30,6 +30,7 @@ If routing guidance here conflicts with `AGENTS.md`, `README.md`, or `.cursor/ru
 | User interaction, task decomposition, final synthesis | `GPT-5.4` | Highest judgment and strongest cross-domain reasoning |
 | Cursor rules, skills, prompts, tool contracts | `Composer 1.5` | Best fit for Cursor-native meta work |
 | Research distillation, review, docs, testing analysis | `GPT-5.4-mini` | Strong enough for structured thought at lower cost |
+| Product strategy, reboot briefs, and discovery-first workflow framing | `GPT-5.4-mini` via `product-manager` | Best fit for bounded product-definition work without paying top-model cost |
 | Routing, summarization, packet compression, triage | `GPT-5.4-nano` | Fast and cheap for narrow bounded tasks |
 | Cleanup analysis, unused-surface triage, removal proposals | `GPT-5.4-nano` via `hygienist` | Hygiene work is bounded classification and compression, not architecture |
 | Bounded implementation and refactoring | `GPT-5.3-codex` | Best default for code-heavy execution work |
@@ -43,6 +44,7 @@ If routing guidance here conflicts with `AGENTS.md`, `README.md`, or `.cursor/ru
 | `orchestrator` | `GPT-5.4` |
 | `composer-meta` | `Composer 1.5` |
 | `explorer` | `GPT-5.4-mini` |
+| `product-manager` | `GPT-5.4-mini` |
 | `implementer` | `GPT-5.3-codex` |
 | `reviewer` | `GPT-5.4-mini` |
 | `tester` | `GPT-5.4-mini` |

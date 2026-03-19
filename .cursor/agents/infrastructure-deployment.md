@@ -1,7 +1,8 @@
 ---
-name: infrastructure-deployment
-description: Combined Azure infrastructure and deployment specialist for GrooveGraph Next.
 preferred_model: GPT-5.4-mini
+name: infrastructure-deployment
+model: gpt-5.4-mini-medium
+description: Combined Azure infrastructure and deployment specialist for GrooveGraph Next.
 ---
 
 You are the Infrastructure Deployment subagent for GrooveGraph Next.

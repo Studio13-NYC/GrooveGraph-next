@@ -50,3 +50,7 @@ Cleanup analysis is a first-class lane rather than an informal shell ritual. A d
 ### D009 - Full traceability stance
 
 Local JSONL cost summaries are necessary but not sufficient. The framework now explicitly distinguishes rough local slice-cost telemetry from full observability and treats structured identifiers, stage-level runtime logs, and Application Insights-backed correlation as the default direction for end-to-end traceability.
+
+### D010 - ProductManager lane
+
+Discovery-first product definition is now a first-class lane rather than an implicit orchestrator duty. A dedicated `product-manager` subagent owns legacy-product archaeology, hero-workflow framing, and recommendations for flexible graph persistence before ontology hardening, using `GPT-5.4-mini` because the work is bounded synthesis rather than top-level final judgment.

@@ -43,7 +43,7 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
   objective:
     "Prove that the orchestrator can manage a strict handoff chain where each agent receives bounded instructions, uses prior outputs, and contributes to one final release packet.",
   finalProject:
-    "A synthesized headcount release packet for a tiny smoke-page revision, including scoped findings, implementation intent, review notes, validation notes, hygiene notes, deployment notes, and rough slice cost.",
+    "A synthesized headcount release packet for a tiny product slice, including scoped findings, product framing, implementation intent, review notes, validation notes, hygiene notes, deployment notes, and rough slice cost.",
   whyThisTestExists:
     "Serial work is where weak instructions and bad handoffs become obvious. This test checks whether each lane can stay in role while still advancing one shared outcome.",
   successCriteria: [
@@ -70,13 +70,29 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       referenceBudget: { tokensLow: 1200, tokensHigh: 2400, costLowUsd: 0.001, costHighUsd: 0.003 },
     },
     {
+      id: "serial-product-manager",
+      agent: "product-manager",
+      title: "Frame the discovery-first product slice",
+      goal:
+        "Turn the explored surface into a clear user, workflow, and persistence framing without hardening the ontology too early.",
+      inputs: ["explorer output", "legacy product signals", "user goal"],
+      handoffFrom: ["serial-explorer"],
+      output:
+        "A concise product brief defining the hero workflow, starter types, flexible persistence stance, and normalization triggers.",
+      successChecks: [
+        "Defines the user-visible why of the slice before implementation begins.",
+        "Keeps early graph structure flexible instead of over-specifying ontology.",
+      ],
+      referenceBudget: { tokensLow: 1500, tokensHigh: 3000, costLowUsd: 0.0015, costHighUsd: 0.004 },
+    },
+    {
       id: "serial-composer-meta",
       agent: "composer-meta",
       title: "Define the execution contract",
       goal:
         "Turn the discovered surface into a tight execution rubric and packet shape for the downstream agents.",
-      inputs: ["explorer output", "docs/CONTEXT_PACKETS.md", ".cursor/rules/"],
-      handoffFrom: ["serial-explorer"],
+      inputs: ["explorer output", "product-manager output", "docs/CONTEXT_PACKETS.md", ".cursor/rules/"],
+      handoffFrom: ["serial-explorer", "serial-product-manager"],
       output: "A concise packet/rubric defining acceptance criteria and non-goals.",
       successChecks: [
         "Clarifies what later agents must and must not change.",
@@ -90,8 +106,8 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Produce the visual brief",
       goal:
         "Create a small visual-direction brief that keeps the smoke revision aligned with the repo visual system.",
-      inputs: ["explorer output", "composer-meta rubric", "docs/VISUAL_STYLE_GUIDE.md"],
-      handoffFrom: ["serial-explorer", "serial-composer-meta"],
+      inputs: ["explorer output", "product-manager output", "composer-meta rubric", "docs/VISUAL_STYLE_GUIDE.md"],
+      handoffFrom: ["serial-explorer", "serial-product-manager", "serial-composer-meta"],
       output: "A focused visual brief or title treatment for the smoke change.",
       successChecks: [
         "Uses the documented visual regime rather than generic design language.",
@@ -105,8 +121,8 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Apply the bounded change",
       goal:
         "Translate the packet and brief into the minimal implementation artifact needed for the smoke revision.",
-      inputs: ["explorer output", "composer-meta rubric", "graphic-artist brief"],
-      handoffFrom: ["serial-explorer", "serial-composer-meta", "serial-graphic-artist"],
+      inputs: ["explorer output", "product-manager output", "composer-meta rubric", "graphic-artist brief"],
+      handoffFrom: ["serial-explorer", "serial-product-manager", "serial-composer-meta", "serial-graphic-artist"],
       output: "A bounded implementation change or patch-ready artifact.",
       successChecks: [
         "Stays inside the declared writable scope.",
@@ -184,7 +200,7 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
   objective:
     "Prove that the orchestrator can fan out bounded parallel work, absorb multiple incoming results, and synthesize them into one coherent launch pack.",
   finalProject:
-    "A synthesized headcount launch pack with research, meta contract, visual direction, implementation scaffold, hygiene notes, review risks, validation plan, deployment notes, and rough slice cost.",
+    "A synthesized headcount launch pack with research, product framing, meta contract, visual direction, implementation scaffold, hygiene notes, review risks, validation plan, deployment notes, and rough slice cost.",
   whyThisTestExists:
     "Parallel work tests whether the orchestrator can preserve intent under concurrency and still produce one final artifact instead of a pile of disconnected outputs.",
   successCriteria: [
@@ -205,6 +221,21 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       output: "The smallest set of relevant paths for the launch pack.",
       successChecks: ["Returns a bounded path set.", "Avoids repo-wide drift."],
       referenceBudget: { tokensLow: 1000, tokensHigh: 2200, costLowUsd: 0.001, costHighUsd: 0.003 },
+    },
+    {
+      id: "async-product-manager",
+      agent: "product-manager",
+      title: "Define the discovery-first product frame",
+      goal:
+        "Return the user, hero workflow, persistence stance, and delayed-normalization guardrails for the launch pack.",
+      inputs: ["legacy product signals", "user goal", "framework constraints"],
+      handoffFrom: [],
+      output: "A concise product frame for the launch pack.",
+      successChecks: [
+        "Defines what the product is trying to learn before implementation hardens schema.",
+        "Separates starter types from later normalization work.",
+      ],
+      referenceBudget: { tokensLow: 1400, tokensHigh: 2800, costLowUsd: 0.0015, costHighUsd: 0.004 },
     },
     {
       id: "async-composer-meta",

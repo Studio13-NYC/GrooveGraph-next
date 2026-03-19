@@ -39,6 +39,7 @@ It owns:
 `GPT-5.4-mini` handles:
 
 - exploration
+- product strategy and reboot framing via the `product-manager` subagent
 - code review
 - documentation drafting
 - test interpretation
@@ -104,6 +105,12 @@ The orchestrator should:
 - gathers context quickly
 - returns concise, actionable findings
 
+### `product-manager`
+
+- studies legacy product signals without copying them blindly
+- defines discovery-first product loops and hero workflows
+- recommends flexible graph persistence before ontology hardening
+
 ### `implementer`
 
 - executes bounded code changes
@@ -140,6 +147,7 @@ The orchestrator should:
 | `orchestrator` | `GPT-5.4` | Top-level judgment, conflict resolution, and final synthesis |
 | `composer-meta` | `Composer 1.5` | Cursor-native rules, skills, prompts, and tool contracts |
 | `explorer` | `GPT-5.4-mini` | Fast bounded exploration with enough reasoning depth |
+| `product-manager` | `GPT-5.4-mini` | Product-definition research, reboot framing, and workflow synthesis at moderate cost |
 | `implementer` | `GPT-5.3-codex` | Best default for bounded coding and refactoring work |
 | `reviewer` | `GPT-5.4-mini` | Strong bug-finding and review quality at lower cost |
 | `tester` | `GPT-5.4-mini` | Good workflow validation and failure interpretation |

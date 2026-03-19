@@ -32,6 +32,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - Architecture, planning, and synthesis: orchestrator
 - Cursor rules, skills, and prompt authoring: `Composer 1.5`
 - Research, reviews, and graphics direction: `GPT-5.4-mini`
+- Discovery-first product framing and reboot briefs: `product-manager`
 - Compression, classification, and low-risk summarization: `GPT-5.4-nano`
 - Cleanup analysis and removal proposals: `hygienist`
 - Implementation after criteria are fixed: `GPT-5.3-codex`
@@ -43,6 +44,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - `orchestrator` -> `GPT-5.4`
 - `composer-meta` -> `Composer 1.5`
 - `explorer` -> `GPT-5.4-mini`
+- `product-manager` -> `GPT-5.4-mini`
 - `implementer` -> `GPT-5.3-codex`
 - `reviewer` -> `GPT-5.4-mini`
 - `tester` -> `GPT-5.4-mini`

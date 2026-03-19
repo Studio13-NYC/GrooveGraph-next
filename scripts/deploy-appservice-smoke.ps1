@@ -10,6 +10,9 @@ $productRoot = Join-Path $repoRoot "product"
 
 Push-Location $productRoot
 try {
+  Remove-Item Env:GROOVEGRAPH_STATIC_EXPORT -ErrorAction SilentlyContinue
+  Remove-Item Env:NEXT_PUBLIC_API_BASE_URL -ErrorAction SilentlyContinue
+
   npm run build
 
   $zipPath = Join-Path $env:TEMP "groovegraph-next-appservice-smoke-$(Get-Date -Format 'yyyyMMddHHmmss').zip"

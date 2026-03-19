@@ -22,7 +22,12 @@ export default function HomePage() {
 
     async function loadMessage() {
       try {
-        const response = await fetch("/api/smoke", { cache: "no-store" });
+        const base =
+          typeof process.env.NEXT_PUBLIC_API_BASE_URL === "string"
+            ? process.env.NEXT_PUBLIC_API_BASE_URL.replace(/\/$/, "")
+            : "";
+        const url = `${base}/api/smoke`;
+        const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) {
           return;
         }
@@ -136,7 +141,7 @@ export default function HomePage() {
 
         <div style={{ padding: "28px" }}>
           <img
-            src="/cza-map.png"
+            src="/cza-map.svg"
             alt="County Zoning Authority governance map"
             style={{
               width: "100%",

@@ -10,6 +10,10 @@ Visual anchor:
 
 This reference matters because it demonstrates what disciplined civic information design looks like: high legibility, route logic, strong typographic hierarchy, limited but vivid color, and visual authority without decorative confusion.
 
+For software-facing translation of this system, use `.cursor/skills/studio13-wayfinding-system/SKILL.md` and its companion `reference.md` as the implementation-facing layer.
+
+Treat the full Vignelli-era NYCTA map as the definitive reference for route geometry, line behavior, color families, bundling, and interchange logic.
+
 ## Use this system for
 
 - governance maps
@@ -62,6 +66,13 @@ Hierarchy:
 - compact labels with strong legibility
 - minimal body copy
 
+For Studio13-style web and interface surfaces:
+
+- treat titles and object names as identification
+- treat actions, breadcrumbs, and section markers as directional
+- treat metadata and supporting copy as informational
+- keep those three layers visually distinct before adding more ornament
+
 ### Layout grammar
 
 - use a clear grid
@@ -76,6 +87,51 @@ Hierarchy:
 - station markers should be high-contrast and simple
 - corner radii should feel deliberate and repeated across the piece
 - avoid thin decorative linework in new-regime assets
+
+### Map grammar
+
+Treat the transit map itself, not just the signage system around it, as a core visual reference.
+
+Rules:
+
+- color names route families or durable system identity, not mood
+- the line is a structural actor and should explain the system before labels do
+- route geometry should use a small repeatable radius family rather than arbitrary curves
+- shared corridors should read as bundled parallel lanes with fixed spacing
+- crossings are not automatically transfers; transfer logic should be explicit
+- interchanges should feel like controlled compression points, not decorative overlap
+
+Recommended route behavior:
+
+- primary trunks should read first through line weight, continuity, and adjacency
+- branches should split cleanly with enough lead-in distance to make the divergence legible
+- bends should preserve direction and vector, not become calligraphic
+- repeated radii should make the system feel engineered rather than hand-drawn
+
+Suggested stroke scale:
+
+- `1x` hairline for dividers and minor guides
+- `2x` route for secondary workflow rails and graph connections
+- `3x` trunk for primary paths, active corridors, and dominant graph routes
+
+Suggested radius family:
+
+- `R1` tight turn for compact UI elbows
+- `R2` standard route turn for most product and graph bends
+- `R3` broad sweep for major route changes or dominant transitions
+
+For software-facing surfaces:
+
+- use route rails and stage strips to connect related modules across a page
+- use parallel lanes when two workflows coexist, such as investigation and review
+- use interchanges for deliberate handoffs between search, evidence, and graph review
+
+For graph-facing surfaces:
+
+- use edge color for durable relationship families or investigation tracks
+- use opacity, badges, or stroke treatment for confidence and state instead of overloading color
+- prefer route-aware bundling and branch clarity over force-directed spaghetti
+- let hubs behave like interchanges where route families meet
 
 ## Avoid
 

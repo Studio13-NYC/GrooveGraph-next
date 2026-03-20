@@ -18,6 +18,7 @@
 | `HEADCOUNT.md` | Canonical serial and async orchestration test suite for current agents |
 | `WORKFLOW_VALIDATION.md` | Evidence from representative framework workflow checks |
 | `GENERALIZATION_AUDIT.md` | Audit against `generalized.md`; reusable vs product-specific; fork checklist |
+| `RESEARCH_WORKBENCH_WAYFINDING_PLAN.md` | Live-site design critique turned into a `graphic-artist` execution brief and implementation-ready S13/MTA redesign plan for the research workbench |
 
 ## Precedence
 

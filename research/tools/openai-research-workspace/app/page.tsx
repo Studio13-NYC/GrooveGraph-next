@@ -490,140 +490,44 @@ export default function HomePage() {
     return latestAssistant?.id ?? null;
   }, [selectedSession]);
 
+  const headerTitle = "GROOVEGRAPH / RESEARCH WORKBENCH";
+  const headerSubtitle = selectedSession
+    ? `${selectedSession.title} / Updated ${formatTimestamp(selectedSession.updatedAt)}`
+    : "Select a past session or create a new route to begin investigating.";
+
   return (
-    <main style={{ minHeight: "100vh", padding: "16px 20px 24px" }}>
-      <section
-        style={{
-          maxWidth: "1600px",
-          margin: "0 auto",
-          display: "grid",
-          gap: "16px",
-        }}
-      >
-        <header
-          style={{
-            background: "var(--panel)",
-            border: "2px solid var(--ink)",
-            padding: "14px 16px",
-            display: "grid",
-            gap: "10px",
-          }}
-        >
-          <div
-            className="workspace-header-row"
-            style={{
-              display: "grid",
-              gap: "12px",
-              alignItems: "start",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gap: "4px",
-                alignContent: "start",
-                maxWidth: "980px",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "var(--muted)",
-                }}
-              >
-                A S13 Research, Design and Development Project.
-              </span>
-              <h1 style={{ margin: 0, fontSize: "clamp(24px, 3vw, 40px)", lineHeight: 0.95 }}>
-                GrooveGraph Research Workbench
-              </h1>
+    <main className="workspace-page">
+      <section className="workspace-shell">
+        <header className="workspace-header">
+          <div className="workspace-header-band">
+            <div className="workspace-header-identity">
+              <span className="workspace-system-label">Current Session</span>
+              <h1 className="workspace-active-title">{headerTitle}</h1>
+              <p className="workspace-active-subtitle">{headerSubtitle}</p>
             </div>
-            <div
-              className="workspace-header-controls"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "350px 300px",
-                gap: "16px",
-                alignItems: "start",
-                justifyContent: "end",
-                justifySelf: "end",
-                width: "fit-content",
-                maxWidth: "100%",
-              }}
-            >
-              <div
-                style={{
-                  border: "1px solid var(--border)",
-                  background: "#ffffff",
-                  padding: "10px",
-                  display: "grid",
-                  gap: "8px",
-                width: "350px",
-                  height: "125px",
-                }}
-              >
-                <label style={{ display: "grid", gap: "6px" }}>
-                  <span
-                    style={{
-                      fontSize: "12px",
-                      fontWeight: 700,
-                      textTransform: "uppercase",
-                      letterSpacing: "0.06em",
-                      justifySelf: "end",
-                      textAlign: "right",
-                    }}
-                  >
-                    New Session
-                  </span>
+            <div className="workspace-header-controls">
+              <section className="header-control-plate">
+                <label className="header-control-field">
+                  <span className="header-control-label">New Session</span>
                   <input
                     value={seedQuery}
                     onChange={(event) => setSeedQuery(event.target.value)}
                     placeholder="Artist, URL, or question"
-                    style={{
-                      border: "1px solid var(--border)",
-                      background: "#ffffff",
-                      padding: "8px 10px",
-                    }}
+                    className="header-control-input"
                   />
                 </label>
                 <button
                   onClick={() => void createSession()}
                   disabled={isBusy}
-                  style={{
-                    border: "1px solid var(--ink)",
-                    background: "var(--route-blue)",
-                    color: "#ffffff",
-                    padding: "8px 12px",
-                    fontWeight: 700,
-                    fontSize: "13px",
-                  }}
+                  className="primary-route-button"
                 >
                   {isBusy ? "Working..." : "Create Session"}
                 </button>
-              </div>
+              </section>
 
-              <div
-                style={{
-                  border: "1px solid var(--border)",
-                  background: "#ffffff",
-                  padding: "10px",
-                  display: "grid",
-                  gap: "8px",
-                width: "300px",
-                  height: "125px",
-                  overflow: "auto",
-                }}
-              >
-                <strong
-                  style={{
-                    fontSize: "12px",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.06em",
-                    textAlign: "right",
-                  }}
-                >
-                  Past Sessions
-                </strong>
-                <div style={{ display: "grid", gap: "6px", maxHeight: "146px", overflow: "auto", paddingRight: "2px" }}>
+              <section className="header-control-plate header-session-plate">
+                <strong className="header-control-label">Past Sessions</strong>
+                <div className="session-select-list">
                   {sessions.length === 0 ? (
                     <EmptyState text="No sessions yet." />
                   ) : (
@@ -631,45 +535,21 @@ export default function HomePage() {
                       <button
                         key={session.id}
                         onClick={() => setSelectedSessionId(session.id)}
-                        style={{
-                          textAlign: "left",
-                          display: "grid",
-                          gap: "3px",
-                          padding: "8px",
-                          border:
-                            selectedSessionId === session.id
-                              ? "2px solid var(--ink)"
-                              : "1px solid var(--border)",
-                          background:
-                            selectedSessionId === session.id
-                              ? "rgba(27,103,201,0.08)"
-                              : "#ffffff",
-                        }}
+                        className={`session-select-button${
+                          selectedSessionId === session.id ? " session-select-button-active" : ""
+                        }`}
                       >
-                        <strong style={{ fontSize: "13px" }}>{session.title}</strong>
-                        <span style={{ fontSize: "11px", color: "var(--muted)" }}>
-                          {formatTimestamp(session.updatedAt)}
-                        </span>
+                        <strong>{session.title}</strong>
+                        <span>{formatTimestamp(session.updatedAt)}</span>
                       </button>
                     ))
                   )}
                 </div>
-              </div>
+              </section>
             </div>
           </div>
 
-          {error ? (
-            <div
-              style={{
-                border: "1px solid rgba(215, 51, 47, 0.4)",
-                background: "rgba(215, 51, 47, 0.08)",
-                color: "var(--route-red)",
-                padding: "10px 12px",
-              }}
-            >
-              {error}
-            </div>
-          ) : null}
+          {error ? <div className="workspace-error-banner">{error}</div> : null}
         </header>
 
         <section
@@ -684,19 +564,15 @@ export default function HomePage() {
             alignItems: "start",
           }}
         >
-          <div style={{ display: "grid", gap: "16px" }}>
-            <Panel title="Chat" accent="var(--route-blue)">
+          <div className="workspace-lane">
+            <LaneSection
+              label="Research Route"
+              title="Investigation"
+              railColor="var(--route-orange)"
+            >
               {selectedSession ? (
-                <div style={{ display: "grid", gap: "10px" }}>
-                  <div
-                    style={{
-                      display: "grid",
-                      gap: "10px",
-                      maxHeight: "42vh",
-                      overflow: "auto",
-                      paddingRight: "6px",
-                    }}
-                  >
+                <div className="investigation-stack">
+                  <div className="message-stream">
                     {selectedSession.messages.length === 0 ? (
                       <EmptyState text="Send a message to start the artist-seed investigation." />
                     ) : (
@@ -708,152 +584,93 @@ export default function HomePage() {
                               ? latestAssistantMessageRef
                               : undefined
                           }
-                          style={{
-                            border: "1px solid var(--border)",
-                            background:
-                              entry.role === "assistant"
-                                ? "#ffffff"
-                                : "rgba(27,103,201,0.06)",
-                            padding: "12px 14px",
-                            display: "grid",
-                            gap: "8px",
-                          }}
+                          className={`message-card message-card-${entry.role}`}
                         >
-                          <div
-                            style={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                              gap: "12px",
-                            }}
-                          >
-                            <strong style={{ textTransform: "capitalize" }}>
-                              {entry.role}
-                            </strong>
-                            <span style={{ fontSize: "12px", color: "var(--muted)" }}>
-                              {formatTimestamp(entry.createdAt)}
-                            </span>
+                          <div className="message-card-header">
+                            <strong>{entry.role}</strong>
+                            <span>{formatTimestamp(entry.createdAt)}</span>
                           </div>
                           <MarkdownMessage content={entry.content} />
                         </article>
                       ))
                     )}
                   </div>
-                  <div style={{ display: "grid", gap: "10px" }}>
+                  <div className="composer-block">
                     <textarea
                       value={message}
                       onChange={(event) => setMessage(event.target.value)}
                       placeholder="Ask a discovery question, refine the investigation, or request more evidence."
                       rows={3}
-                      style={{
-                        border: "1px solid var(--border)",
-                        background: "#ffffff",
-                        padding: "10px 12px",
-                        resize: "vertical",
-                      }}
+                      className="composer-input"
                     />
                     <button
                       onClick={() => void sendTurn()}
                       disabled={isBusy}
-                      style={{
-                        border: "1px solid var(--ink)",
-                        background: "var(--ink)",
-                        color: "#ffffff",
-                        padding: "10px 14px",
-                        fontWeight: 700,
-                      }}
+                      className="primary-route-button composer-submit"
                     >
                       {isBusy ? "Running Research..." : "Send Turn"}
                     </button>
                   </div>
                 </div>
               ) : (
-                <EmptyState text="Select or create a session to begin chatting." />
+                <EmptyState text="Select or create a session to begin investigating." />
               )}
-            </Panel>
+            </LaneSection>
 
-            <Panel title="Session Notes" accent="var(--route-green)">
-              {selectedSession?.notes.length ? (
-                <ul style={{ margin: 0, paddingLeft: "18px", display: "grid", gap: "8px" }}>
-                  {selectedSession.notes.map((note, index) => (
-                    <li key={`${note}-${index}`}>{note}</li>
-                  ))}
-                </ul>
-              ) : (
-                <EmptyState text="Notes recorded by the model will appear here." />
-              )}
-            </Panel>
-
-            <details
-              style={{
-                border: "2px solid var(--ink)",
-                background: "var(--panel)",
-              }}
+            <LaneSection
+              label="Informational Support"
+              title="Evidence Support"
+              railColor="var(--route-blue)"
             >
-              <summary
-                style={{
-                  padding: "12px 14px",
-                  cursor: "pointer",
-                  fontWeight: 700,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.08em",
-                  fontSize: "13px",
-                  borderBottom: "1px solid var(--border)",
-                  background: "#ffffff",
-                }}
-              >
-                Sources
-              </summary>
-              <div style={{ padding: "14px" }}>
-                {selectedSession?.sources.length ? (
-                  <div
-                    style={{
-                      display: "grid",
-                      gap: "10px",
-                      maxHeight: "58vh",
-                      overflow: "auto",
-                      paddingRight: "6px",
-                    }}
-                  >
-                    {selectedSession.sources.map((source) => (
-                      <article
-                        key={source.id}
-                        style={{
-                          border: "1px solid var(--border)",
-                          background: "#ffffff",
-                          padding: "12px",
-                        }}
-                      >
-                        <a
-                          href={source.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          style={{ fontWeight: 700, textDecoration: "none" }}
-                        >
-                          {source.title}
-                        </a>
-                        <p
-                          style={{
-                            margin: "8px 0 0",
-                            fontSize: "12px",
-                            color: "var(--muted)",
-                            wordBreak: "break-word",
-                          }}
-                        >
-                          {source.url}
-                        </p>
-                        {source.citationText ? (
-                          <p style={{ margin: "8px 0 0", fontSize: "13px", lineHeight: 1.5 }}>
-                            {source.citationText}
-                          </p>
-                        ) : null}
-                      </article>
-                    ))}
+              <div className="support-stack">
+                <section className="support-subsection">
+                  <div className="support-subsection-header">
+                    <strong>Field Notes</strong>
+                    <span className="support-count">{selectedSession?.notes.length ?? 0}</span>
                   </div>
-                ) : (
-                  <EmptyState text="Cited sources will appear here once the model searches the web." />
-                )}
+                  {selectedSession?.notes.length ? (
+                    <ul className="support-list">
+                      {selectedSession.notes.map((note, index) => (
+                        <li key={`${note}-${index}`}>{note}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <EmptyState text="Notes recorded by the model will appear here." />
+                  )}
+                </section>
+
+                <details className="support-details">
+                  <summary className="support-details-summary">
+                    <span>Sources</span>
+                    <span className="support-count">{selectedSession?.sources.length ?? 0}</span>
+                  </summary>
+                  <div className="support-details-body">
+                    {selectedSession?.sources.length ? (
+                      <div className="support-source-list">
+                        {selectedSession.sources.map((source) => (
+                          <article key={source.id} className="support-source-card">
+                            <a
+                              href={source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="support-source-title"
+                            >
+                              {source.title}
+                            </a>
+                            <p className="support-source-url">{source.url}</p>
+                            {source.citationText ? (
+                              <p className="support-source-citation">{source.citationText}</p>
+                            ) : null}
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <EmptyState text="Cited sources will appear here once the model searches the web." />
+                    )}
+                  </div>
+                </details>
               </div>
-            </details>
+            </LaneSection>
           </div>
 
           {!isNarrowWorkspaceLayout ? (
@@ -862,17 +679,32 @@ export default function HomePage() {
               aria-orientation="vertical"
               aria-label="Resize workspace columns"
               tabIndex={-1}
-              className={`workspace-splitter${isMainGridResizing ? " workspace-splitter-active" : ""}`}
+              className={`workspace-splitter workspace-interchange${
+                isMainGridResizing ? " workspace-splitter-active" : ""
+              }`}
               onPointerDown={beginMainGridResize}
             >
+              <span className="workspace-interchange-line workspace-interchange-line-top" aria-hidden />
+              <span className="workspace-interchange-core" aria-hidden>
+                <span className="workspace-interchange-ring" />
+                <span className="workspace-interchange-crossbar" />
+              </span>
+              <span className="workspace-interchange-label" aria-hidden>
+                Interchange
+              </span>
+              <span className="workspace-interchange-line workspace-interchange-line-bottom" aria-hidden />
               <span className="workspace-splitter-grip" aria-hidden />
             </div>
           ) : null}
 
-          <div style={{ display: "grid", gap: "16px" }}>
-            <Panel title="Graph Candidates" accent="var(--route-orange)">
+          <div className="workspace-lane">
+            <LaneSection
+              label="Decision Route"
+              title="Graph Review"
+              railColor="var(--route-magenta)"
+            >
               {selectedSession ? (
-                <div style={{ display: "grid", gap: "14px" }}>
+                <div className="review-stack">
                   {tripletCandidates.length ? (
                     tripletCandidates.map(({ relationship, sourceEntity, targetEntity }) => {
                       const isEditingTriplet = tripletEditDraft?.relationshipId === relationship.id;
@@ -893,19 +725,10 @@ export default function HomePage() {
                         <article
                           key={relationship.id}
                           className="triplet-card"
-                          style={{
-                            border: "1px solid var(--border)",
-                            background: "#ffffff",
-                            padding: "12px",
-                            display: "grid",
-                            gap: "10px",
-                          }}
                         >
                           <div className="triplet-card-header">
-                            <StatusBar
-                              status={relationship.status}
-                            />
-                            <span style={{ fontSize: "12px", color: "var(--muted)" }}>
+                            <StatusBar status={relationship.status} />
+                            <span className="review-confidence-label">
                               confidence: {relationship.confidence}
                             </span>
                           </div>
@@ -1012,14 +835,14 @@ export default function HomePage() {
                                 <MiniAction
                                   compact
                                   label={isSavingTriplet ? "Saving..." : "Save"}
-                                  accent="var(--route-green)"
+                                  variant="primary"
                                   disabled={isSavingTriplet}
                                   onClick={() => void saveTripletEdit(relationship.id)}
                                 />
                                 <MiniAction
                                   compact
                                   label="Cancel"
-                                  accent="var(--muted)"
+                                  variant="neutral"
                                   disabled={isSavingTriplet}
                                   onClick={() => setTripletEditDraft(null)}
                                 />
@@ -1028,7 +851,7 @@ export default function HomePage() {
                               <MiniAction
                                 compact
                                 label="Edit"
-                                accent="var(--route-blue)"
+                                variant="link"
                                 disabled={Boolean(savingTripletId)}
                                 onClick={() => beginTripletEdit(relationship, sourceEntity, targetEntity)}
                               />
@@ -1044,30 +867,17 @@ export default function HomePage() {
               ) : (
                 <EmptyState text="Select a session to inspect provisional graph artifacts." />
               )}
-            </Panel>
+            </LaneSection>
 
-            <Panel title="Claims" accent="var(--route-green)">
+            <LaneSection
+              label="Supporting Review"
+              title="Claims For Review"
+              railColor="var(--route-yellow)"
+            >
               {selectedSession?.claims.length ? (
-                <div
-                  style={{
-                    display: "grid",
-                    gap: "10px",
-                    maxHeight: "44vh",
-                    overflow: "auto",
-                    paddingRight: "6px",
-                  }}
-                >
+                <div className="claims-review-list">
                   {selectedSession.claims.map((claim) => (
-                    <article
-                      key={claim.id}
-                      style={{
-                        border: "1px solid var(--border)",
-                        background: "#ffffff",
-                        padding: "12px",
-                        display: "grid",
-                        gap: "10px",
-                      }}
-                    >
+                    <article key={claim.id} className="claim-review-card">
                       <strong>{claim.text}</strong>
                       <StatusBar
                         status={claim.status}
@@ -1088,57 +898,41 @@ export default function HomePage() {
               ) : (
                 <EmptyState text="Structured claims extracted from the session will appear here." />
               )}
-            </Panel>
+            </LaneSection>
           </div>
         </section>
-
       </section>
     </main>
   );
 }
 
-function Panel({
+function LaneSection({
+  label,
   title,
-  accent,
+  railColor,
   children,
 }: {
+  label: string;
   title: string;
-  accent: string;
+  railColor: string;
   children: React.ReactNode;
 }) {
   return (
     <section
-      style={{
-        minHeight: "120px",
-        border: "2px solid var(--ink)",
-        background: "var(--panel)",
-        display: "grid",
-        gridTemplateRows: "auto 1fr",
-      }}
+      className="lane-section"
+      style={
+        {
+          "--lane-color": railColor,
+        } as React.CSSProperties
+      }
     >
-      <div
-        style={{
-          borderBottom: "2px solid var(--ink)",
-          padding: "12px 14px",
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          background: "#ffffff",
-        }}
-      >
-        <span
-          aria-hidden
-          style={{
-            width: "12px",
-            height: "12px",
-            borderRadius: "999px",
-            background: accent,
-            display: "inline-block",
-          }}
-        />
-        <strong style={{ fontSize: "13px", textTransform: "uppercase", letterSpacing: "0.08em" }}>{title}</strong>
+      <div className="lane-section-header">
+        <div className="lane-section-copy">
+          <span className="lane-section-kicker">{label}</span>
+          <h2 className="lane-section-title">{title}</h2>
+        </div>
       </div>
-      <div style={{ padding: "14px" }}>{children}</div>
+      <div className="lane-section-body">{children}</div>
     </section>
   );
 }
@@ -1163,23 +957,23 @@ function DecisionRow({
   compact?: boolean;
 }) {
   return (
-    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+    <div className="decision-row">
       <MiniAction
         compact={compact}
         label="Accept"
-        accent="var(--route-green)"
+        variant="accept"
         onClick={() => onDecision("accepted")}
       />
       <MiniAction
         compact={compact}
         label="Defer"
-        accent="var(--route-orange)"
+        variant="defer"
         onClick={() => onDecision("deferred")}
       />
       <MiniAction
         compact={compact}
         label="Reject"
-        accent="var(--route-red)"
+        variant="reject"
         onClick={() => onDecision("rejected")}
       />
     </div>
@@ -1188,13 +982,13 @@ function DecisionRow({
 
 function MiniAction({
   label,
-  accent,
+  variant,
   onClick,
   compact = false,
   disabled = false,
 }: {
   label: string;
-  accent: string;
+  variant: "accept" | "defer" | "reject" | "link" | "neutral" | "primary";
   onClick: () => void;
   compact?: boolean;
   disabled?: boolean;
@@ -1208,14 +1002,7 @@ function MiniAction({
         event.stopPropagation();
         onClick();
       }}
-      style={{
-        border: "1px solid var(--border)",
-        background: "#ffffff",
-        color: accent,
-        padding: compact ? "4px 8px" : "6px 10px",
-        fontSize: compact ? "11px" : "12px",
-        fontWeight: 700,
-      }}
+      className={`mini-action mini-action-${variant}${compact ? " mini-action-compact" : ""}`}
     >
       {label}
     </button>
@@ -1229,39 +1016,21 @@ function StatusBar({
   status: string;
   detail?: string;
 }) {
-  const color =
+  const statusClass =
     status === "accepted"
-      ? "var(--route-green)"
+      ? "status-bar-accepted"
       : status === "rejected"
-        ? "var(--route-red)"
+        ? "status-bar-rejected"
         : status === "deferred"
-          ? "var(--route-orange)"
-          : "var(--route-blue)";
+          ? "status-bar-deferred"
+          : "status-bar-proposed";
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px", color }}>
-      <span
-        aria-hidden
-        style={{
-          width: "10px",
-          height: "10px",
-          borderRadius: "999px",
-          display: "inline-block",
-          background: color,
-        }}
-      />
-      <span
-        style={{
-          fontSize: "12px",
-          fontWeight: 700,
-          textTransform: "uppercase",
-          letterSpacing: "0.06em",
-        }}
-      >
-        {status}
-      </span>
+    <div className={`status-bar ${statusClass}`}>
+      <span aria-hidden className="status-bar-rail" />
+      <span className="status-bar-label">{status}</span>
       {detail ? (
-        <span style={{ fontSize: "12px", color: "var(--muted)" }}>{detail}</span>
+        <span className="status-bar-detail">{detail}</span>
       ) : null}
     </div>
   );

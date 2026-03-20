@@ -1,0 +1,17 @@
+---
+description: MTA/NYCTA design foundation for Studio13
+alwaysApply: true
+---
+
+# MTA Design Foundation
+
+- Treat `docs/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md` as the primary design reference.
+- Preserve the existing Studio13 black, white, and orange colorway as the core palette.
+- Use Helvetica first for UI, labels, titles, and supporting text; avoid decorative display fonts in primary interface work.
+- Design for wayfinding: identification first, directional next, informational last.
+- Keep labels short, alignment strong, spacing measured, and grouping intentional.
+- Use orange for emphasis, active states, and directional signaling, not decoration.
+- Keep motion restrained, directional, and functional.
+- If a proposed visual change does not improve orientation or comprehension, do not add it.
+- Treat the Vignelli NYCTA map as a definitive system reference: color names route families, lines carry structure, bends come from a limited repeatable radius family, shared corridors stay visibly bundled, and interchanges must be explicit rather than implied by overlap.
+- Translate that map grammar into software by using continuous rails for primary flows, parallel lanes for shared workflow corridors, and clear interchange moments where users move between search, evidence, graph review, or action.

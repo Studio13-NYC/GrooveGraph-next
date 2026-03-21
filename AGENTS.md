@@ -70,3 +70,40 @@ This repository is the writable framework surface for the next GrooveGraph era.
 ## Visual default
 
 Use the NYCTA-inspired transit/signage system for authoritative "new regime" graphics. Use the whiteboard/cartoon style only for retrospective critique of legacy behavior.
+
+## Cursor Cloud specific instructions
+
+### Workspace structure
+
+npm workspaces monorepo with three packages: `framework/` (TypeScript library stubs), `product/` (Next.js 16 smoke-test app), and `research/tools/openai-research-workspace/` (Next.js 16 OpenAI-powered research workbench). All scripts are in the root `package.json`.
+
+### Running services
+
+| Service | Command | Port | Notes |
+|---|---|---|---|
+| Product app | `npm run dev:product` | 3000 | Minimal smoke test; no external deps |
+| Research workspace | `npm run dev:research-workspace` | 3011 | Requires `OPENAI_API_KEY` in `.env.local` (see below) |
+
+### Environment variables
+
+The research workspace needs `research/tools/openai-research-workspace/.env.local` with at least `OPENAI_API_KEY`. Copy from `.env.example` in the same directory. The `OPENAI_API_KEY` env var is injected as a Cursor secret; create `.env.local` on session start:
+
+```sh
+echo "OPENAI_API_KEY=${OPENAI_API_KEY}" > research/tools/openai-research-workspace/.env.local
+```
+
+### Validation (no ESLint / no test framework)
+
+This repo has no ESLint config and no test framework (jest/vitest). Validation is done via:
+- `npm run validate:repo` / `validate:docs` / `validate:framework` / `validate:visual-system`
+- TypeScript type-checking: `npx tsc --noEmit` inside `product/` or `research/tools/openai-research-workspace/`
+
+### Build
+
+- `npm run build:product` and `npm run build:research-workspace` both produce standalone Next.js builds.
+
+### Gotchas
+
+- Node.js >= 22 required (Next.js 16 + OpenAI SDK v6).
+- The research workspace uses the OpenAI Responses API with `web_search` tool and `conversation` persistence. Sessions are stored as JSON files under `.data/` (git-ignored).
+- The `.env.example` defaults reference `gpt-5.4` / `gpt-5.4-mini` models. If your API key doesn't have access, override via `OPENAI_RESEARCH_MODEL` and `OPENAI_RESEARCH_EXTRACTION_MODEL` in `.env.local`.

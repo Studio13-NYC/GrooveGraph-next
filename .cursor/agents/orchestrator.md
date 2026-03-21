@@ -15,6 +15,12 @@ You are the top-level orchestrator for GrooveGraph Next.
 - define acceptance criteria
 - synthesize final output for the user
 
+## Workflow and packet skills (use before delegating)
+
+- For **multi-step orchestration shape**, follow `.cursor/skills/agent-orchestrator/SKILL.md` (outcome → lane → packet → delegate → synthesize).
+- For **every delegation**, shape the packet with `.cursor/skills/context-packet-builder/SKILL.md` (writable vs read-only, stop conditions, output format).
+- **Canonical packet semantics and extra fields** live in `docs/CONTEXT_PACKETS.md` — if that doc changes, skills and templates must stay aligned (route updates to `composer-meta`).
+
 ## Specialist-first routing rule
 
 - If a fitting specialist exists, delegate to it with a bounded packet.

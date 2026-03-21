@@ -31,10 +31,11 @@ When designing or implementing **`/workbench-next`** in `research/tools/openai-r
 5. **`framework/src/visual-system/nycta-groovegraph-tokens.css`** — **only** CSS token source; apps import **`@groovegraph-next/framework/nycta-groovegraph-tokens.css`** (workspace-wide, not limited to `product/`)
 6. **`graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`** — which files are authoritative vs superseded
 7. **`docs/VISUAL_STYLE_GUIDE.md`** — short entry + checklist
-8. `.cursor/skills/gsap-motion-system/SKILL.md` — when motion is in scope
-9. `.cursor/skills/graph-data-viz-system/SKILL.md` — when graphs are in scope
+8. `.cursor/skills/studio13-wayfinding-system/SKILL.md` (and **`reference.md`** when needed) — page composition, hierarchy, signage-inspired web surfaces; use **with** FOUNDATION, not instead of it
+9. `.cursor/skills/gsap-motion-system/SKILL.md` — when motion is in scope
+10. `.cursor/skills/graph-data-viz-system/SKILL.md` — when graphs are in scope
 
-If sources conflict: **map image + FOUNDATION** win on geometry and route color; **v3 extract** wins on sign semantics; **software foundation** wins on UI behavior; then skills for motion/graph specifics.
+If sources conflict: **map image + FOUNDATION** win on geometry and route color; **v3 extract** wins on sign semantics; **software foundation** wins on UI behavior; then skills for wayfinding, motion, and graph specifics.
 
 **Do not** treat `graphic-design-agent-assets/styles.css` (dark Studio13 theme) as the palette for **new-regime NYCTA map documents** unless the brief explicitly asks for that dark chrome.
 
@@ -69,10 +70,11 @@ Return:
 ## Working method
 
 1. Open **FOUNDATION.md** and the **vignelli JPG** before proposing palettes or geometry.
-2. Classify every element into identification / directional / informational.
-3. Name **primary trunk**, **branches**, **parallel corridors**, **interchanges** for the artifact.
-4. Prefer the **smallest** token or layout change that improves orientation.
-5. Point implementers at **`@groovegraph-next/framework/nycta-groovegraph-tokens.css`** — no orphan hex lists.
+2. For **layout and hierarchy** on real pages, cross-check **studio13-wayfinding-system** so composition stays signage-literate.
+3. Classify every element into identification / directional / informational.
+4. Name **primary trunk**, **branches**, **parallel corridors**, **interchanges** for the artifact.
+5. Prefer the **smallest** token or layout change that improves orientation.
+6. Point implementers at **`@groovegraph-next/framework/nycta-groovegraph-tokens.css`** — no orphan hex lists.
 
 ## Stop conditions
 

@@ -14,6 +14,12 @@ You are the Composer Meta subagent for GrooveGraph Next.
 - design prompt contracts
 - shape durable repo behavior
 
+## Skills vs canonical docs
+
+- Keep **`.cursor/skills/agent-orchestrator/SKILL.md`** consistent with `.cursor/agents/orchestrator.md` and `.cursor/rules/subagent-routing.mdc` (same decomposition and delegation stance; the skill stays the short checklist).
+- Keep **`.cursor/skills/context-packet-builder/SKILL.md`** consistent with **`docs/CONTEXT_PACKETS.md`** (YAML template mirrors the canonical schema; extend or trim both together).
+- When you change routing or packet contracts, update **orchestrator agent**, **subagent-routing rule**, **CONTEXT_PACKETS**, and these two skills in one pass when possible.
+
 ## Design tokens (cross-repo)
 
 - **Canonical CSS:** `framework/src/visual-system/nycta-groovegraph-tokens.css`

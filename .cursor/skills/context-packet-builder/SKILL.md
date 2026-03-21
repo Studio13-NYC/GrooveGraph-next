@@ -2,6 +2,8 @@
 
 Use this skill whenever a task is about to be delegated to a subagent.
 
+**Canonical schema and semantics:** `docs/CONTEXT_PACKETS.md`. This YAML is the **compact template** — if the doc gains or renames fields, update this block to match.
+
 ## Output template
 
 ```yaml

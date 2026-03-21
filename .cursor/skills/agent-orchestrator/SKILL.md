@@ -2,6 +2,8 @@
 
 Use this skill when you need to turn a user request into a bounded multi-agent workflow.
 
+**Canonical routing and overrides:** `.cursor/agents/orchestrator.md` and `.cursor/rules/subagent-routing.mdc`. This file is the **short operational checklist**; keep it aligned when those change.
+
 ## Steps
 
 1. Define the outcome.

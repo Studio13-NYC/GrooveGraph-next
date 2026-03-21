@@ -10,6 +10,11 @@ Use these routing rules for all GrooveGraph Next work.
 - If no fitting specialist exists, stop and create one instead of keeping the work at the orchestrator layer.
 - Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is explicitly justified.
 
+## Workflow and packet skills
+
+- **Orchestration checklist:** `.cursor/skills/agent-orchestrator/SKILL.md` — use when turning a goal into a bounded multi-agent flow.
+- **Packet shape:** `.cursor/skills/context-packet-builder/SKILL.md` — use before every delegation; **canonical field definitions** in `docs/CONTEXT_PACKETS.md`.
+
 ## Override rule
 
 - The orchestrator may retain work only for final synthesis, conflicting specialist outputs, or materially changing acceptance criteria.

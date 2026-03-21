@@ -49,7 +49,7 @@ When files drift, use this precedence:
 
 - `.cursor/agents/` for role cards
 - `.cursor/rules/` for durable Cursor behavior
-- `.cursor/skills/` for reusable operational helpers
+- `.cursor/skills/` for reusable operational helpers — orchestration checklist (`agent-orchestrator`), packet template (`context-packet-builder`, canonical schema in `CONTEXT_PACKETS.md`), and visual/motion helpers (`studio13-wayfinding-system`, `gsap-motion-system`, `graph-data-viz-system`)
 - `../refs/INDEX.md` for the consolidated alias map (`@refs/INDEX.md`) to canonical docs and rules
 - `assets/posts/` for narrative updates and framework blog posts
 - `research/` for validation evidence, reboot briefs, and experimental product surfaces

@@ -45,7 +45,7 @@ When files drift, use this precedence:
 - `.cursor/agents/` for role cards
 - `.cursor/rules/` for durable Cursor behavior
 - `.cursor/skills/` for reusable operational helpers
-- `../refs/` for short `@...` aliases that point back to canonical docs and rules
+- `../refs/INDEX.md` for the consolidated alias map (`@refs/INDEX.md`) to canonical docs and rules
 - `assets/posts/` for narrative updates and framework blog posts
 - `research/` for validation evidence, reboot briefs, and experimental product surfaces
 
@@ -55,3 +55,4 @@ When files drift, use this precedence:
 |---|---|
 | `../assets/posts/2026-03-18-the-janitor-gets-a-badge.md` | Narrative post on making hygiene a first-class lane and turning cleanup into a real, proposal-first workflow |
 | `../assets/posts/2026-03-19-the-research-loop-leaves-the-lab.md` | Narrative post on turning the OpenAI research workspace from a design intention into a real discovery-first investigation loop |
+| `../assets/posts/2026-03-21-one-index-to-rule-the-refs.md` | Consolidating refs, research evidence, and product deps after a composer-meta + hygienist pass |

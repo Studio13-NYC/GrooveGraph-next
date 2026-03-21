@@ -142,7 +142,7 @@ Observed result:
 
 Framework response:
 
-- added `research/headcount/headcount-serial-run-001.md`
+- added serial headcount evidence (now `research/headcount/headcount-serial-evidence.md`, § Run 001)
 - added `.telemetry/slice-costs.jsonl`
 
 ## Validation 8: async headcount execution
@@ -163,7 +163,7 @@ Observed result:
 
 Framework response:
 
-- populated `research/headcount/headcount-async-launch-pack-001.md`
+- populated initial async headcount evidence (superseded file removed on consolidation; narrative succeeded by `research/headcount/headcount-async-launch-pack-002.md`)
 - appended async run telemetry to `.telemetry/slice-costs.jsonl`
 
 ## Validation 9: hygiene lane bootstrap
@@ -186,7 +186,7 @@ Framework response:
 - added `docs/HYGIENE.md`
 - updated routing, orchestration, and maintenance docs to include the hygiene lane
 - updated `docs/HEADCOUNT.md` and `framework/src/headcount.ts` so the current agent set is represented honestly
-- added `research/hygiene/hygiene-run-001.md`
+- added hygiene evidence (now `research/hygiene/HYGIENE_LOG.md`, 2026-03-18 Run 001)
 
 ## Validation 10: refreshed serial headcount evidence
 
@@ -207,7 +207,7 @@ Observed result:
 
 Framework response:
 
-- added `research/headcount/headcount-serial-run-002.md`
+- added serial headcount rerun evidence (now `research/headcount/headcount-serial-evidence.md`, § Run 002)
 
 ## Validation 11: refreshed async headcount evidence
 
@@ -269,7 +269,7 @@ Observed result:
 Framework response:
 
 - added `research/tools/openai-research-workspace/`
-- added `research/openai-research-workspace-validation-001.md`
+- added research workspace validation notes (now `research/openai-research-workspace-validation.md`, Part A)
 
 ## Validation 14: OpenAI research workspace end-to-end artist-seed session
 
@@ -299,5 +299,5 @@ Observed result:
 Framework response:
 
 - updated `research/tools/openai-research-workspace/src/lib/server/research-runtime.ts` to make the tool/output schemas OpenAI-safe
-- added `research/openai-research-workspace-validation-002.md`
+- extended validation record (now `research/openai-research-workspace-validation.md`, Part B)
 - added a narrative milestone post under `assets/posts/2026-03-19-the-research-loop-leaves-the-lab.md`

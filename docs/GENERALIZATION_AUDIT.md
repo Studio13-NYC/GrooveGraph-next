@@ -125,7 +125,7 @@ Per the blueprint, the framework layer should avoid product-domain specifics whe
 **Scope:**
 
 - Update `docs/INDEX.md` to include `generalized.md` under root references.
-- Add `research/hygiene/hygiene-run-002.md` with this run's evidence.
+- Add a dated section to `research/hygiene/HYGIENE_LOG.md` with this run's evidence (log consolidated 2026-03-21).
 
 ---
 

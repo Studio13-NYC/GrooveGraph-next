@@ -8,6 +8,7 @@
 - Source of truth: `framework/src/headcount.ts`
 - Human-readable runbook: `docs/HEADCOUNT.md`
 - Purpose: refreshed framework-only async evidence that includes the current `hygienist` lane
+- Prior: `headcount-async-launch-pack-001` (same test id, pre-hygienist narrative) was retired during repo consolidation; this file is the canonical async evidence.
 - Status: `complete`
 - Orchestrator owner: `GPT-5.4`
 - Final synthesis timestamp: `2026-03-18`

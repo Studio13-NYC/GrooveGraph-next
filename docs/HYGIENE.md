@@ -58,6 +58,10 @@ The root repo script for this workflow is:
 npm run cleanup:check
 ```
 
+## Knip and workspace packages
+
+Root `knip.json` lists `@groovegraph-next/framework` under `ignoreDependencies` because workspace apps (for example `product/` and `research/tools/openai-research-workspace/`) import `nycta-groovegraph-tokens.css` via CSS `@import`, which `knip` does not treat as a JavaScript dependency. Do not drop that ignore unless you add another traceable consumption path or CSS-aware analysis.
+
 ## Current stance
 
 - hygiene is a repeatable framework workflow, not an ad hoc shell habit

@@ -204,7 +204,7 @@ The `001` recorded runs on `2026-03-18` predate the `hygienist` and `product-man
 
 Current evidence is now refreshed by:
 
-- `research/headcount/headcount-serial-run-002.md`
+- `research/headcount/headcount-serial-evidence.md` (serial runs 001 and 002, consolidated)
 - `research/headcount/headcount-async-launch-pack-002.md`
 - `research/product/productmanager-reboot-brief-001.md`
 

@@ -10,7 +10,7 @@ This repository is intentionally separate from the legacy `GrooveGraph` codebase
 - `.cursor/agents/`: specialist agent definitions
 - `.cursor/rules/`: durable Cursor rules for routing, context, boundaries, and visual style
 - `.cursor/skills/`: reusable skills for orchestration and packet generation
-- `refs/`: short `@...` aliases for the most commonly referenced docs and rules
+- `refs/INDEX.md`: single alias map (`@refs/INDEX.md`) to canonical docs and `.cursor/rules`
 - `docs/`: canonical framework documentation
 - `framework/`: first implementation target for orchestration utilities and reusable support code
 - `product/`: reserved for the future GrooveGraph rebuild

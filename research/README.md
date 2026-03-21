@@ -13,5 +13,4 @@ Do not treat anything here as automatic source of truth. Research informs decisi
 Current notable surfaces:
 
 - `tools/openai-research-workspace/` for the first OpenAI-centered, discovery-first research tool
-- `openai-research-workspace-validation-001.md` for the bootstrap validation pass
-- `openai-research-workspace-validation-002.md` for the first true end-to-end artist-seed session validation
+- `openai-research-workspace-validation.md` for bootstrap and first end-to-end artist-seed session validation (single consolidated record)

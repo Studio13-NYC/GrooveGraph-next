@@ -36,6 +36,16 @@ npm run dev:research-workspace
 
 The workspace runs on `http://localhost:3011`.
 
+### UI routes
+
+| Route | Purpose |
+|-------|---------|
+| `/` | **308 redirect** to `/workbench-next` (default home locally and on production). |
+| `/classic` | **Classic** workbench chrome (original layout). |
+| `/workbench-next` | **Next-regime** shell: NYCTA sign-plate grammar (`--gg-sign-band`, modular plates, token rails, tighter 8/16/24 rhythm). Same APIs and behavior as `/classic` — presentation only. Art direction brief: graphic-artist lane + `docs/design-language/FOUNDATION.md`. |
+
+Production: [groovegraph.s13.nyc](https://groovegraph.s13.nyc/) serves this app on App Service; deploy with `.\scripts\deploy-appservice-research-workbench.ps1` from the repo root (deploy may lag this repo).
+
 ## Persistence
 
 Session artifacts are stored locally under `.data/` and are ignored by git.
@@ -44,5 +54,4 @@ Session artifacts are stored locally under `.data/` and are ignored by git.
 
 See:
 
-- `research/openai-research-workspace-validation-001.md` for the bootstrap pass
-- `research/openai-research-workspace-validation-002.md` for the first true end-to-end session
+- `research/openai-research-workspace-validation.md` for bootstrap and first true end-to-end session evidence

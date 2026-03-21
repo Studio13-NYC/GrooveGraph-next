@@ -1,7 +1,7 @@
 ---
-preferred_model: GPT-5.4-mini
+preferred_model: composer-2
 name: explorer
-model: gpt-5.4-mini-medium
+model: composer-2
 description: Fast context gatherer for bounded codebase or documentation exploration.
 ---
 

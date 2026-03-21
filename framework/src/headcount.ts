@@ -106,7 +106,13 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Produce the visual brief",
       goal:
         "Create a small visual-direction brief that keeps the smoke revision aligned with the repo visual system.",
-      inputs: ["explorer output", "product-manager output", "composer-meta rubric", "docs/VISUAL_STYLE_GUIDE.md"],
+      inputs: [
+        "explorer output",
+        "product-manager output",
+        "composer-meta rubric",
+        "docs/design-language/FOUNDATION.md",
+        "docs/VISUAL_STYLE_GUIDE.md",
+      ],
       handoffFrom: ["serial-explorer", "serial-product-manager", "serial-composer-meta"],
       output: "A focused visual brief or title treatment for the smoke change.",
       successChecks: [
@@ -253,7 +259,11 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       agent: "graphic-artist",
       title: "Set the launch-pack visual frame",
       goal: "Provide a title treatment and visual direction for the final pack.",
-      inputs: ["docs/VISUAL_STYLE_GUIDE.md", "message and audience"],
+      inputs: [
+        "docs/design-language/FOUNDATION.md",
+        "docs/VISUAL_STYLE_GUIDE.md",
+        "message and audience",
+      ],
       handoffFrom: [],
       output: "Title treatment and visual-direction note for the final pack.",
       successChecks: ["Uses the documented visual system.", "Remains bounded to the pack."],

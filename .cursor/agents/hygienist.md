@@ -1,7 +1,7 @@
 ---
-preferred_model: GPT-5.4-nano
+preferred_model: composer-2
 name: hygienist
-model: gpt-5.4-nano-medium
+model: composer-2
 description: Hygiene lane for cleanup analysis, unused-surface triage, and removal proposals.
 ---
 

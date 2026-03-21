@@ -4,18 +4,25 @@
 
 Use this checklist whenever you add, rename, remove, or materially change a subagent.
 
+## Gate
+
+- First confirm that no existing specialist fits the work.
+- Missing specialist coverage is a stop condition, not permission for the orchestrator to keep the task.
+- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is explicitly justified.
+
 ## Required update surfaces
 
 1. Add or update the role card in `.cursor/agents/`
-2. Update `framework/src/subagent-registry.ts`
-3. Update `.cursor/rules/subagent-routing.mdc`
-4. Update `docs/AGENT_ORCHESTRATION.md`
-5. Update `docs/MODEL_ROUTING.md` if the model lane changes
-6. Update `AGENTS.md` if the repo-level operating contract changes
-7. Record the change in `docs/DECISION_LOG.md` if it affects governance
-8. Update `docs/HYGIENE.md` if the lane affects cleanup or removal policy
-9. Update `README.md` only if the top-level operating stance changes
-10. If the lane is canonical, update `framework/src/headcount.ts`, `docs/HEADCOUNT.md`, and `docs/WORKFLOW_VALIDATION.md`
+2. Update `docs/AGENT_REGISTRY.md`
+3. Update `framework/src/subagent-registry.ts`
+4. Update `.cursor/rules/subagent-routing.mdc`
+5. Update `docs/AGENT_ORCHESTRATION.md` if authority or handoff behavior changes
+6. Update `docs/MODEL_ROUTING.md` if the model lane changes
+7. Update `AGENTS.md` if the repo-level operating contract changes
+8. Record the change in `docs/DECISION_LOG.md` if it affects governance
+9. Update `docs/HYGIENE.md` if the lane affects cleanup or removal policy
+10. Update `README.md` only if the top-level operating stance changes
+11. If the lane is canonical, update `framework/src/headcount.ts`, `docs/HEADCOUNT.md`, and `docs/WORKFLOW_VALIDATION.md`
 
 ## Add-a-subagent checklist
 
@@ -23,7 +30,8 @@ Use this checklist whenever you add, rename, remove, or materially change a suba
 - define inputs
 - define output contract
 - define stop conditions
-- assign the correct model lane
+- assign the default `GPT-5.4-mini` lane unless there is an explicit reason not to
+- document any non-default model choice in the role card and `docs/MODEL_ROUTING.md`
 - ensure packet usage is still valid
 - note whether the subagent changes the visual or documentation system
 - update typed registry and evidence surfaces when the lane becomes part of the official set

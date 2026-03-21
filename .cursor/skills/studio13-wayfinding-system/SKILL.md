@@ -31,8 +31,8 @@ Every surface should answer:
 
 - Treat identification, directional, and informational layers as distinct jobs.
 - Use Helvetica first, then Arial or compatible sans-serif fallbacks.
-- Keep the core Studio13 palette centered on black, white, and orange.
-- Use orange for emphasis, active state, and directional cues, not decoration.
+- **Directional emphasis** uses the **NYCTA orange route** token (`--gg-accent-directional` / `--gg-route-orange` in `nycta-groovegraph-tokens.css`) — one system with the Vignelli map, not a separate decorative accent color.
+- **Route and map hues** come only from **`nycta-groovegraph-tokens.css`** for new-regime work.
 - Use weight, spacing, rails, and grouping to create hierarchy before reaching for extra effects.
 - Keep labels short, decisive, and easy to scan.
 - Remove repetition unless it improves orientation.
@@ -42,14 +42,16 @@ Every surface should answer:
 
 Read these in order when the task needs concrete reference material:
 
-1. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
-2. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
-3. `graphic-design-agent-assets/s13/s13.css`
-4. `graphic-design-agent-assets/s13/index.html`
-5. `graphic-design-agent-assets/graphic-designer.md`
-6. `graphic-design-agent-assets/mta-design-foundation.mdc`
+1. `docs/design-language/FOUNDATION.md`
+2. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg`
+3. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
+4. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
+5. `framework/src/visual-system/nycta-groovegraph-tokens.css` (package import: `@groovegraph-next/framework/nycta-groovegraph-tokens.css`)
+6. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
+7. `graphic-design-agent-assets/graphic-designer.md`
+8. `graphic-design-agent-assets/mta-design-foundation.mdc`
 
-If the files disagree, follow the software wayfinding foundation and the concrete Studio13 CSS before older decorative examples.
+If the files disagree, follow **FOUNDATION.md** and the **vignelli map reference**, then the software wayfinding foundation, then v3 manual notes.
 
 ## Working method
 
@@ -62,9 +64,10 @@ If the files disagree, follow the software wayfinding foundation and the concret
 ## What to avoid
 
 - decorative display fonts in primary UI
-- color drift away from the black/white/orange core without semantic need
+- color drift away from **NYCTA route tokens** without explicit semantic need
 - ornamental motion or glows that do not improve comprehension
 - generic SaaS gradients or glassmorphism
+- arbitrary curves on map-style routes (use horizontal, vertical, 45°, repeatable radii)
 - overly long labels or metadata piles at decision points
 
 ## Additional reference

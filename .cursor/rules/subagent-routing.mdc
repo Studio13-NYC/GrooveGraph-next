@@ -2,50 +2,43 @@
 
 Use these routing rules for all GrooveGraph Next work.
 
-## 1. Default hierarchy
+## Core rule
 
-- `GPT-5.4` stays at the top as orchestrator.
-- `Composer 1.5` handles Cursor-native meta work.
-- `GPT-5.4-mini` handles research, review, testing analysis, and graphics direction.
-- `GPT-5.4-nano` handles triage, compression, and routing.
-- `GPT-5.3-codex` handles bounded implementation.
+- Specialist subagent first, always.
+- The orchestrator routes, judges overrides, and synthesizes. It is not the default worker.
+- If a fitting specialist exists, delegate with a bounded packet.
+- If no fitting specialist exists, stop and create one instead of keeping the work at the orchestrator layer.
+- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is explicitly justified.
 
-## 1a. Default delegation stance
+## Override rule
 
-- Assume the orchestrator should delegate unless a stronger reason exists not to.
-- If a cheaper lane can do the work reliably within a bounded scope, route the work there.
-- Keep `GPT-5.4` focused on decomposition, conflict resolution, acceptance-criteria control, and final synthesis.
-- Do not let the orchestrator hold ordinary exploration, review, hygiene, or bounded implementation work out of habit.
+- The orchestrator may retain work only for final synthesis, conflicting specialist outputs, or materially changing acceptance criteria.
+- Any override must explicitly name the skipped specialist and explain why direct orchestration is safer than delegation here.
 
-## 2. Route by work type
+## Default routes
 
 - rules, prompts, skills, and tool contracts -> `composer-meta`
 - exploration -> `explorer`
-- product strategy, reboot briefs, and discovery-first workflow framing -> `product-manager`
+- product strategy and reboot framing -> `product-manager`
 - bounded code work -> `implementer`
 - review -> `reviewer`
 - workflow validation -> `tester`
 - cleanup analysis and removal proposals -> `hygienist`
 - graphics and visual briefs -> `graphic-artist`
+- GSAP animation, scroll choreography, timeline design, and motion implementation -> `animator`
 - Azure baseline, deployment, and preservation work -> `infrastructure-deployment`
 
-## 2a. Agent to model assignment
+## Model lanes
 
 - `orchestrator` -> `GPT-5.4`
 - `composer-meta` -> `Composer 1.5`
-- `explorer` -> `GPT-5.4-mini`
-- `product-manager` -> `GPT-5.4-mini`
-- `implementer` -> `GPT-5.3-codex`
-- `reviewer` -> `GPT-5.4-mini`
-- `tester` -> `GPT-5.4-mini`
+- most specialists -> `GPT-5.4-mini`
 - `hygienist` -> `GPT-5.4-nano`
-- `graphic-artist` -> `GPT-5.4-mini`
-- `infrastructure-deployment` -> `GPT-5.4-mini`
+- `implementer` -> `GPT-5.3-codex`
 
-## 3. Escalation
+See `docs/AGENT_REGISTRY.md` for the current matrix.
 
-Escalate to the orchestrator when:
+## Concision
 
-- multiple outputs conflict
-- scope changes materially
-- the user needs a cross-domain synthesis
+- Keep routing notes, packets, and subagent outputs concise by default.
+- Add depth only when ambiguity, risk, or the user requires it.

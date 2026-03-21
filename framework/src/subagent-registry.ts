@@ -15,6 +15,7 @@ export type SubagentName =
   | "tester"
   | "hygienist"
   | "graphic-artist"
+  | "animator"
   | "infrastructure-deployment";
 
 export interface SubagentDefinition {
@@ -78,6 +79,13 @@ export const SUBAGENT_REGISTRY: Record<SubagentName, SubagentDefinition> = {
     name: "graphic-artist",
     modelLane: "gpt-5.4-mini",
     purpose: "Visual systems, campaign graphics, and image-brief production.",
+    writableByDefault: true,
+  },
+  animator: {
+    name: "animator",
+    modelLane: "gpt-5.4-mini",
+    purpose:
+      "GSAP motion design, timelines, and React/Next implementation patterns aligned with GrooveGraph visual system.",
     writableByDefault: true,
   },
   "infrastructure-deployment": {

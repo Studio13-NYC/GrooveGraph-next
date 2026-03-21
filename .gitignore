@@ -7,6 +7,8 @@ coverage/
 .env.*
 !.env.example
 *.log
+*.tsbuildinfo
+.vercel/
 .telemetry/
 .firecrawl/
 .data/

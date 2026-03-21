@@ -2,21 +2,28 @@
 
 ## Purpose
 
-Every delegation should carry a packet. Packets prevent vague handoffs, context bloat, and accidental scope drift.
+Every real delegation should carry a packet. Packets prevent vague handoffs, context bloat, and accidental scope drift.
+
+Packets are for specialist handoffs. If the orchestrator retains work, it should state an explicit override reason instead of pretending a packet exists.
 
 ## Required fields
 
 | Field | Meaning |
 |---|---|
 | `goal` | Exact outcome required from the subagent |
-| `why_now` | Why this delegation is happening now |
-| `tracking` | Optional slice-tracking metadata if the runtime wants grouped cost rollups |
 | `scope` | Allowed files, directories, or research boundary |
 | `inputs` | Files, docs, examples, or prior findings to use |
 | `constraints` | Rules, non-goals, and validation requirements |
-| `reference_boundary` | What is read-only reference vs writable target |
 | `expected_output` | Exact output format to return |
 | `stop_conditions` | When the subagent should stop and hand back |
+
+## Optional fields
+
+| Field | Meaning |
+|---|---|
+| `why_now` | Why this delegation is happening now |
+| `tracking` | Slice-tracking metadata when the runtime wants grouped cost rollups |
+| `reference_boundary` | What is read-only reference vs writable target |
 | `follow_on_hints` | Likely next consumer or next step |
 
 ## Packet template
@@ -24,13 +31,6 @@ Every delegation should carry a packet. Packets prevent vague handoffs, context 
 ```yaml
 goal: >
   <Exact deliverable>
-why_now: >
-  <Why this task is being delegated now>
-tracking:
-  session_id: <session-id-optional>
-  chunk_id: <chunk-id-optional>
-  parent_chunk_id: <parent-chunk-id-optional>
-  measurement_mode: <exact|estimated|unknown>
 scope:
   writable:
     - <path or directory>
@@ -45,17 +45,24 @@ inputs:
     - <short note>
 constraints:
   - <constraint>
-reference_boundary:
-  read_only:
-    - <legacy or external references>
-  writable:
-    - <new framework surface>
 expected_output:
   format: <bullets|table|patch|brief|review>
   must_include:
     - <item>
 stop_conditions:
   - <condition>
+why_now: >
+  <Why this task is being delegated now>
+tracking:
+  session_id: <session-id-optional>
+  chunk_id: <chunk-id-optional>
+  parent_chunk_id: <parent-chunk-id-optional>
+  measurement_mode: <exact|estimated|unknown>
+reference_boundary:
+  read_only:
+    - <legacy or external references>
+  writable:
+    - <new framework surface>
 follow_on_hints:
   - <next likely consumer>
 ```
@@ -76,13 +83,17 @@ scope:
     - assets/
     - docs/
   readable:
+    - docs/design-language/FOUNDATION.md
     - docs/VISUAL_STYLE_GUIDE.md
+    - graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg
+    - framework/src/visual-system/nycta-groovegraph-tokens.css
     - research/
 inputs:
   files:
+    - docs/design-language/FOUNDATION.md
     - docs/VISUAL_STYLE_GUIDE.md
   prior_findings:
-    - "Use NYCTA-derived map language for authoritative graphics."
+    - "Follow Vignelli 1972 map grammar and NYCTA manual discipline per FOUNDATION.md."
 constraints:
   - Keep the tone calm and civic.
   - Avoid generic SaaS visual language.
@@ -107,8 +118,10 @@ follow_on_hints:
 ## Packet quality checklist
 
 - Is the scope narrow enough?
+- Is the packet clearly shaped for one specialist?
 - Is the output format explicit?
 - If tracking is present, is it consistent enough for later rollups?
 - Is the writable surface clear?
 - Does the packet say when to stop?
+- Can the packet fit on one screen in normal use?
 - Can the next agent use the output without re-asking basic questions?

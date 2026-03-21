@@ -4,9 +4,10 @@
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./nycta-groovegraph-tokens.css": "./src/visual-system/nycta-groovegraph-tokens.css"
   },
   "scripts": {
-    "validate:framework": "node -e \"const fs=require('fs'); ['src/index.ts','src/context-packets.ts','src/headcount.ts','src/subagent-registry.ts','src/usage-accounting.ts','src/telemetry-log.ts'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('framework sources present')\""
+    "validate:framework": "node -e \"const fs=require('fs'); ['src/index.ts','src/context-packets.ts','src/headcount.ts','src/subagent-registry.ts','src/usage-accounting.ts','src/telemetry-log.ts','src/visual-system/nycta-groovegraph-tokens.css','src/visual-system/tokens.ts'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('framework sources present')\""
   }
 }

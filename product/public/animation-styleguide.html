@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="system">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GrooveGraph Next — Animation style guide (GSAP)</title>
+    <meta
+      name="description"
+      content="Interactive NYCTA-aligned motion reference: colorways, symbols, line art, diagram map, Disney 12 principles. Canonical tokens: framework/src/visual-system/nycta-groovegraph-tokens.css"
+    />
+    <style>
+      /* Subset mirror of framework/src/visual-system/nycta-groovegraph-tokens.css (+ theme). */
+      :root,
+      html[data-theme="light"] {
+        color-scheme: light;
+        --gg-surface-canvas: #ffffff;
+        --gg-surface-canvas-ink: #111111;
+        --gg-map-land: var(--gg-surface-canvas);
+        --gg-map-park: #a7a9ac;
+        --gg-ink: #111111;
+        --gg-slate: #5a5654;
+        --gg-route-red: #ee352e;
+        --gg-route-green: #00933c;
+        --gg-route-blue: #0039a6;
+        --gg-route-orange: #ff6319;
+        --gg-route-yellow: #fccc0a;
+        --gg-route-gray: #a7a9ac;
+        --gg-route-purple: #b933ad;
+        --gg-route-lime: #6cbe45;
+        --gg-sign-panel: #ffffff;
+        --gg-sign-band: #111111;
+        --gg-accent-directional: var(--gg-route-orange);
+        --gg-on-dark-fg: #ffffff;
+        --gg-route-stroke-ui: 6px;
+        --gg-route-stroke-ui-bold: 8px;
+        --paper: var(--gg-surface-canvas);
+        --ink: var(--gg-surface-canvas-ink);
+        --toc-bg: color-mix(in srgb, var(--gg-surface-canvas) 94%, var(--gg-ink) 6%);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        html[data-theme="system"] {
+          color-scheme: dark;
+          --gg-surface-canvas: #0a0a0a;
+          --gg-surface-canvas-ink: #f2f2f2;
+          --gg-map-land: var(--gg-surface-canvas);
+          --gg-ink: #f2f2f2;
+          --gg-slate: #a3a3a3;
+          --gg-sign-panel: #121212;
+          --gg-sign-band: #f2f2f2;
+          --paper: var(--gg-surface-canvas);
+          --ink: var(--gg-surface-canvas-ink);
+          --toc-bg: color-mix(in srgb, var(--gg-surface-canvas) 92%, var(--gg-ink) 8%);
+        }
+      }
+
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --gg-surface-canvas: #0a0a0a;
+        --gg-surface-canvas-ink: #f2f2f2;
+        --gg-map-land: var(--gg-surface-canvas);
+        --gg-ink: #f2f2f2;
+        --gg-slate: #a3a3a3;
+        --gg-sign-panel: #121212;
+        --gg-sign-band: #f2f2f2;
+        --paper: var(--gg-surface-canvas);
+        --ink: var(--gg-surface-canvas-ink);
+        --toc-bg: color-mix(in srgb, var(--gg-surface-canvas) 92%, var(--gg-ink) 8%);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: "Helvetica Neue", Helvetica, Arial, "Nimbus Sans L", sans-serif;
+        line-height: 1.35;
+        font-size: 15px;
+      }
+
+      .wrap {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 0 24px 120px;
+      }
+
+      .hero {
+        padding: 32px 0 24px;
+        border-bottom: var(--gg-route-stroke-ui-bold) solid var(--ink);
+      }
+
+      .hero .kicker {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--gg-slate);
+        margin: 0 0 8px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(26px, 4.5vw, 42px);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+      }
+
+      .hero .lede {
+        margin: 12px 0 0;
+        max-width: 68ch;
+        color: var(--gg-slate);
+        font-size: 14px;
+      }
+
+      .hero-actions {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .btn {
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 8px 14px;
+        border: 2px solid var(--ink);
+        background: var(--paper);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .btn:hover {
+        background: var(--ink);
+        color: var(--paper);
+      }
+
+      .btn[aria-pressed="true"] {
+        background: var(--gg-accent-directional);
+        border-color: var(--ink);
+        color: #fff;
+      }
+
+      .btn:focus-visible {
+        outline: 2px solid var(--gg-route-blue);
+        outline-offset: 2px;
+      }
+
+      .toc {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: var(--toc-bg);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+        margin: 0 -24px;
+        padding: 10px 24px;
+      }
+
+      .toc-inner {
+        max-width: 1180px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+        align-items: center;
+      }
+
+      .toc a {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+        text-decoration: none;
+        color: var(--ink);
+        padding: 4px 0;
+        border-bottom: 2px solid transparent;
+      }
+
+      .toc a:hover,
+      .toc a:focus-visible {
+        color: var(--gg-accent-directional);
+        border-bottom-color: var(--gg-accent-directional);
+        outline: none;
+      }
+
+      section.block {
+        margin-top: 52px;
+        scroll-margin-top: 64px;
+      }
+
+      section.block h2 {
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .block-desc {
+        margin: 0 0 20px;
+        max-width: 68ch;
+        color: var(--gg-slate);
+        font-size: 14px;
+      }
+
+      .panel {
+        border: 2px solid color-mix(in srgb, var(--ink) 20%, transparent);
+        background: var(--gg-sign-panel);
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      .panel h3 {
+        margin: 0 0 14px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--gg-accent-directional);
+      }
+
+      /* —— Colorways —— */
+      .color-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 10px;
+      }
+
+      .color-chip {
+        height: 72px;
+        border: 2px solid var(--ink);
+        display: flex;
+        align-items: flex-end;
+        padding: 8px 10px;
+        font-size: 9px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .color-chip span {
+        text-shadow: 0 0 2px var(--paper), 0 0 4px var(--paper);
+      }
+
+      .color-chip.light-label span {
+        color: var(--gg-ink);
+        text-shadow: 0 0 2px #fff, 0 0 4px #fff;
+      }
+
+      .color-chip.dark-label span {
+        color: #fff;
+        text-shadow: 0 0 2px #000, 0 0 4px #000;
+      }
+
+      /* —— Symbols —— */
+      .symbol-stage {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px 28px;
+        align-items: center;
+        min-height: 100px;
+      }
+
+      /* Do not override .disc — it must stay display:grid for centered glyphs */
+      .symbol-stage .station-dot[data-symbol],
+      .symbol-stage .mta-arrow[data-symbol] {
+        display: block;
+        flex-shrink: 0;
+        transform-origin: center center;
+      }
+
+      .symbol-stage .disc[data-symbol] {
+        flex-shrink: 0;
+        transform-origin: center center;
+      }
+
+      .disc {
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 1.1rem;
+        line-height: 1;
+        text-align: center;
+        color: var(--gg-on-dark-fg);
+        cursor: default;
+      }
+
+      .station-dot {
+        width: 14px;
+        height: 14px;
+        box-sizing: content-box;
+        border-radius: 50%;
+        background: var(--paper);
+        border: 3px solid var(--ink);
+      }
+
+      .mta-arrow {
+        width: 48px;
+        height: 16px;
+        background: var(--ink);
+        clip-path: polygon(0 35%, 72% 35%, 72% 0, 100% 50%, 72% 100%, 72% 65%, 0 65%);
+      }
+
+      /* —— Line art —— */
+      .line-svg {
+        width: 100%;
+        max-width: 520px;
+        height: auto;
+        display: block;
+        border: 2px solid color-mix(in srgb, var(--ink) 18%, transparent);
+        background: color-mix(in srgb, var(--gg-sign-panel) 97%, var(--ink) 3%);
+      }
+
+      .line-svg path {
+        stroke-width: var(--gg-route-stroke-ui-bold);
+      }
+
+      .line-actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      /* —— Map —— */
+      .map-frame {
+        border: 2px solid var(--ink);
+        background: var(--gg-map-land);
+        padding: 14px;
+        overflow: auto;
+      }
+
+      .map-svg .route {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: var(--gg-route-stroke-ui-bold);
+      }
+
+      .map-svg .st {
+        fill: var(--paper);
+        stroke: var(--ink);
+        stroke-width: 3;
+      }
+
+      .map-svg .st.ix {
+        stroke-width: 4;
+        stroke: var(--gg-route-orange);
+      }
+
+      .map-svg .park {
+        fill: var(--gg-map-park);
+        opacity: 0.85;
+      }
+
+      /* —— 12 principles —— */
+      .principles-grid {
+        display: grid;
+        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+
+      .principle-card {
+        border: 2px solid var(--ink);
+        background: var(--gg-sign-panel);
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .principle-card h3 {
+        margin: 0;
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: none;
+        color: var(--ink);
+      }
+
+      .principle-card p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--gg-slate);
+        flex: 1;
+      }
+
+      .demo-viewport {
+        position: relative;
+        height: 100px;
+        border: 1px dashed color-mix(in srgb, var(--ink) 28%, transparent);
+        background: color-mix(in srgb, var(--gg-sign-panel) 92%, var(--ink) 4%);
+        overflow: hidden;
+      }
+
+      .demo-viewport.wide {
+        height: 120px;
+      }
+
+      footer.meta {
+        margin-top: 64px;
+        padding-top: 20px;
+        border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+        font-size: 12px;
+        color: var(--gg-slate);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .reduced-banner {
+          display: block;
+          padding: 10px 14px;
+          background: color-mix(in srgb, var(--gg-route-yellow) 35%, var(--paper));
+          border: 2px solid var(--ink);
+          font-size: 12px;
+          font-weight: 700;
+          margin-bottom: 16px;
+        }
+      }
+
+      .reduced-banner {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="hero">
+        <p class="kicker">GrooveGraph Next · Animator lane · GSAP</p>
+        <h1>Animation style guide</h1>
+        <p class="lede">
+          Motion within the NYCTA / Vignelli system: directional, information-bearing, station-stop pacing.
+          Uses <strong>GSAP 3</strong> + <strong>ScrollTrigger</strong> (CDN). Line draws use
+          <code>stroke-dashoffset</code> — no Club-only plugins. Pair with
+          <code>design-system-styleguide.html</code> for static tokens. Reduced motion shows final states only.
+        </p>
+        <div class="hero-actions">
+          <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase"
+            >Theme</span
+          >
+          <button type="button" class="btn" data-theme-btn="light" aria-pressed="false">Light</button>
+          <button type="button" class="btn" data-theme-btn="dark" aria-pressed="false">Dark</button>
+          <button type="button" class="btn" data-theme-btn="system" aria-pressed="true">System</button>
+        </div>
+      </header>
+
+      <nav class="toc" aria-label="Section navigation">
+        <div class="toc-inner">
+          <a href="#colorways">Colorways</a>
+          <a href="#symbols">Symbols</a>
+          <a href="#line-art">Line art</a>
+          <a href="#map">Map</a>
+          <a href="#principles">12 principles</a>
+        </div>
+      </nav>
+
+      <div class="reduced-banner" role="status">
+        Reduced motion: interactive timelines are disabled; layouts show rest state.
+      </div>
+
+      <main>
+        <section class="block" id="colorways">
+          <h2>Colorways</h2>
+          <p class="block-desc">
+            Route and surface tokens as motion targets. Scroll-linked stagger on enter — color stays
+            <strong>signal</strong>, not atmosphere (<code>--gg-route-*</code>).
+          </p>
+          <div class="panel">
+            <h3>Token strips</h3>
+            <div class="color-grid" id="color-chips" aria-label="Color token chips"></div>
+          </div>
+        </section>
+
+        <section class="block" id="symbols">
+          <h2>Symbols</h2>
+          <p class="block-desc">
+            Discs, station dot, directional arrow — micro-emphasis on hover (scale / opacity), scoped to
+            identification and directional layers.
+          </p>
+          <div class="panel">
+            <h3>Hover choreography</h3>
+            <div class="symbol-stage" id="symbol-stage">
+              <div class="disc" style="background: var(--gg-route-red)" data-symbol>1</div>
+              <div class="disc" style="background: var(--gg-route-blue)" data-symbol>A</div>
+              <div class="disc" style="background: var(--gg-route-green)" data-symbol>G</div>
+              <span class="station-dot" data-symbol></span>
+              <span class="mta-arrow" data-symbol aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="block" id="line-art">
+          <h2>Line art</h2>
+          <p class="block-desc">
+            Orthogonal + 45° trunk (uniform weight). “Route draw” = timeline on stroke dash — same grammar as
+            the map, smaller canvas.
+          </p>
+          <div class="panel">
+            <h3>Trunk draw</h3>
+            <svg class="line-svg" id="line-svg" viewBox="0 0 400 120" aria-label="Animated route trunk">
+              <path
+                id="line-path"
+                d="M 24 96 L 120 96 L 160 56 L 280 56 L 320 24 L 376 24"
+                fill="none"
+                stroke="var(--gg-route-orange)"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <div class="line-actions">
+              <button type="button" class="btn" id="replay-line">Replay draw</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="block" id="map">
+          <h2>Map</h2>
+          <p class="block-desc">
+            Simplified diagram: parallel blues, interchange, park — routes draw in sequence (station-stop
+            pacing), then stations pop.
+          </p>
+          <div class="map-frame">
+            <div class="line-actions" style="margin-bottom: 12px">
+              <button type="button" class="btn" id="replay-map">Replay map</button>
+            </div>
+            <svg
+              class="map-svg"
+              id="anim-map"
+              viewBox="0 0 560 360"
+              style="width: 100%; min-width: 480px; max-height: 420px"
+              role="img"
+              aria-label="Animated route diagram"
+            >
+              <rect class="park" x="380" y="60" width="44" height="120" rx="2" />
+              <path
+                class="route"
+                data-order="0"
+                d="M 40 280 L 160 280 L 200 240 L 240 200 L 280 160 L 320 120 L 380 120 L 460 120"
+                stroke="var(--gg-route-blue)"
+              />
+              <path
+                class="route"
+                data-order="1"
+                d="M 40 292 L 160 292 L 200 252 L 240 212 L 280 172 L 320 132 L 380 132 L 460 132"
+                stroke="var(--gg-route-blue)"
+              />
+              <path
+                class="route"
+                data-order="2"
+                d="M 120 300 L 360 300 M 200 246 L 200 300"
+                stroke="var(--gg-route-red)"
+              />
+              <path
+                class="route"
+                data-order="3"
+                d="M 320 120 L 400 200 L 420 220 L 420 260"
+                stroke="var(--gg-route-green)"
+              />
+              <path
+                class="route"
+                data-order="4"
+                d="M 380 132 L 440 192 L 480 232 L 480 260"
+                stroke="var(--gg-route-orange)"
+              />
+              <circle class="st" data-order="5" cx="40" cy="286" r="10" />
+              <circle class="st ix" data-order="6" cx="200" cy="246" r="12" />
+              <circle class="st" data-order="7" cx="460" cy="126" r="10" />
+              <circle class="st" data-order="8" cx="360" cy="300" r="9" />
+            </svg>
+          </div>
+        </section>
+
+        <section class="block" id="principles">
+          <h2>12 principles of animation</h2>
+          <p class="block-desc">
+            Classic Disney / Johnston–Thomas vocabulary, translated to UI motion: each card has a short GrooveGraph
+            reading and a live demo. Principles are pedagogical; production motion stays restrained and
+            directional.
+          </p>
+          <div class="principles-grid" id="principles-root"></div>
+        </section>
+
+        <footer class="meta">
+          Canonical CSS: <code>framework/src/visual-system/nycta-groovegraph-tokens.css</code> · Static reference:
+          <code>product/public/design-system-styleguide.html</code> · Foundation:
+          <code>docs/design-language/FOUNDATION.md</code>
+        </footer>
+      </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/ScrollTrigger.min.js"></script>
+    <script>
+      (function () {
+        var html = document.documentElement;
+        var reducedMq = window.matchMedia("(prefers-reduced-motion: reduce)");
+        var reduced = reducedMq.matches;
+
+        try {
+          reducedMq.addEventListener("change", function () {
+            window.location.reload();
+          });
+        } catch (e) {
+          try {
+            reducedMq.addListener(function () {
+              window.location.reload();
+            });
+          } catch (e2) {}
+        }
+
+        function applyTheme(mode) {
+          html.setAttribute("data-theme", mode);
+          document.querySelectorAll("[data-theme-btn]").forEach(function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-theme-btn") === mode ? "true" : "false");
+          });
+          try {
+            localStorage.setItem("gg-anim-styleguide-theme", mode);
+          } catch (e) {}
+        }
+
+        var saved = null;
+        try {
+          saved = localStorage.getItem("gg-anim-styleguide-theme");
+        } catch (e) {}
+        if (saved === "light" || saved === "dark" || saved === "system") applyTheme(saved);
+
+        document.querySelectorAll("[data-theme-btn]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            applyTheme(btn.getAttribute("data-theme-btn"));
+          });
+        });
+
+        if (typeof gsap === "undefined") return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        var chips = [
+          { label: "canvas", bg: "var(--gg-surface-canvas)", cls: "light-label" },
+          { label: "ink", bg: "var(--gg-ink)", cls: "dark-label" },
+          { label: "red", bg: "var(--gg-route-red)", cls: "dark-label" },
+          { label: "blue", bg: "var(--gg-route-blue)", cls: "dark-label" },
+          { label: "green", bg: "var(--gg-route-green)", cls: "dark-label" },
+          { label: "orange", bg: "var(--gg-route-orange)", cls: "dark-label" },
+          { label: "yellow", bg: "var(--gg-route-yellow)", cls: "light-label" },
+          { label: "purple", bg: "var(--gg-route-purple)", cls: "dark-label" },
+          { label: "lime", bg: "var(--gg-route-lime)", cls: "dark-label" },
+          { label: "park", bg: "var(--gg-map-park)", cls: "light-label" },
+        ];
+
+        var chipRoot = document.getElementById("color-chips");
+        if (chipRoot) {
+          chips.forEach(function (c) {
+            var el = document.createElement("div");
+            el.className = "color-chip " + c.cls;
+            el.style.background = c.bg;
+            el.innerHTML = "<span>" + c.label + "</span>";
+            chipRoot.appendChild(el);
+          });
+        }
+
+        if (!reduced && chipRoot) {
+          gsap.from(".color-chip", {
+            scrollTrigger: { trigger: "#colorways", start: "top 75%", toggleActions: "play none none none" },
+            y: 20,
+            opacity: 0,
+            duration: 0.45,
+            stagger: 0.06,
+            ease: "power2.out",
+          });
+        }
+
+        function prepPathDraw(path) {
+          var len = path.getTotalLength();
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
+        }
+
+        function lineDrawTimeline() {
+          var path = document.getElementById("line-path");
+          if (!path) return null;
+          prepPathDraw(path);
+          return gsap.timeline().to(path, {
+            strokeDashoffset: 0,
+            duration: 1.6,
+            ease: "power1.inOut",
+          });
+        }
+
+        var linePathEl = document.getElementById("line-path");
+        var replayLineBtn = document.getElementById("replay-line");
+        if (!reduced) {
+          lineDrawTimeline();
+          if (replayLineBtn) {
+            replayLineBtn.addEventListener("click", function () {
+              lineDrawTimeline();
+            });
+          }
+        } else if (linePathEl) {
+          var ll = linePathEl.getTotalLength();
+          linePathEl.style.strokeDasharray = ll;
+          linePathEl.style.strokeDashoffset = 0;
+        }
+
+        var mapPaths = gsap.utils.toArray("#anim-map path.route");
+        var mapStations = gsap.utils.toArray("#anim-map circle.st");
+
+        function mapTimeline() {
+          var tl = gsap.timeline();
+          mapPaths.forEach(function (p) {
+            prepPathDraw(p);
+          });
+          mapStations.forEach(function (c) {
+            gsap.set(c, { scale: 0, transformOrigin: "50% 50%" });
+          });
+          mapPaths.forEach(function (p, i) {
+            tl.to(
+              p,
+              { strokeDashoffset: 0, duration: 0.85, ease: "power1.inOut" },
+              i === 0 ? 0 : "-=0.35"
+            );
+          });
+          tl.to(
+            mapStations,
+            { scale: 1, duration: 0.35, stagger: 0.06, ease: "back.out(1.6)" },
+            "-=0.2"
+          );
+          return tl;
+        }
+
+        var replayMapBtn = document.getElementById("replay-map");
+        if (!reduced) {
+          ScrollTrigger.create({
+            trigger: "#map",
+            start: "top 70%",
+            once: true,
+            onEnter: function () {
+              mapTimeline();
+            },
+          });
+          if (replayMapBtn) {
+            replayMapBtn.addEventListener("click", function () {
+              mapPaths.forEach(function (p) {
+                prepPathDraw(p);
+              });
+              mapStations.forEach(function (c) {
+                gsap.set(c, { scale: 0, transformOrigin: "50% 50%" });
+              });
+              mapTimeline();
+            });
+          }
+        } else {
+          mapPaths.forEach(function (p) {
+            var len = p.getTotalLength();
+            p.style.strokeDasharray = len;
+            p.style.strokeDashoffset = 0;
+          });
+        }
+
+        if (!reduced) {
+          document.querySelectorAll("[data-symbol]").forEach(function (el) {
+            el.addEventListener("mouseenter", function () {
+              gsap.to(el, { scale: 1.08, duration: 0.25, ease: "power2.out" });
+            });
+            el.addEventListener("mouseleave", function () {
+              gsap.to(el, { scale: 1, duration: 0.3, ease: "power2.inOut" });
+            });
+          });
+        }
+
+        var principles = [
+          {
+            title: "1 · Squash & stretch",
+            text: "Preserve volume while emphasizing speed. UI: slight scale on press or arrival — keep map geometry legible.",
+            setup: function (root) {
+              var b = document.createElement("div");
+              b.style.cssText =
+                "position:absolute;left:24px;bottom:16px;width:40px;height:24px;background:var(--gg-route-orange);border:2px solid var(--ink);transform-origin:center bottom;";
+              root.appendChild(b);
+              if (reduced) return;
+              gsap.to(b, {
+                y: -40,
+                scaleY: 1.15,
+                scaleX: 0.92,
+                duration: 0.5,
+                yoyo: true,
+                repeat: -1,
+                ease: "power2.inOut",
+              });
+            },
+          },
+          {
+            title: "2 · Anticipation",
+            text: "Small opposite motion before the main action. UI: nudge back before forward transition.",
+            setup: function (root) {
+              var b = document.createElement("div");
+              b.style.cssText =
+                "position:absolute;left:24px;bottom:20px;width:32px;height:32px;border-radius:50%;background:var(--gg-route-blue);border:2px solid var(--ink);";
+              root.appendChild(b);
+              if (reduced) return;
+              var tl = gsap.timeline({ repeat: -1, repeatDelay: 0.6 });
+              tl.to(b, { x: -10, duration: 0.15, ease: "power2.in" }).to(b, { x: 56, duration: 0.5, ease: "power2.out" });
+            },
+          },
+          {
+            title: "3 · Staging",
+            text: "One idea at a time. UI: dim siblings, spotlight the active route or decision point.",
+            setup: function (root) {
+              for (var i = 0; i < 4; i++) {
+                var d = document.createElement("div");
+                d.style.cssText =
+                  "position:absolute;top:24px;width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);left:" +
+                  (20 + i * 44) +
+                  "px;background:" +
+                  (i === 1 ? "var(--gg-route-red)" : "var(--gg-route-gray)") +
+                  ";";
+                root.appendChild(d);
+              }
+              if (reduced) return;
+              var dots = root.children;
+              gsap
+                .timeline({ repeat: -1, repeatDelay: 0.5 })
+                .to(dots, { opacity: 0.35, scale: 1, duration: 0.2 })
+                .to(dots[1], { opacity: 1, scale: 1.14, duration: 0.28, ease: "power2.out" })
+                .to(dots, { opacity: 1, scale: 1, duration: 0.35, ease: "power2.inOut" }, "+=0.2");
+            },
+          },
+          {
+            title: "4 · Straight ahead / Pose to pose",
+            text: "Fluid vs keyed states. UI: prefer keyed states for wayfinding; interpolate sparingly between.",
+            setup: function (root) {
+              var bar = document.createElement("div");
+              bar.style.cssText =
+                "position:absolute;left:16px;bottom:28px;width:8px;height:48px;background:var(--gg-ink);";
+              root.appendChild(bar);
+              if (reduced) return;
+              gsap
+                .timeline({ repeat: -1, repeatDelay: 0.45 })
+                .set(bar, { x: 0 })
+                .to(bar, { x: 200, duration: 0.75, ease: "steps(6)" });
+            },
+          },
+          {
+            title: "5 · Follow through / Overlap",
+            text: "Parts settle at different rates. UI: staggered list or chain reveal along a rail.",
+            setup: function (root) {
+              for (var i = 0; i < 5; i++) {
+                var s = document.createElement("div");
+                s.style.cssText =
+                  "position:absolute;left:" +
+                  (16 + i * 36) +
+                  "px;bottom:24px;width:10px;height:10px;border-radius:50%;background:var(--gg-route-green);border:1px solid var(--ink);";
+                root.appendChild(s);
+              }
+              if (reduced) return;
+              gsap.to(root.children, {
+                y: -28,
+                duration: 0.5,
+                stagger: 0.08,
+                yoyo: true,
+                repeat: -1,
+                ease: "power2.inOut",
+              });
+            },
+          },
+          {
+            title: "6 · Slow in & slow out",
+            text: "Ease at extremes. UI: default to power2 / power3 — avoid linear cross-fades on reading surfaces.",
+            setup: function (root) {
+              var a = document.createElement("div");
+              var b = document.createElement("div");
+              a.style.cssText =
+                "position:absolute;left:12px;bottom:20px;width:36px;height:6px;background:var(--gg-slate);";
+              b.style.cssText =
+                "position:absolute;left:12px;bottom:40px;width:36px;height:6px;background:var(--gg-route-orange);";
+              root.appendChild(a);
+              root.appendChild(b);
+              if (reduced) return;
+              gsap.to(a, { x: 200, duration: 1.2, repeat: -1, yoyo: true, ease: "none" });
+              gsap.to(b, { x: 200, duration: 1.2, repeat: -1, yoyo: true, ease: "power2.inOut" });
+            },
+          },
+          {
+            title: "7 · Arc",
+            text: "Natural paths curve. UI: if moving a marker, bias to shallow arcs; map trunks stay 0°/45°/90°.",
+            setup: function (root) {
+              var dot = document.createElement("div");
+              dot.style.cssText =
+                "position:absolute;width:12px;height:12px;border-radius:50%;background:var(--gg-route-purple);border:2px solid var(--ink);left:20px;bottom:20px;";
+              root.appendChild(dot);
+              if (reduced) return;
+              gsap.to(dot, {
+                keyframes: [
+                  { x: 0, y: 0, duration: 0.4 },
+                  { x: 90, y: -44, duration: 0.5 },
+                  { x: 180, y: 0, duration: 0.4 },
+                ],
+                repeat: -1,
+                yoyo: true,
+                ease: "power1.inOut",
+              });
+            },
+          },
+        ];
+
+        principles.push(
+          {
+            title: "8 · Secondary action",
+            text: "Supporting motion reinforces the main beat. UI: subtle badge pulse while a panel slides.",
+            setup: function (root) {
+              var rail = document.createElement("div");
+              rail.style.cssText =
+                "position:absolute;left:16px;bottom:36px;width:160px;height:4px;background:var(--gg-route-blue);";
+              var badge = document.createElement("div");
+              badge.style.cssText =
+                "position:absolute;left:16px;bottom:48px;width:20px;height:12px;background:var(--gg-route-yellow);border:1px solid var(--ink);";
+              root.appendChild(rail);
+              root.appendChild(badge);
+              if (reduced) return;
+              gsap.to(rail, { scaleX: 0.3, transformOrigin: "left center", duration: 0.8, repeat: -1, yoyo: true, ease: "power2.inOut" });
+              gsap.to(badge, { y: -4, duration: 0.35, repeat: -1, yoyo: true, ease: "sine.inOut" });
+            },
+          },
+          {
+            title: "9 · Timing",
+            text: "Duration carries meaning. UI: faster for local toggles, slower for context switches.",
+            setup: function (root) {
+              [0.3, 0.7, 1.2].forEach(function (dur, i) {
+                var d = document.createElement("div");
+                d.style.cssText =
+                  "position:absolute;bottom:20px;width:10px;height:40px;background:var(--gg-ink);left:" +
+                  (24 + i * 52) +
+                  "px;";
+                root.appendChild(d);
+                if (!reduced) gsap.to(d, { height: 16, transformOrigin: "bottom", repeat: -1, yoyo: true, duration: dur, ease: "power2.inOut" });
+              });
+            },
+          },
+          {
+            title: "10 · Exaggeration",
+            text: "Amplify for clarity within brand. UI: small overshoot on snap — not carnival bounce on data.",
+            setup: function (root) {
+              var b = document.createElement("div");
+              b.style.cssText =
+                "position:absolute;left:20px;bottom:24px;width:36px;height:20px;background:var(--gg-route-red);border:2px solid var(--ink);";
+              root.appendChild(b);
+              if (reduced) return;
+              gsap.fromTo(
+                b,
+                { x: 0 },
+                { x: 140, duration: 0.7, repeat: -1, repeatDelay: 0.5, ease: "back.out(1.4)" }
+              );
+            },
+          },
+          {
+            title: "11 · Solid drawing",
+            text: "Clear silhouette and weight. UI: keep trunk strokes uniform; hierarchy from color and position.",
+            setup: function (root) {
+              var thin = document.createElement("div");
+              var thick = document.createElement("div");
+              thin.style.cssText =
+                "position:absolute;left:20px;bottom:40px;width:120px;height:2px;background:var(--gg-slate);";
+              thick.style.cssText =
+                "position:absolute;left:20px;bottom:24px;width:120px;height:8px;background:var(--gg-route-orange);border-radius:1px;";
+              root.appendChild(thin);
+              root.appendChild(thick);
+            },
+          },
+          {
+            title: "12 · Appeal",
+            text: "Clarity and confidence read as polish. UI: disciplined grids, decisive motion off — sign-plate calm.",
+            setup: function (root) {
+              var plate = document.createElement("div");
+              plate.style.cssText =
+                "position:absolute;left:16px;top:16px;right:16px;bottom:16px;border:2px solid var(--ink);background:var(--paper);overflow:hidden;";
+              var band = document.createElement("div");
+              band.style.cssText = "height:6px;background:var(--gg-sign-band);";
+              var body = document.createElement("div");
+              body.style.cssText = "padding:8px 10px;font-size:10px;font-weight:800;letter-spacing:0.06em;";
+              body.textContent = "DOWNTOWN";
+              plate.appendChild(band);
+              plate.appendChild(body);
+              root.appendChild(plate);
+              if (reduced) return;
+              gsap.from(plate, { opacity: 0, y: 8, duration: 0.6, repeat: -1, repeatDelay: 2.2, ease: "power2.out" });
+            },
+          }
+        );
+
+        var prRoot = document.getElementById("principles-root");
+        if (prRoot) {
+          principles.forEach(function (p) {
+            var card = document.createElement("article");
+            card.className = "principle-card";
+            var vp = document.createElement("div");
+            vp.className = "demo-viewport" + (p.title.indexOf("4 ·") === 0 ? " wide" : "");
+            var h = document.createElement("h3");
+            h.textContent = p.title;
+            var para = document.createElement("p");
+            para.textContent = p.text;
+            card.appendChild(h);
+            card.appendChild(para);
+            card.appendChild(vp);
+            prRoot.appendChild(card);
+            p.setup(vp);
+          });
+
+          if (!reduced) {
+            gsap.utils.toArray(".principle-card").forEach(function (card) {
+              gsap.from(card, {
+                scrollTrigger: { trigger: card, start: "top 88%", toggleActions: "play none none none" },
+                y: 24,
+                opacity: 0,
+                duration: 0.5,
+                ease: "power2.out",
+              });
+            });
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

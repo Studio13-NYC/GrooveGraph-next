@@ -1,5 +1,7 @@
 # MTA Style Guide — Extracted Notes
 
+> **Superseded for authoring:** use **`mta_style_guide_extracted_v3.md`** plus **`docs/design-language/FOUNDATION.md`**. This file is kept for historical diff only.
+
 This document organizes the supplied JPG pages into a readable page-by-page reference.
 Image links are relative and assume this `.md` file is stored in the same folder as the JPGs.
 OCR on the scanned manual is imperfect; text below is normalized and cleaned for readability.

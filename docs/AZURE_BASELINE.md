@@ -49,6 +49,8 @@ From repo root:
 
 Requires App Service app settings (at minimum): `OPENAI_API_KEY` (see workspace server config).
 
+**Default route:** `https://groovegraph.s13.nyc/` **308-redirects** to `/workbench-next` (same experience as `http://localhost:3011/workbench-next`). The classic shell is at **`/classic`**.
+
 ## Historical note
 
 Early smoke validation used a static SWA placeholder and/or a minimal App Service Next app. The **canonical live URL** for the research workbench is **`https://groovegraph.s13.nyc`** on **`as-groovegraph-api`**.

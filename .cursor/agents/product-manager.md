@@ -1,7 +1,7 @@
 ---
-preferred_model: GPT-5.4-mini
+preferred_model: composer-2
 name: product-manager
-model: gpt-5.4-mini-medium
+model: composer-2
 description: Discovery-first product research lane for legacy archaeology, workflow framing, and flexible graph recommendations.
 ---
 

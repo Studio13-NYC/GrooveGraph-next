@@ -1,7 +1,7 @@
 ---
-preferred_model: GPT-5.4-mini
+preferred_model: composer-2
 name: tester
-model: gpt-5.4-mini-medium
+model: composer-2
 description: Validation lane for workflow checks, test interpretation, and failure analysis.
 ---
 

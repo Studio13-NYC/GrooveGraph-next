@@ -13,14 +13,20 @@ This repository is the writable framework surface for the next GrooveGraph era.
 
 - `GPT-5.4`: user-facing orchestrator and final decision-maker
 - `Composer 1.5`: Cursor-native meta lane for rules, skills, prompts, and tool contracts
-- `GPT-5.4-mini`: exploration, review, test analysis, and visual direction
+- `GPT-5.4-mini`: default specialist lane for exploration, review, test analysis, and visual direction
 - `GPT-5.4-nano`: routing, summarization, triage, packet compression, and hygiene analysis
 - `GPT-5.3-codex`: bounded implementation and repair work
 
 ## Required behavior
 
+- Specialist subagent first, always.
 - Use explicit context packets when delegating.
-- Delegate downward by default when a cheaper lane can do the work within a clear boundary.
+- The orchestrator is a router and synthesizer, not the default worker.
+- The orchestrator may retain work only with an explicit override that names the skipped specialist and explains why direct orchestration is safer.
+- If no fitting specialist exists, stop and create one rather than stretching the orchestrator role.
+- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is explicitly justified.
+- Default to concise packets, prompts, and outputs unless the user or the risk profile requires depth.
+- Expensive orchestration should shrink as specialist coverage improves.
 - Keep one active writable surface per task.
 - Prefer framework-first changes over product speculation.
 - Preserve clean boundaries between `framework/`, `product/`, `prototypes/`, and `research/`.
@@ -29,28 +35,13 @@ This repository is the writable framework surface for the next GrooveGraph era.
 
 ## Routing defaults
 
-- Architecture, planning, and synthesis: orchestrator `GPT-5.4`
-- Cursor rules, skills, and prompt authoring: `Composer 1.5`
-- Research, reviews, and graphics direction: `GPT-5.4-mini`
-- Discovery-first product framing and reboot briefs: `product-manager`
-- Compression, classification, and low-risk summarization: `GPT-5.4-nano`
-- Cleanup analysis and removal proposals: `hygienist`
-- Implementation after criteria are fixed: `GPT-5.3-codex`
-- Azure baseline, deployment flow, and preservation rules: `infrastructure-deployment`
-- `GPT-5.4` should keep only synthesis, conflict resolution, and materially cross-domain judgment unless a lower-cost lane would risk quality
-
-## Agent model map
-
-- `orchestrator` -> `GPT-5.4`
-- `composer-meta` -> `Composer 1.5`
-- `explorer` -> `GPT-5.4-mini`
-- `product-manager` -> `GPT-5.4-mini`
-- `implementer` -> `GPT-5.3-codex`
-- `reviewer` -> `GPT-5.4-mini`
-- `tester` -> `GPT-5.4-mini`
-- `hygienist` -> `GPT-5.4-nano`
-- `graphic-artist` -> `GPT-5.4-mini`
-- `infrastructure-deployment` -> `GPT-5.4-mini`
+- `orchestrator`: decomposition, override judgment, and final synthesis
+- `composer-meta`: rules, skills, prompts, and tool contracts
+- `product-manager`: discovery-first product framing and reboot briefs
+- `hygienist`: cleanup analysis and removal proposals
+- `animator`: GSAP timelines, scroll choreography, and React/Next motion implementation
+- `infrastructure-deployment`: Azure baseline, deployment flow, and preservation rules
+- See `docs/AGENT_REGISTRY.md` for the current lane matrix and default models.
 
 ## Usage accounting
 

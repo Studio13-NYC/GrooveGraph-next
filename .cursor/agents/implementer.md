@@ -1,7 +1,7 @@
 ---
-preferred_model: GPT-5.3-codex
+preferred_model: composer-2
 name: implementer
-model: gpt-5.3-codex
+model: composer-2
 description: Bounded implementation lane for code changes after scope and acceptance criteria are fixed.
 ---
 

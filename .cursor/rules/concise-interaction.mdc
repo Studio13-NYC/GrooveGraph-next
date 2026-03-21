@@ -1,0 +1,12 @@
+---
+description: Default to concise interactions, packets, and agent outputs
+alwaysApply: true
+---
+
+# Concise Interaction
+
+- Default to concise responses, packets, and agent outputs.
+- Start with the minimum useful answer or instruction.
+- Add depth only when the user asks for it or when ambiguity or risk would block reliable execution.
+- Prefer tight bullets or short paragraphs over long policy prose.
+- Do not pad with ceremony, repeated restatement, or generic caveats.

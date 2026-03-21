@@ -9,5 +9,5 @@ Store repeat-use visual assets, examples, and future campaign artifacts here.
 
 ## Notes
 
-- New-regime authoritative graphics should follow `docs/VISUAL_STYLE_GUIDE.md`.
+- New-regime authoritative graphics should follow `docs/design-language/FOUNDATION.md` and `docs/VISUAL_STYLE_GUIDE.md`.
 - Legacy satire graphics should use the old-regime visual mode defined in the same guide.

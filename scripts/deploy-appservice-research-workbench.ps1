@@ -26,13 +26,14 @@ finally {
 }
 
 Push-Location $workspaceRoot
+$deploySucceeded = $false
+$zipPath = $null
+$deployRoot = $null
 try {
-  $zipPath = Join-Path $env:TEMP "groovegraph-research-workbench-$(Get-Date -Format 'yyyyMMddHHmmss').zip"
-  $deployRoot = Join-Path $env:TEMP "groovegraph-research-workbench-deploy"
-
-  if (Test-Path $deployRoot) {
-    Remove-Item $deployRoot -Recurse -Force
-  }
+  $stamp = Get-Date -Format "yyyyMMddHHmmss"
+  $zipPath = Join-Path $env:TEMP "groovegraph-research-workbench-$stamp.zip"
+  # Unique folder per run avoids Windows file locks on cleanup of a previous deploy
+  $deployRoot = Join-Path $env:TEMP "groovegraph-research-workbench-deploy-$stamp"
 
   New-Item -ItemType Directory -Path $deployRoot | Out-Null
   Copy-Item ".next\standalone\*" $deployRoot -Recurse -Force
@@ -64,13 +65,28 @@ try {
 
   Write-Host "Research workbench deployed to https://$WebAppName.azurewebsites.net" -ForegroundColor Green
   Write-Host "Startup: $startupCommand" -ForegroundColor DarkGray
+  $deploySucceeded = $true
 }
 finally {
   Pop-Location
-  if ($zipPath -and (Test-Path $zipPath)) {
-    Remove-Item $zipPath -Force
+  try {
+    if ($zipPath -and (Test-Path $zipPath)) {
+      Remove-Item -LiteralPath $zipPath -Force
+    }
   }
-  if ($deployRoot -and (Test-Path $deployRoot)) {
-    Remove-Item $deployRoot -Recurse -Force
+  catch {
+    Write-Host "Note: could not remove temp zip (file may still be locked): $zipPath" -ForegroundColor DarkGray
   }
+  try {
+    if ($deployRoot -and (Test-Path $deployRoot)) {
+      Remove-Item -LiteralPath $deployRoot -Recurse -Force
+    }
+  }
+  catch {
+    Write-Host "Note: could not remove temp deploy folder (may still be locked): $deployRoot" -ForegroundColor DarkGray
+  }
+}
+
+if (-not $deploySucceeded) {
+  exit 1
 }

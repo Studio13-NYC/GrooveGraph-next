@@ -60,14 +60,14 @@ export default function HomePage() {
       <section
         style={{
           width: "min(1120px, 100%)",
-          background: "rgba(255,255,255,0.42)",
-          border: "2px solid #111111",
-          boxShadow: "0 20px 50px rgba(17,17,17,0.08)",
+          background: "color-mix(in srgb, var(--gg-sign-panel) 90%, transparent)",
+          border: "2px solid var(--ink)",
+          boxShadow: "0 20px 50px color-mix(in srgb, var(--ink) 10%, transparent)",
         }}
       >
         <div
           style={{
-            borderBottom: "2px solid #111111",
+            borderBottom: "2px solid var(--ink)",
             padding: "28px 32px 28px",
             display: "grid",
             gap: "14px",
@@ -92,7 +92,7 @@ export default function HomePage() {
                 height: "42px",
                 borderRadius: "999px",
                 background: "#111111",
-                color: "#F2E9D8",
+                color: "#ffffff",
                 fontSize: "20px",
               }}
             >
@@ -120,7 +120,7 @@ export default function HomePage() {
               lineHeight: 0.95,
               textAlign: "center",
               textTransform: "uppercase",
-              color: "#D7332F",
+              color: "var(--red-route)",
             }}
           >
             {payload.status}
@@ -131,7 +131,7 @@ export default function HomePage() {
               margin: "4px 0 0",
               fontSize: "14px",
               lineHeight: 1.5,
-              color: "#475569",
+              color: "var(--slate)",
               textAlign: "left",
             }}
           >
@@ -147,7 +147,8 @@ export default function HomePage() {
               width: "100%",
               height: "auto",
               display: "block",
-              border: "2px solid rgba(17,17,17,0.18)",
+              border:
+                "2px solid color-mix(in srgb, var(--ink) 22%, transparent)",
             }}
           />
         </div>

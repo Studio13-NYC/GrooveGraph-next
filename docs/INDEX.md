@@ -6,9 +6,13 @@
 |---|---|
 | `AGENT_ORCHESTRATION.md` | Canonical orchestration and authority model |
 | `MODEL_ROUTING.md` | Canonical routing and model-selection source |
+| `AGENT_REGISTRY.md` | Compact operator matrix for current lanes and default models |
 | `CONTEXT_PACKETS.md` | Canonical delegation packet schema |
 | `USAGE_ACCOUNTING.md` | Canonical rough slice-cost model and JSONL telemetry persistence |
-| `VISUAL_STYLE_GUIDE.md` | Canonical graphics system and visual direction |
+| `VISUAL_STYLE_GUIDE.md` | Short entry: graphics system, regimes, checklist |
+| `design-language/FOUNDATION.md` | Merged NYCTA / Vignelli design authority (map + manual + software) |
+| `design-language/README.md` | Index for the design-language folder |
+| `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md` | Execution brief for workbench-next chrome (graphic-artist lane) |
 | `GITHUB_STRATEGY.md` | Canonical successor-repo and remote strategy |
 | `AZURE_BASELINE.md` | Current Azure environment, preservation rules, and overwrite boundaries |
 | `HYGIENE.md` | Canonical cleanup workflow, `hygienist` lane, and proposal-first removal policy |
@@ -26,13 +30,14 @@ When files drift, use this precedence:
 
 1. `docs/MODEL_ROUTING.md` for routing decisions
 2. `docs/AGENT_ORCHESTRATION.md` for hierarchy and authority
-3. `docs/CONTEXT_PACKETS.md` for packet fields and delegation boundaries
-4. `docs/USAGE_ACCOUNTING.md` for rough usage, cost reference, and telemetry persistence rules
-5. `docs/HYGIENE.md` for cleanup tooling, proposal format, and deletion guardrails
-6. `docs/OBSERVABILITY.md` for traceability, runtime logging, and Azure telemetry guidance
-7. `docs/VISUAL_STYLE_GUIDE.md` for graphics and visual regime decisions
-8. `AGENTS.md` as the repo-level operating summary
-9. `.cursor/rules/*.mdc` as executable mirrors that must stay in sync with the docs
+3. `docs/AGENT_REGISTRY.md` for the current agent matrix and default model assignments
+4. `docs/CONTEXT_PACKETS.md` for packet fields and delegation boundaries
+5. `docs/USAGE_ACCOUNTING.md` for rough usage, cost reference, and telemetry persistence rules
+6. `docs/HYGIENE.md` for cleanup tooling, proposal format, and deletion guardrails
+7. `docs/OBSERVABILITY.md` for traceability, runtime logging, and Azure telemetry guidance
+8. `docs/design-language/FOUNDATION.md` and `docs/VISUAL_STYLE_GUIDE.md` for graphics and visual regime decisions
+9. `AGENTS.md` as the repo-level operating summary
+10. `.cursor/rules/*.mdc` as executable mirrors that must stay in sync with the docs
 
 ## Root references
 

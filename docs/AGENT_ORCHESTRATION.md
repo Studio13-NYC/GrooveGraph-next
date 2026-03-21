@@ -20,7 +20,7 @@ It owns:
 - final synthesis for the user
 - escalation decisions when scope or ambiguity grows
 
-It should default to delegation whenever a cheaper lane can do the work cleanly inside a bounded packet.
+It should default to specialist delegation, not direct execution.
 
 ### Meta lane
 
@@ -84,8 +84,9 @@ Subagents should:
 
 The orchestrator should:
 
-- delegate downward by default
-- avoid retaining ordinary lane work out of caution alone
+- route to a fitting specialist first
+- justify any override explicitly
+- stop and create a new specialist when coverage is missing instead of stretching the orchestrator role
 - keep expensive top-model work focused on judgment and synthesis
 
 ## Subagent set
@@ -134,6 +135,11 @@ The orchestrator should:
 
 - turns architecture and strategy into persuasive visual artifacts
 
+### `animator`
+
+- owns GSAP timelines, plugins, scroll-linked choreography, and React/Next motion patterns
+- aligns timing, easing, and interaction with the same Studio13 and NYCTA-derived visual discipline as `graphic-artist`
+
 ### `infrastructure-deployment`
 
 - preserves the Azure baseline
@@ -153,6 +159,7 @@ The orchestrator should:
 | `tester` | `GPT-5.4-mini` | Good workflow validation and failure interpretation |
 | `hygienist` | `GPT-5.4-nano` | Fast, cheap triage for cleanup tooling and proposal generation |
 | `graphic-artist` | `GPT-5.4-mini` | Best balance of taste, structure, and cost for visual direction |
+| `animator` | `GPT-5.4-mini` | Deep GSAP and motion-system reasoning without frontier-model cost |
 | `infrastructure-deployment` | `GPT-5.4-mini` | Operational reasoning without paying frontier-model cost |
 
 ## Delegation workflow
@@ -171,7 +178,7 @@ The orchestrator should:
 ## What good orchestration looks like
 
 - fewer, sharper handoffs
-- downward delegation whenever a cheaper lane can preserve quality
+- specialist-first delegation by default
 - explicit ownership
 - explicit rough cost summaries when available
 - stable naming
@@ -181,6 +188,7 @@ The orchestrator should:
 ## What bad orchestration looks like
 
 - delegating vague tasks
+- treating missing specialist coverage as permission to keep the work at the top layer
 - treating the orchestrator as the default executor instead of the default delegator
 - hiding unresolved assumptions inside implementation work
 - mixing policy authoring with product coding

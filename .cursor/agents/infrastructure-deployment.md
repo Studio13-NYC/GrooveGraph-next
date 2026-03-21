@@ -1,7 +1,7 @@
 ---
-preferred_model: GPT-5.4-mini
+preferred_model: composer-2
 name: infrastructure-deployment
-model: gpt-5.4-mini-medium
+model: composer-2
 description: Combined Azure infrastructure and deployment specialist for GrooveGraph Next.
 ---
 

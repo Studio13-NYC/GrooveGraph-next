@@ -39,18 +39,18 @@ Rules:
 
 ## Color
 
-Studio13 base palette:
+New-regime **map and route** colors are **not** ad hoc Studio13 oranges — they are the **NYCTA / Vignelli** system:
 
-- black for foundation
-- white for primary legibility
-- orange for emphasis and direction
+- Use **`framework/src/visual-system/nycta-groovegraph-tokens.css`** (`--gg-route-*`, `--gg-map-water`, `--gg-map-park`, `--gg-surface-canvas`, `--gg-ink`). **`--gg-map-land`** mirrors the canvas — no warm substrate.
+- **Directional emphasis** in UI = **`--gg-accent-directional`** (same as **orange route** on the map).
 
 Usage rules:
 
-- black and white should do most of the work
-- orange should signal active state, emphasis, or direction
-- extra color should appear only for explicit coded meaning
+- land / water / ink / route families do most of the work on **map-like** surfaces
+- extra hues appear only for **coded** meaning (route family, exit, transfer, status)
 - do not introduce decorative palette drift
+
+**Note:** `graphic-design-agent-assets/styles.css` is a **legacy dark Studio13 theme** for other contexts — do not treat it as the authoritative palette for NYCTA new-regime GrooveGraph graphics.
 
 ## Layout
 
@@ -90,7 +90,7 @@ Translate that into software like this:
 Concrete rules:
 
 - color should identify durable route or object families, not momentary decoration
-- black, white, and warm neutral ground should still do most of the structural work
+- black, white, and neutral canvas (light/dark) should still do most of the structural work
 - orange remains the directional accent for current path, emphasis, and next action
 - blue should be reserved for links, citations, or other stable reference affordances unless a true route family requires it
 - green and red should remain review-state colors, not general surface accents

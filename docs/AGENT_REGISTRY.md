@@ -1,0 +1,23 @@
+# Agent Registry
+
+Compact operator matrix for GrooveGraph Next.
+
+- Use the listed specialist first.
+- The orchestrator may override only with an explicit case.
+- If no specialist fits, stop and create one.
+- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is justified.
+- Keep packets and outputs concise by default.
+
+| Agent | Use for | Default model |
+|---|---|---|
+| `orchestrator` | decomposition, override judgment, final synthesis | `GPT-5.4` |
+| `composer-meta` | rules, skills, prompts, tool contracts | `Composer 1.5` |
+| `explorer` | bounded exploration and context gathering | `GPT-5.4-mini` |
+| `product-manager` | discovery-first product framing and reboot briefs | `GPT-5.4-mini` |
+| `implementer` | bounded implementation after scope is fixed | `GPT-5.3-codex` |
+| `reviewer` | bug-finding and change review | `GPT-5.4-mini` |
+| `tester` | workflow validation and failure interpretation | `GPT-5.4-mini` |
+| `hygienist` | cleanup analysis and removal proposals | `GPT-5.4-nano` |
+| `graphic-artist` | visual systems and campaign graphics | `GPT-5.4-mini` |
+| `animator` | GSAP motion, timelines, and React/Next animation implementation | `GPT-5.4-mini` |
+| `infrastructure-deployment` | Azure infrastructure and deployment work | `GPT-5.4-mini` |

@@ -1,22 +1,23 @@
+@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";
+
+/* Workspace-specific names layered on shared NYCTA tokens (any app can import the same sheet). */
 :root {
-  --paper: #ffffff;
-  --panel: #ffffff;
-  --surface: #ffffff;
-  --surface-strong: #ffffff;
-  --ink: #111111;
-  --text-soft: #394049;
-  --muted: #5e6670;
-  --border: rgba(17, 17, 17, 0.18);
-  --accent-orange: #e97722;
-  --link-blue: #1b67c9;
-  --state-accept: #11804b;
-  --state-reject: #d7332f;
-  --route-red: #d7332f;
-  --route-blue: #1b67c9;
-  --route-green: #11804b;
-  --route-orange: #e97722;
-  --route-magenta: #c433a8;
-  --route-yellow: #f2c230;
+  --panel: var(--gg-sign-panel);
+  --surface: var(--paper);
+  --surface-strong: color-mix(in srgb, var(--paper) 94%, var(--ink) 6%);
+  --text-soft: color-mix(in srgb, var(--ink) 78%, transparent);
+  --muted: var(--slate);
+  --border: color-mix(in srgb, var(--ink) 18%, transparent);
+  --accent-orange: var(--gg-accent-directional);
+  --link-blue: var(--blue-route);
+  --state-accept: var(--green-route);
+  --state-reject: var(--red-route);
+  --route-red: var(--red-route);
+  --route-blue: var(--blue-route);
+  --route-green: var(--green-route);
+  --route-orange: var(--orange-route);
+  --route-magenta: var(--magenta-route);
+  --route-yellow: var(--yellow-route);
 }
 
 * {
@@ -33,7 +34,7 @@ body {
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: var(--gg-font-sans);
 }
 
 button,

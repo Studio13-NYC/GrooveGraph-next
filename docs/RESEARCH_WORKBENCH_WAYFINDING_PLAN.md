@@ -13,7 +13,7 @@ The goal is not to add more S13/MTA styling on top of the product. The goal is t
 
 The live workbench already has strong raw material:
 
-- warm paper substrate
+- neutral white canvas
 - black rule and border system
 - Helvetica / Arial typography
 - restrained editorial tone
@@ -132,7 +132,7 @@ Treat notes and sources as supporting evidence, not as peer destinations.
 
 #### Preserve
 
-- warm paper base
+- neutral canvas base
 - black border and rule structure
 - Helvetica / Arial typographic discipline
 - overall editorial seriousness

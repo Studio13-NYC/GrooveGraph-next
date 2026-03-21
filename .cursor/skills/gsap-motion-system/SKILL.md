@@ -1,6 +1,6 @@
 ---
 name: gsap-motion-system
-description: Deep GSAP motion direction for GrooveGraph Next. Use when the user mentions GSAP, motion design, animation systems, ScrollTrigger, SplitText, draggable interactions, or when the `graphic-artist` lane needs web-native motion guidance for React or Next.js surfaces.
+description: Deep GSAP motion direction for GrooveGraph Next. Use when the user mentions GSAP, motion design, animation systems, ScrollTrigger, SplitText, draggable interactions, or when the `animator` or `graphic-artist` lane needs web-native motion guidance for React or Next.js surfaces.
 ---
 # GSAP Motion System
 

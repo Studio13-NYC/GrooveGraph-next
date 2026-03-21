@@ -2,89 +2,51 @@
 
 ## Goal
 
-Use the strongest model only where it creates leverage. Everything else should be routed to the cheapest model that can reliably do the job.
-
-## Default stance
-
-The orchestrator should assume delegation first, not personal execution first.
-
-If a cheaper lane can perform the work within a clear boundary and preserve the quality bar, route the work downward.
-
-Reserve the top model for:
-
-- user-facing synthesis
-- cross-domain judgment
-- conflicting outputs
-- materially changing acceptance criteria
+Use the strongest model only where it adds real leverage. Everything else should go to the cheapest reliable specialist.
 
 ## Canonical source
 
-This document is the canonical source for routing decisions in GrooveGraph Next.
+This document is the routing source of truth for GrooveGraph Next.
 
-If routing guidance here conflicts with `AGENTS.md`, `README.md`, or `.cursor/rules/subagent-routing.mdc`, update those files to match this document.
+If routing guidance here conflicts with `AGENTS.md`, `README.md`, `.cursor/rules/subagent-routing.mdc`, or `docs/AGENT_REGISTRY.md`, update those files to match this document.
 
-## Default routing table
+## Operating rules
 
-| Work type | Preferred model | Why |
-|---|---|---|
-| User interaction, task decomposition, final synthesis | `GPT-5.4` | Highest judgment and strongest cross-domain reasoning |
-| Cursor rules, skills, prompts, tool contracts | `Composer 1.5` | Best fit for Cursor-native meta work |
-| Research distillation, review, docs, testing analysis | `GPT-5.4-mini` | Strong enough for structured thought at lower cost |
-| Product strategy, reboot briefs, and discovery-first workflow framing | `GPT-5.4-mini` via `product-manager` | Best fit for bounded product-definition work without paying top-model cost |
-| Routing, summarization, packet compression, triage | `GPT-5.4-nano` | Fast and cheap for narrow bounded tasks |
-| Cleanup analysis, unused-surface triage, removal proposals | `GPT-5.4-nano` via `hygienist` | Hygiene work is bounded classification and compression, not architecture |
-| Bounded implementation and refactoring | `GPT-5.3-codex` | Best default for code-heavy execution work |
-| Graphics direction and visual briefs | `GPT-5.4-mini` via `graphic-artist` | Good balance of taste, reasoning, and cost |
-| Azure baseline, deployment planning, and smoke validation | `GPT-5.4-mini` via `infrastructure-deployment` | Operational judgment without spending frontier-model cost |
+- Specialist first, always.
+- The orchestrator is a router and synthesizer, not the default worker.
+- If a fitting specialist exists, delegate with a bounded packet.
+- The orchestrator may retain work only for final synthesis, cross-domain conflict resolution, or materially changing acceptance criteria.
+- Any orchestrator override must make an explicit case: name the skipped specialist, explain why delegation is worse here, and explain why direct orchestration is safer.
+- Missing specialist coverage is not an override. Stop, create the specialist, then resume the workflow.
+- Default model for a new specialist is `GPT-5.4-mini` unless a stronger model is explicitly justified.
+- As specialist coverage improves, expensive orchestration should shrink.
 
-## Agent routing table
+## Lane defaults
 
-| Agent | Preferred model |
-|---|---|
-| `orchestrator` | `GPT-5.4` |
-| `composer-meta` | `Composer 1.5` |
-| `explorer` | `GPT-5.4-mini` |
-| `product-manager` | `GPT-5.4-mini` |
-| `implementer` | `GPT-5.3-codex` |
-| `reviewer` | `GPT-5.4-mini` |
-| `tester` | `GPT-5.4-mini` |
-| `hygienist` | `GPT-5.4-nano` |
-| `graphic-artist` | `GPT-5.4-mini` |
-| `infrastructure-deployment` | `GPT-5.4-mini` |
+- `GPT-5.4`: orchestration, cross-domain judgment, final synthesis
+- `Composer 1.5`: Cursor-native rules, skills, prompts, and tool contracts
+- `GPT-5.4-mini`: most specialist reasoning lanes and the default for new specialists
+- `GPT-5.4-nano`: routing, compression, triage, and bounded hygiene analysis
+- `GPT-5.3-codex`: bounded implementation after scope is explicit
 
-## Escalation rules
+See `docs/AGENT_REGISTRY.md` for the current operator matrix.
 
-Escalate to `GPT-5.4` when:
+## Concision
 
-- multiple agent outputs conflict
-- the acceptance criteria are changing
-- a task spans architecture, product, and workflow decisions
-- user-facing synthesis quality matters more than speed
-
-Escalate to `Composer 1.5` when:
-
-- the repo's rules or skills need to change
-- prompt contracts need rewriting
-- a workflow should become durable platform behavior
-
-Route down to `GPT-5.4-nano` when:
-
-- the task is mostly compression, extraction, classification, or triage
-- no architectural judgment is needed
+- Default to concise packets, prompts, and outputs.
+- Add depth only when the user asks for it or when ambiguity or risk would block reliable execution.
 
 ## Cost discipline
 
-- default to mini or nano when possible
-- use codex only after the task boundary is explicit
-- use `GPT-5.4` for orchestration, not for routine mechanical work
-- if a cheaper lane can do the work cleanly, delegating is the preferred behavior rather than an optional optimization
-- avoid parallel high-cost subagents unless the speed benefit is real
-- ask each agent for a rough `cost_summary` whenever the runtime can provide one
+- Default to mini or nano when possible.
+- Use codex only after the task boundary is explicit.
+- Use `GPT-5.4` for orchestration, not routine mechanical work.
+- Avoid parallel high-cost delegation unless the speed gain is real.
+- Ask each agent for a rough `cost_summary` when the runtime can provide one.
 
 ## Anti-patterns
 
-- using `GPT-5.4` for every step because it feels safer
-- leaving work at the orchestrator layer when a cheaper lane is clearly suitable
-- asking `nano` to make architecture calls
-- sending under-specified code tasks to codex
-- using the meta lane for ordinary implementation
+- Keeping work at the orchestrator layer because delegation feels slower.
+- Treating a missing specialist as permission to keep the work.
+- Using `GPT-5.4` for ordinary exploration, review, or bounded execution.
+- Sending under-scoped implementation work to codex.

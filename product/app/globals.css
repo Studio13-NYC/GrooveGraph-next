@@ -1,14 +1,4 @@
-:root {
-  --paper: #f2e9d8;
-  --ink: #111111;
-  --slate: #5e6670;
-  --red-route: #d7332f;
-  --blue-route: #1b67c9;
-  --green-route: #11804b;
-  --orange-route: #e97722;
-  --magenta-route: #c433a8;
-  --yellow-route: #f2c230;
-}
+@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";
 
 * {
   box-sizing: border-box;
@@ -24,7 +14,7 @@ body {
 body {
   background: var(--paper);
   color: var(--ink);
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: var(--gg-font-sans);
 }
 
 a {

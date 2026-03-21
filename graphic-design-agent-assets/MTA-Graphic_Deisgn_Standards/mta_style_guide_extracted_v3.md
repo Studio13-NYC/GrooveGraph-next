@@ -1,5 +1,7 @@
 # MTA Style Guide — Extracted Notes
 
+> **Canonical extract** for the NYCTA Graphics Standards Manual notes in this repo. **Merged authority and map grammar:** `docs/design-language/FOUNDATION.md`. **CSS tokens:** `framework/src/visual-system/nycta-groovegraph-tokens.css`. **Index:** `CANONICAL.md`.
+
 This document organizes the supplied JPG pages into a readable page-by-page reference.
 Image links are relative and assume this `.md` file is stored in the same folder as the JPGs.
 OCR on the scanned manual is imperfect; text below is normalized and cleaned for readability.

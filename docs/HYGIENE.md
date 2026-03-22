@@ -48,7 +48,10 @@ Known audit targets should include:
 
 - `.firecrawl/`
 - `.telemetry/`
+- `research/tools/openai-research-workspace/.data/` (local session store for the research workbench)
 - future machine-local tool directories introduced by repo tooling, plugins, or research workflows
+
+Secrets (e.g. `OPENAI_API_KEY`, `NEO4J_*` in `.env.local`) must remain out of git; flag accidental commits as **critical** hygiene findings.
 
 ## Repo script
 

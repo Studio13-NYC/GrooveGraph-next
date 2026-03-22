@@ -105,12 +105,21 @@ The research workbench is the discovery-first surface for artist-seed investigat
 1. **Data model** (document in this repo or `framework/`): mapping from **session entities / relationships / decisions** (and optional **claims** as properties or separate nodes — product decision) to **Neo4j** labels, relationship types, and properties.
 2. **Operations:** At minimum: **upsert** accepted entities and relationships; **idempotent** or clearly versioned writes to avoid duplicate edges on retry.
 3. **Configuration:** Connection via **environment** (URI, auth, database); failures surface **clear messages**; **do not** clear user drafts.
-4. **Scope:** Persistence runs **after** explicit user action (e.g. “Sync to graph”, “Export session”, or “Persist accepted”) — exact trigger **TBD** in implementation plan.
+4. **Scope:** Persistence runs **after** explicit user action — **implemented** as **Sync to graph** in Graph review (optional **Include deferred**).
+
+**Implementation (current)**
+
+- **UI:** Graph review → **Sync to graph**; optional checkbox **Include deferred** (default: accepted items only).
+- **API:** `POST /api/sessions/[sessionId]/neo4j/sync` with body `{ "includeDeferred"?: boolean }`.
+- **Server:** `research/tools/openai-research-workspace/src/lib/server/neo4j-graph-persistence.ts` — entities matched in order: `candidateKeys` (`sessionId:candidateId`), overlapping `externalIds`, then `nameNorm` + `provisionalKind`; existing nodes are **enriched** (merged lists and attributes). Labels: `ResearchSession`, `Entity`; relationship types: `SESSION_INCLUDES_ENTITY`, `GRAPH_REL`.
+- **Env:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` — see [`research/tools/openai-research-workspace/README.md`](../../research/tools/openai-research-workspace/README.md) and [`docs/AZURE_BASELINE.md`](../AZURE_BASELINE.md) for App Service.
+- **Hosting:** Production uses **Neo4j Aura** (credentials in App Service application settings, not in source control).
+- **Bloom / other labels:** The workbench persists **`Entity`** / **`GRAPH_REL`** only. Neo4j Bloom perspectives that target **`Artist`**, **`IS_A`**, **`EntityType`**, etc. show a **separate** subgraph (ontology or other pipelines). Operators must query **`Entity`** (or add a Bloom perspective for `Entity` + `GRAPH_REL`) to see synced session data; unifying with `Artist` is a **normalization** follow-on.
 
 **Acceptance**
 
-- [ ] Accepted triplets (and agreed scope of entities) appear in Neo4j **as specified**.
-- [ ] Failed writes are **recoverable**; **composer** and in-progress edits **preserved** (aligns with G4).
+- [x] Accepted triplets (and agreed scope of entities) appear in Neo4j **as specified** (sync path above).
+- [x] Failed writes are **recoverable**; **composer** and in-progress edits **preserved** (aligns with G4) — sync does not mutate session JSON; errors surface in the workbench alert.
 
 ---
 
@@ -157,8 +166,8 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ## 10. Open questions
 
-1. **Neo4j hosting:** Aura vs self-hosted vs local dev — **environment** strategy.
-2. **Persistence trigger:** Automatic on each decision vs. explicit **batch sync** button.
+1. **Neo4j hosting:** **Aura** in production; local/dev uses the same env vars against Aura or a local instance — see README and `docs/AZURE_BASELINE.md`.
+2. **Persistence trigger:** **Resolved:** explicit **Sync to graph** (batch); automatic-on-decision remains optional for a later iteration.
 3. **Claims in Neo4j:** Properties on session node, text nodes, or omit entirely.
 4. **Graph library:** Cytoscape.js, D3, other — align with existing product patterns.
 

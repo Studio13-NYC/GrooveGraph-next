@@ -68,6 +68,12 @@
   max-width: 42ch;
 }
 
+.gg-next-alert--success {
+  border-color: color-mix(in srgb, var(--gg-route-blue) 45%, var(--ink));
+  background: color-mix(in srgb, var(--gg-route-blue) 12%, var(--paper));
+  color: var(--ink);
+}
+
 .gg-next-alert {
   margin: 0 auto;
   max-width: 1680px;
@@ -358,6 +364,40 @@
 .gg-next-cta:disabled {
   opacity: 0.65;
   cursor: not-allowed;
+}
+
+.gg-next-cta--secondary {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+.gg-next-cta--secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 6%, var(--paper));
+}
+
+.gg-next-graph-sync {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.gg-next-graph-sync-deferred {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--gg-slate);
+  cursor: pointer;
+  user-select: none;
+}
+
+.gg-next-graph-sync-deferred input {
+  accent-color: var(--ink);
 }
 
 .gg-next-index-past {

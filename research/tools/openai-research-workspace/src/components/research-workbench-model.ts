@@ -86,4 +86,7 @@ export type ResearchWorkbenchModel = {
     aliasIndex: number,
   ) => void;
   saveTripletEdit: (relationshipId: string) => Promise<void>;
+  isGraphSyncing: boolean;
+  graphSyncFeedback: string | null;
+  syncSessionToNeo4j: (options?: { includeDeferred?: boolean }) => Promise<void>;
 };

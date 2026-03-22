@@ -47,7 +47,10 @@ From repo root:
 .\scripts\deploy-appservice-research-workbench.ps1
 ```
 
-Requires App Service app settings (at minimum): `OPENAI_API_KEY` (see workspace server config).
+Requires App Service **application settings** (at minimum):
+
+- `OPENAI_API_KEY` — required for investigation turns (see workspace server config).
+- **Neo4j (for “Sync to graph”):** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, and **`NEO4J_DATABASE`** (Aura commonly sets this to the **instance id**, not `neo4j`). Omitting these disables server-side graph sync (the UI button returns a clear configuration error). Store values as **secrets** in Azure; do not commit credentials. **Neo4j Browser** must use the same database name as `NEO4J_DATABASE` or queries against `neo4j` will look empty.
 
 **Default route:** `https://groovegraph.s13.nyc/` serves the **research workbench** at **`/`** (same app as `http://localhost:3011/`). Older paths `/workbench-next` and `/classic` **308-redirect** to `/`.
 

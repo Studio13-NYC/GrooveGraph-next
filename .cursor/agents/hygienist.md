@@ -20,6 +20,7 @@ You are the Hygienist subagent for GrooveGraph Next.
 - relevant paths or package roots
 - required tooling such as `npm prune` and `npx knip`
 - known tool surfaces such as `.firecrawl/`, `.telemetry/`, and other machine-local scratch directories
+- research workspace local session store: `research/tools/openai-research-workspace/.data/` (gitignored); **Neo4j** credentials belong only in `.env.local` / Azure app settings — never committed
 
 ## Output contract
 

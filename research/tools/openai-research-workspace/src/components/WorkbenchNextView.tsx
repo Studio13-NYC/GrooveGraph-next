@@ -19,6 +19,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
   const [indexNavHydrated, setIndexNavHydrated] = useState(false);
   const [evidenceFieldNotesOpen, setEvidenceFieldNotesOpen] = useState(true);
   const [evidenceSourcesOpen, setEvidenceSourcesOpen] = useState(false);
+  const [includeDeferredInGraphSync, setIncludeDeferredInGraphSync] = useState(false);
 
   const {
     sessions,
@@ -52,6 +53,9 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     addTripletEntityAlias,
     removeTripletEntityAlias,
     saveTripletEdit,
+    isGraphSyncing,
+    graphSyncFeedback,
+    syncSessionToNeo4j,
   } = model;
 
   useEffect(() => {
@@ -94,6 +98,11 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
       </header>
 
       {error ? <div className="gg-next-alert">{error}</div> : null}
+      {graphSyncFeedback && !error ? (
+        <div className="gg-next-alert gg-next-alert--success" role="status">
+          {graphSyncFeedback}
+        </div>
+      ) : null}
 
       <div
         className="gg-next-body"
@@ -401,6 +410,29 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               <div className="gg-next-plate-heading">
                 <p className="gg-next-plate-kicker">Decision</p>
                 <h2 className="gg-next-plate-title">Graph review</h2>
+                {selectedSession ? (
+                  <div className="gg-next-graph-sync">
+                    <label className="gg-next-graph-sync-deferred">
+                      <input
+                        type="checkbox"
+                        checked={includeDeferredInGraphSync}
+                        onChange={(event) => setIncludeDeferredInGraphSync(event.target.checked)}
+                        disabled={isGraphSyncing || isBusy}
+                      />
+                      <span>Include deferred</span>
+                    </label>
+                    <button
+                      type="button"
+                      className="gg-next-cta gg-next-cta--secondary"
+                      disabled={isGraphSyncing || isBusy}
+                      onClick={() =>
+                        void syncSessionToNeo4j({ includeDeferred: includeDeferredInGraphSync })
+                      }
+                    >
+                      {isGraphSyncing ? "Syncing…" : "Sync to graph"}
+                    </button>
+                  </div>
+                ) : null}
               </div>
               {selectedSession ? (
                 <div className="gg-next-review-stack">

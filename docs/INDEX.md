@@ -4,7 +4,7 @@
 
 | File | Purpose |
 |---|---|
-| `product/RESEARCH_WORKBENCH_PRD.md` | PRD: research workbench — triplet UX → Neo4j persistence → session graph visualization |
+| `product/RESEARCH_WORKBENCH_PRD.md` | PRD: research workbench — triplet UX → Neo4j persistence (Sync to graph; see PRD §7 Phase 2) → session graph visualization |
 
 ## Canonical docs
 

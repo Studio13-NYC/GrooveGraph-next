@@ -54,3 +54,9 @@ Local JSONL cost summaries are necessary but not sufficient. The framework now e
 ### D010 - ProductManager lane
 
 Discovery-first product definition is now a first-class lane rather than an implicit orchestrator duty. A dedicated `product-manager` subagent owns legacy-product archaeology, hero-workflow framing, and recommendations for flexible graph persistence before ontology hardening, using `GPT-5.4-mini` because the work is bounded synthesis rather than top-level final judgment.
+
+## 2026-03-21
+
+### D011 - Research workbench Neo4j persistence (Phase 2)
+
+The OpenAI research workbench (`research/tools/openai-research-workspace`) persists accepted (and optionally deferred) graph candidates to **Neo4j Aura** on explicit **Sync to graph**, using labels **`Entity`**, **`ResearchSession`**, and relationship types **`GRAPH_REL`**, **`SESSION_INCLUDES_ENTITY`**. Entity upsert matches by session candidate key, overlapping external IDs, then normalized name + kind, and **enriches** existing nodes. Operators must use the Aura **`NEO4J_DATABASE`** (often the instance id) in Browser/Bloom; **Bloom** perspectives on **`Artist`** / **`IS_A`** are a **separate** subgraph from workbench **`Entity`** data until a normalization step links them.

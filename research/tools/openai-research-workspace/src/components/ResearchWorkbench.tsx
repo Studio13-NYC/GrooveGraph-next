@@ -31,6 +31,8 @@ export function ResearchWorkbench() {
   const [tripletEditDraft, setTripletEditDraft] = useState<TripletEditDraft | null>(null);
   const [savingTripletId, setSavingTripletId] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const [isGraphSyncing, setIsGraphSyncing] = useState(false);
+  const [graphSyncFeedback, setGraphSyncFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   /** Discovery share of the split between Investigation and Review (Review gets the remainder). PRD: ~60–70% Review by default. */
   const [leftColumnFraction, setLeftColumnFraction] = useState(0.35);
@@ -110,6 +112,10 @@ export function ResearchWorkbench() {
 
   useEffect(() => {
     setTripletEditDraft(null);
+  }, [selectedSessionId]);
+
+  useEffect(() => {
+    setGraphSyncFeedback(null);
   }, [selectedSessionId]);
 
   useEffect(() => {
@@ -411,6 +417,67 @@ export function ResearchWorkbench() {
     });
   }
 
+  async function syncSessionToNeo4j(options?: { includeDeferred?: boolean }) {
+    if (!selectedSession) {
+      return;
+    }
+
+    setError(null);
+    setGraphSyncFeedback(null);
+    setIsGraphSyncing(true);
+    try {
+      const response = await fetch(`/api/sessions/${selectedSession.id}/neo4j/sync`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ includeDeferred: Boolean(options?.includeDeferred) }),
+      });
+      const data = (await response.json()) as
+        | {
+            ok: true;
+            result: {
+              database: string;
+              entitiesUpserted: number;
+              relationshipsUpserted: number;
+              skippedRelationships: { relationshipId: string; reason: string }[];
+              sessionSnapshot: {
+                entityCandidates: number;
+                relationshipCandidates: number;
+                entitiesAccepted: number;
+                entitiesDeferred: number;
+                relationshipsAccepted: number;
+                relationshipsDeferred: number;
+              };
+              hint?: string;
+            };
+          }
+        | { ok: false; error: string };
+
+      if (!response.ok || !data.ok) {
+        throw new Error("error" in data ? data.error : "Neo4j sync failed.");
+      }
+
+      const { result } = data;
+      const skipped = result.skippedRelationships.length;
+      const parts = [
+        `Wrote ${result.entitiesUpserted} entities and ${result.relationshipsUpserted} relationships to database "${result.database}".`,
+        `Session: ${result.sessionSnapshot.entitiesAccepted} accepted / ${result.sessionSnapshot.entitiesDeferred} deferred entities; ${result.sessionSnapshot.relationshipsAccepted} accepted / ${result.sessionSnapshot.relationshipsDeferred} deferred relationships among candidates.`,
+      ];
+      if (skipped > 0) {
+        parts.push(`${skipped} relationship(s) skipped (see server result for reasons).`);
+      }
+      if (result.hint) {
+        parts.push(result.hint);
+      }
+      setGraphSyncFeedback(parts.join(" "));
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Neo4j sync failed.");
+    } finally {
+      setIsGraphSyncing(false);
+    }
+  }
+
   async function saveTripletEdit(relationshipId: string) {
     if (savingTripletId || tripletEditDraft?.relationshipId !== relationshipId) {
       return;
@@ -509,6 +576,9 @@ export function ResearchWorkbench() {
     addTripletEntityAlias,
     removeTripletEntityAlias,
     saveTripletEdit,
+    isGraphSyncing,
+    graphSyncFeedback,
+    syncSessionToNeo4j,
   };
 
   return <WorkbenchNextView model={model} />;

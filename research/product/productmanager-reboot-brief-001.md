@@ -4,18 +4,18 @@
 
 - Lane: `product-manager`
 - Date: `2026-03-18`
-- Scope: discovery-first reboot framing from the legacy `GrooveGraph` repo
-- Source boundary: read-only legacy repo, writable framework research artifact
+- Scope: discovery-first reboot framing from historical product context and in-repo goals
+- Source boundary: canonical docs and this repository only; writable research artifact under `research/product/`
 
 ## Context packet
 
 ```yaml
 goal: >
-  Produce the first ProductManager-style discovery-first reboot brief from the
-  legacy GrooveGraph repo.
+  Produce the first ProductManager-style discovery-first reboot brief using
+  canonical docs and this repository as the only source boundary.
 why_now: >
-  GrooveGraph-next is adding a canonical product-manager lane and needs a
-  durable research artifact to define the new GrooveGraph path.
+  GrooveGraph Next is adding a canonical product-manager lane and needs a
+  durable research artifact to define the product path.
 tracking:
   session_id: productmanager-bootstrap
   chunk_id: reboot-brief-001
@@ -24,13 +24,9 @@ scope:
   writable:
     - research/product/
   readable:
-    - ../GrooveGraph/README.md
-    - ../GrooveGraph/docs/FUNCTIONAL_SPEC.md
-    - ../GrooveGraph/docs/PRD_FUZZY.md
-    - ../GrooveGraph/docs/briefing.md
-    - ../GrooveGraph/docs/uat.md
-    - ../GrooveGraph/docs/ENRICHMENT_PROCESS.md
-    - ../GrooveGraph/frontend/app
+    - docs/
+    - AGENTS.md
+    - docs/product/
 constraints:
   - Do not preserve the old ontology blindly.
   - Keep phase 1 discovery-first.

@@ -1,12 +1,16 @@
-# Reference Boundary
+---
+description: Canonical work happens only in this repository; no external legacy codebase is a dependency.
+---
 
-The legacy `GrooveGraph` repository is read-only reference material for GrooveGraph Next.
+# Reference boundary
+
+**This repository** is the source of truth for GrooveGraph Next: docs, rules, skills, framework code, research artifacts, and product surfaces.
 
 ## Rules
 
-- Do not treat legacy files as the new source of truth.
-- Do not port old rules or prompts without explicit review.
+- Prefer in-repo docs and code over informal external notes.
+- Do not port prompts or rules from outside this repo without explicit review.
 - Distinguish clearly between:
-  - read-only research inputs
-  - writable framework outputs
-- Prefer fresh structure over inherited complexity.
+  - read-only external references (public specs, vendor docs, design PDFs)
+  - writable framework and product outputs in this tree
+- Prefer clear structure in this repo over inherited complexity from elsewhere.

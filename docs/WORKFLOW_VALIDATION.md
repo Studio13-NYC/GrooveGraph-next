@@ -233,7 +233,7 @@ Validation method:
 
 - added a dedicated `product-manager` lane to the framework surfaces
 - updated the typed registry, routing mirrors, orchestration docs, and headcount runbook to include the new lane
-- executed one bounded ProductManager-style research packet against the legacy `GrooveGraph` repo
+- executed one bounded ProductManager-style research packet (in-repo discovery and `research/product/` artifact)
 
 Observed result:
 

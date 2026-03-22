@@ -4,10 +4,8 @@ This repository is the writable framework surface for the next GrooveGraph era.
 
 ## Repo boundary
 
-- The legacy `GrooveGraph` repository is reference-only.
-- Do not copy its rules or prompts blindly.
-- Reuse only ideas that survive explicit review.
-- The source of truth for this repo lives here, not in the legacy project.
+- **This repository** is the sole writable source of truth for GrooveGraph Next work.
+- Canonical policy, skills, agents, docs, and code live here—not in a sibling or external codebase.
 
 ## Hierarchy
 

@@ -1,36 +1,21 @@
-# GitHub Strategy
+# GitHub strategy
 
 ## Position
 
-`GrooveGraph Next` should be established as a successor project, not as an in-place continuation of the legacy repository.
+**GrooveGraph Next** is developed in **this repository** as the single canonical remote and working tree. There is no parallel or legacy repository that agents, scripts, or docs should treat as a dependency.
 
-## Recommended approach
+## Current practice
 
-1. Create a new GitHub repository for `GrooveGraph Next`.
-2. Describe the legacy `GrooveGraph` repo as reference material and predecessor work.
-3. Keep a clean paper trail for what is newly authored here versus what was learned elsewhere.
-
-## Why
-
-- the new framework has different boundaries and authority
-- the old repo is valuable as evidence, but not as the implementation substrate
-- a new repo makes the clean-room discipline obvious to humans and tools
-
-## Suggested remote setup
-
-- default repo name: `GrooveGraph-next`
-- default branch: `main`
-- local path: sibling to the old repo
-- old repo remains unchanged except for retrospective documentation
+- **Default branch:** `main`
+- **Canonical org remote:** use the Studio13 org URL shown by `git remote -v` (GitHub may display a redirect notice if the remote was renamed—prefer the canonical `Studio13-NYC/GrooveGraph-next` location when updating remotes)
+- **Scope:** all framework docs, `.cursor/` agents and rules, `framework/`, `product/`, `research/`, and deployment scripts live here
 
 ## README language
 
-When the remote is created, include language like:
-
-> GrooveGraph Next is a clean-start successor framework. The legacy GrooveGraph repository remains available as historical and architectural reference.
+The root **README** and **AGENTS** describe this repo as the only writable source of truth for GrooveGraph Next. Do not document a “predecessor repo” or sibling clone path as required reading.
 
 ## Before pushing
 
-- confirm the new repo name
-- confirm whether you want a public or private remote
-- decide whether to link the predecessor repo directly in the README
+- confirm branch and remote
+- confirm public vs private visibility policy for the org
+- never commit secrets (use `.env.example` patterns and Azure app settings)

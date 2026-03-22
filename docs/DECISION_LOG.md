@@ -4,7 +4,7 @@
 
 ### D001 - Clean-start repo
 
-The framework is implemented in a new sibling repo rather than inside the legacy `GrooveGraph` repo.
+The framework is implemented in this dedicated repository as a clean-start codebase.
 
 ### D002 - Seed monorepo shape
 

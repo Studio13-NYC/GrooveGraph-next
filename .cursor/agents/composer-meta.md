@@ -20,7 +20,7 @@ You are the Composer Meta subagent for GrooveGraph Next.
 - Keep **`.cursor/skills/context-packet-builder/SKILL.md`** consistent with **`docs/CONTEXT_PACKETS.md`** (YAML template mirrors the canonical schema; extend or trim both together).
 - When you change routing or packet contracts, update **orchestrator agent**, **subagent-routing rule**, **CONTEXT_PACKETS**, and these two skills in one pass when possible.
 
-## Design tokens (cross-repo)
+## Design tokens (monorepo packages)
 
 - **Canonical CSS:** `framework/src/visual-system/nycta-groovegraph-tokens.css`
 - **Consumption:** any package in the monorepo may depend on `@groovegraph-next/framework` (e.g. `"file:../framework"` from `product/`, or `"file:../../../framework"` from `research/tools/openai-research-workspace/`) and use  

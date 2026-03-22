@@ -99,9 +99,9 @@ constraints:
   - Avoid generic SaaS visual language.
 reference_boundary:
   read_only:
-    - legacy GrooveGraph repo
+    - external design PDFs or vendor docs (when cited)
   writable:
-    - GrooveGraph Next repo
+    - this repository (docs, research, framework, product, research/tools)
 expected_output:
   format: brief
   must_include:

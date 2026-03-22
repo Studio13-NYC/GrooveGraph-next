@@ -88,7 +88,7 @@ Per the blueprint, the framework layer should avoid product-domain specifics whe
 | `AGENTS.md` | "GrooveGraph Next Operating Contract", "GrooveGraph era" | Acceptable for this repo; fork replaces |
 | `docs/AGENT_ORCHESTRATION.md` | "GrooveGraph Next" in purpose | Same |
 | `docs/MODEL_ROUTING.md` | "GrooveGraph Next" in canonical source | Same |
-| `docs/CONTEXT_PACKETS.md` | Example: "legacy GrooveGraph repo", "GrooveGraph Next repo" | Add templating note for forks |
+| `docs/CONTEXT_PACKETS.md` | Example `reference_boundary` uses this repo only | Forks replace org names |
 | `.cursor/agents/*.md` | "for GrooveGraph Next" in descriptions | Same; fork does find-replace |
 | `.cursor/rules/subagent-routing.mdc` | "GrooveGraph Next work" | Same |
 

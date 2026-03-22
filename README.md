@@ -1,8 +1,8 @@
 # GrooveGraph Next
 
-`GrooveGraph Next` is a clean-start, workflow-first framework for building a new GrooveGraph successor.
+`GrooveGraph Next` is a clean-start, workflow-first framework for the GrooveGraph product direction.
 
-This repository is intentionally separate from the legacy `GrooveGraph` codebase. The older project is treated as read-only reference material for lessons, examples, and constraints. This repo is the writable surface for the new orchestration system, policy layer, context-passing contracts, visual system, and future product foundation.
+**This repository** is the canonical home for orchestration, policy, context-passing contracts, visual system, research tools, and product foundation. Do not depend on or sync against any other GrooveGraph-named codebase outside this repo.
 
 ## What lives here
 
@@ -16,7 +16,7 @@ This repository is intentionally separate from the legacy `GrooveGraph` codebase
 - `framework/`: first implementation target for orchestration utilities and reusable support code
 - `product/`: smoke test app, static styleguides (`public/`), and SWA sibling (`swa-smoke/`)
 - `prototypes/`: experiments and disposable spikes
-- `research/`: distilled findings from the legacy repo and external references
+- `research/`: validation evidence, experimental tools, and distilled findings
 
 ## Default operating stance
 

@@ -2,8 +2,7 @@
 
 This directory holds distilled notes, references, and extracted lessons from:
 
-- the legacy `GrooveGraph` repository
-- external GitHub examples
+- external GitHub examples and public specs where cited
 - design-system references
 - research tools and experimental workspaces used to validate future product directions
 - validation evidence for those experimental workspaces before anything graduates into `product/`

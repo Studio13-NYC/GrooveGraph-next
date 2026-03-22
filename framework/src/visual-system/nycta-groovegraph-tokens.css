@@ -65,6 +65,7 @@
   --gg-radius-r4: 28px;
   --gg-radius-r5: 40px;
 
+  /* Baseline sans: matches docs/design-language/groovegraph-design-system.fig */
   --gg-font-sans: "Helvetica Neue", Helvetica, Arial, "Nimbus Sans L", sans-serif;
   --gg-type-grid-1: 0.8125rem;
   --gg-type-grid-2: 1.125rem;

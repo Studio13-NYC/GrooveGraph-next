@@ -1,7 +1,6 @@
 "use client";
 
-import type { Ref } from "react";
-import Link from "next/link";
+import { useEffect, useState, type ReactNode, type Ref } from "react";
 import type { ResearchWorkbenchModel } from "./research-workbench-model";
 import { formatTimestamp } from "./research-workbench-utils";
 import {
@@ -13,7 +12,14 @@ import {
   TripletEntitySummary,
 } from "./research-workbench-widgets";
 
+const INDEX_NAV_COLLAPSED_KEY = "gg-workbench-index-nav-collapsed";
+
 export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) {
+  const [indexNavCollapsed, setIndexNavCollapsed] = useState(false);
+  const [indexNavHydrated, setIndexNavHydrated] = useState(false);
+  const [evidenceFieldNotesOpen, setEvidenceFieldNotesOpen] = useState(true);
+  const [evidenceSourcesOpen, setEvidenceSourcesOpen] = useState(false);
+
   const {
     sessions,
     selectedSessionId,
@@ -48,9 +54,30 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     saveTripletEdit,
   } = model;
 
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(INDEX_NAV_COLLAPSED_KEY);
+      if (raw === "1" || raw === "true") {
+        setIndexNavCollapsed(true);
+      }
+    } finally {
+      setIndexNavHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!indexNavHydrated) {
+      return;
+    }
+    localStorage.setItem(INDEX_NAV_COLLAPSED_KEY, indexNavCollapsed ? "1" : "0");
+  }, [indexNavCollapsed, indexNavHydrated]);
+
+  const canCollapseIndex = !isNarrowWorkspaceLayout;
+  const indexCollapsed = canCollapseIndex && indexNavCollapsed;
+
   const directionalLine = selectedSession
-    ? `Active line: ${selectedSession.title} · Updated ${formatTimestamp(selectedSession.updatedAt)}`
-    : "Directional: select an existing session or open a new line to begin.";
+    ? `Active session: ${selectedSession.title} · Updated ${formatTimestamp(selectedSession.updatedAt)}`
+    : "Select a session or open a new one to begin.";
 
   return (
     <main className="gg-next-root">
@@ -60,46 +87,13 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
           <div className="gg-next-masthead-id">
             <p className="gg-next-kicker">Identification</p>
             <h1 className="gg-next-product">GrooveGraph</h1>
-            <p className="gg-next-regime">Research operations · Next regime</p>
+            <p className="gg-next-regime">Research workbench</p>
           </div>
           <p className="gg-next-directional">{directionalLine}</p>
-          <Link className="gg-next-classic-link" href="/classic">
-            Classic workspace
-          </Link>
         </div>
       </header>
 
       {error ? <div className="gg-next-alert">{error}</div> : null}
-
-      <figure className="gg-next-schematic" aria-label="Workflow schematic">
-        <svg viewBox="0 0 720 56" className="gg-next-schematic-svg" role="img">
-          <title>Session to claims flow</title>
-          <path
-            d="M 24 40 L 120 40 L 152 8 L 280 8 L 312 40 L 400 40 L 432 8 L 560 8 L 592 40 L 696 40"
-            fill="none"
-            stroke="var(--gg-ink)"
-            strokeWidth="var(--gg-route-stroke-hairline)"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            opacity="0.45"
-          />
-          <circle cx="24" cy="40" r="5" fill="var(--paper)" stroke="var(--gg-ink)" strokeWidth="2" />
-          <circle cx="360" cy="40" r="6" fill="var(--paper)" stroke="var(--gg-route-orange)" strokeWidth="3" />
-          <circle cx="696" cy="40" r="5" fill="var(--paper)" stroke="var(--gg-ink)" strokeWidth="2" />
-          <text x="12" y="52" className="gg-next-sch-label">
-            Session
-          </text>
-          <text x="248" y="52" className="gg-next-sch-label">
-            Investigate
-          </text>
-          <text x="328" y="52" className="gg-next-sch-label">
-            Interchange
-          </text>
-          <text x="520" y="52" className="gg-next-sch-label">
-            Review
-          </text>
-        </svg>
-      </figure>
 
       <div
         className="gg-next-body"
@@ -108,73 +102,151 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
           display: "grid",
           gridTemplateColumns: isNarrowWorkspaceLayout
             ? "minmax(0, 1fr)"
-            : `minmax(260px, 0.28fr) minmax(0, ${leftColumnFraction}fr) 12px minmax(0, ${1 - leftColumnFraction}fr)`,
+            : indexCollapsed
+              ? `56px minmax(0, ${leftColumnFraction}fr) 12px minmax(0, ${1 - leftColumnFraction}fr)`
+              : `minmax(260px, 0.28fr) minmax(0, ${leftColumnFraction}fr) 12px minmax(0, ${1 - leftColumnFraction}fr)`,
           gap: isNarrowWorkspaceLayout ? "16px" : "0 12px",
           alignItems: "stretch",
         }}
       >
-        <aside className="gg-next-rail" aria-label="Session lines">
-          <div className="gg-next-plate gg-next-plate--rail">
-            <div className="gg-next-plate-band" aria-hidden />
-            <div className="gg-next-plate-inner">
-              <p className="gg-next-plate-kicker">New line</p>
-              <label className="gg-next-field">
-                <span className="gg-next-field-label">Seed</span>
-                <input
-                  value={seedQuery}
-                  onChange={(e) => setSeedQuery(e.target.value)}
-                  placeholder="Artist, URL, question"
-                  className="gg-next-input"
-                />
-              </label>
+        {indexCollapsed ? (
+          <aside
+            id="gg-next-index-panel"
+            className="gg-next-rail gg-next-rail--collapsed"
+            aria-label="Session index"
+          >
+            <div className="gg-next-rail-collapsed-inner">
               <button
                 type="button"
-                className="gg-next-cta"
+                className="gg-next-rail-toggle"
+                onClick={() => setIndexNavCollapsed(false)}
+                aria-expanded={false}
+                aria-controls="gg-next-index-panel"
+                title="Expand index"
+              >
+                <span className="gg-next-rail-toggle-icon" aria-hidden>
+                  »
+                </span>
+                <span className="gg-next-sr-only">Expand session index</span>
+              </button>
+              <button
+                type="button"
+                className="gg-next-cta gg-next-cta--rail-icon"
                 onClick={() => void createSession()}
                 disabled={isBusy}
+                title="Open session (expand index to edit seed)"
+                aria-label="Open session"
               >
-                {isBusy ? "Opening…" : "Open route"}
+                {isBusy ? "…" : "+"}
               </button>
+              <ul className="gg-next-index-collapsed-list" aria-label="Past sessions">
+                {sessions.map((session) => {
+                  const active = selectedSessionId === session.id;
+                  return (
+                    <li key={session.id}>
+                      <button
+                        type="button"
+                        className={`gg-next-index-icon${active ? " gg-next-index-icon--active" : ""}`}
+                        onClick={() => setSelectedSessionId(session.id)}
+                        title={`${session.title} · ${formatTimestamp(session.updatedAt)}`}
+                        aria-label={`${session.title}, ${formatTimestamp(session.updatedAt)}`}
+                        aria-current={active ? "true" : undefined}
+                      >
+                        <span className="gg-next-index-disc" aria-hidden />
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
-          </div>
-          <ul className="gg-next-line-list">
-            {sessions.length === 0 ? (
-              <li className="gg-next-line-empty">
-                <EmptyState className="gg-next-empty" text="No lines yet." />
-              </li>
-            ) : (
-              sessions.map((session) => {
-                const active = selectedSessionId === session.id;
-                return (
-                  <li key={session.id}>
-                    <button
-                      type="button"
-                      className={`gg-next-line-stop${active ? " gg-next-line-stop--active" : ""}`}
-                      onClick={() => setSelectedSessionId(session.id)}
-                    >
-                      <span className="gg-next-line-dot" aria-hidden />
-                      <span className="gg-next-line-copy">
-                        <span className="gg-next-line-title">{session.title}</span>
-                        <span className="gg-next-line-meta">{formatTimestamp(session.updatedAt)}</span>
-                      </span>
-                    </button>
+          </aside>
+        ) : (
+          <aside id="gg-next-index-panel" className="gg-next-rail" aria-label="Session index">
+            {canCollapseIndex ? (
+              <div className="gg-next-rail-tools">
+                <button
+                  type="button"
+                  className="gg-next-rail-toggle"
+                  onClick={() => setIndexNavCollapsed(true)}
+                  aria-expanded={true}
+                  aria-controls="gg-next-index-panel"
+                  title="Collapse index"
+                >
+                  <span className="gg-next-rail-toggle-icon" aria-hidden>
+                    «
+                  </span>
+                  <span className="gg-next-sr-only">Collapse session index</span>
+                </button>
+              </div>
+            ) : null}
+            <div className="gg-next-plate gg-next-plate--rail">
+              <div className="gg-next-plate-band" aria-hidden />
+              <div className="gg-next-plate-inner">
+                <p className="gg-next-plate-kicker">New session</p>
+                <label className="gg-next-field">
+                  <span className="gg-next-field-label">Seed</span>
+                  <input
+                    value={seedQuery}
+                    onChange={(e) => setSeedQuery(e.target.value)}
+                    placeholder="Artist, URL, question"
+                    className="gg-next-input"
+                  />
+                </label>
+                <button
+                  type="button"
+                  className="gg-next-cta"
+                  onClick={() => void createSession()}
+                  disabled={isBusy}
+                >
+                  {isBusy ? "Opening…" : "Open session"}
+                </button>
+              </div>
+            </div>
+            <details className="gg-next-index-past">
+              <summary className="gg-next-index-past-summary">
+                <span className="gg-next-index-past-label">Past sessions</span>
+                <span className="gg-next-badge">{sessions.length}</span>
+              </summary>
+              <ul className="gg-next-index-list" aria-label="Past sessions">
+                {sessions.length === 0 ? (
+                  <li className="gg-next-index-empty">
+                    <EmptyState className="gg-next-empty" text="No sessions yet." />
                   </li>
-                );
-              })
-            )}
-          </ul>
-        </aside>
+                ) : (
+                  sessions.map((session) => {
+                    const active = selectedSessionId === session.id;
+                    return (
+                      <li key={session.id}>
+                        <button
+                          type="button"
+                          className={`gg-next-index-item${active ? " gg-next-index-item--active" : ""}`}
+                          onClick={() => setSelectedSessionId(session.id)}
+                        >
+                          <span className="gg-next-index-disc" aria-hidden />
+                          <span className="gg-next-index-copy">
+                            <span className="gg-next-index-title">{session.title}</span>
+                            <span className="gg-next-index-meta">{formatTimestamp(session.updatedAt)}</span>
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })
+                )}
+              </ul>
+            </details>
+          </aside>
+        )}
 
         <div className="gg-next-corridor gg-next-corridor--discovery">
           <section className="gg-next-plate gg-next-plate--hero">
             <div
-              className="gg-next-plate-band gg-next-plate-band--route"
+              className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--orange-route)" }}
               aria-hidden
             />
             <div className="gg-next-plate-inner gg-next-plate-inner--grow">
               <div className="gg-next-plate-heading">
-                <p className="gg-next-plate-kicker">Research route</p>
+                <p className="gg-next-plate-kicker">Primary module</p>
                 <h2 className="gg-next-plate-title">Investigation</h2>
               </div>
               {selectedSession ? (
@@ -229,29 +301,31 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               ) : (
                 <EmptyState
                   className="gg-next-empty"
-                  text="Select or open a line to enter the investigation corridor."
+                  text="Select or open a session to use the investigation module."
                 />
               )}
             </div>
           </section>
 
-          <section className="gg-next-plate">
+          <section className="gg-next-plate gg-next-plate--evidence">
             <div
-              className="gg-next-plate-band gg-next-plate-band--route"
+              className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--blue-route)" }}
               aria-hidden
             />
-            <div className="gg-next-plate-inner">
+            <div className="gg-next-plate-inner gg-next-plate-inner--grow">
               <div className="gg-next-plate-heading">
                 <p className="gg-next-plate-kicker">Informational support</p>
                 <h2 className="gg-next-plate-title">Evidence</h2>
               </div>
-              <div className="gg-next-evidence-grid">
-                <div className="gg-next-evidence-cell">
-                  <div className="gg-next-evidence-head">
-                    <span>Field notes</span>
-                    <span className="gg-next-badge">{selectedSession?.notes.length ?? 0}</span>
-                  </div>
+              <div className="gg-next-evidence-stack">
+                <EvidenceCollapsibleSection
+                  sectionId="evidence-field-notes"
+                  title="Field notes"
+                  count={selectedSession?.notes.length ?? 0}
+                  open={evidenceFieldNotesOpen}
+                  onToggle={() => setEvidenceFieldNotesOpen((v) => !v)}
+                >
                   {selectedSession?.notes.length ? (
                     <ul className="gg-next-notes">
                       {selectedSession.notes.map((note, index) => (
@@ -261,42 +335,40 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                   ) : (
                     <EmptyState className="gg-next-empty" text="Notes appear as the model records them." />
                   )}
-                </div>
-                <div className="gg-next-evidence-cell">
-                  <details className="gg-next-sources">
-                    <summary className="gg-next-sources-summary">
-                      <span>Sources</span>
-                      <span className="gg-next-badge">{selectedSession?.sources.length ?? 0}</span>
-                    </summary>
-                    <div className="gg-next-sources-body">
-                      {selectedSession?.sources.length ? (
-                        <div className="gg-next-source-stack">
-                          {selectedSession.sources.map((source) => (
-                            <article key={source.id} className="gg-next-source-card">
-                              <a
-                                href={source.url}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="support-source-title"
-                              >
-                                {source.title}
-                              </a>
-                              <p className="support-source-url">{source.url}</p>
-                              {source.citationText ? (
-                                <p className="support-source-citation">{source.citationText}</p>
-                              ) : null}
-                            </article>
-                          ))}
-                        </div>
-                      ) : (
-                        <EmptyState
-                          className="gg-next-empty"
-                          text="Cited sources appear after web search."
-                        />
-                      )}
+                </EvidenceCollapsibleSection>
+                <EvidenceCollapsibleSection
+                  sectionId="evidence-sources"
+                  title="Sources"
+                  count={selectedSession?.sources.length ?? 0}
+                  open={evidenceSourcesOpen}
+                  onToggle={() => setEvidenceSourcesOpen((v) => !v)}
+                >
+                  {selectedSession?.sources.length ? (
+                    <div className="gg-next-source-stack">
+                      {selectedSession.sources.map((source) => (
+                        <article key={source.id} className="gg-next-source-card">
+                          <a
+                            href={source.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="support-source-title"
+                          >
+                            {source.title}
+                          </a>
+                          <p className="support-source-url">{source.url}</p>
+                          {source.citationText ? (
+                            <p className="support-source-citation">{source.citationText}</p>
+                          ) : null}
+                        </article>
+                      ))}
                     </div>
-                  </details>
-                </div>
+                  ) : (
+                    <EmptyState
+                      className="gg-next-empty"
+                      text="Cited sources appear after web search."
+                    />
+                  )}
+                </EvidenceCollapsibleSection>
               </div>
             </div>
           </section>
@@ -306,28 +378,28 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
           <div
             role="separator"
             aria-orientation="vertical"
-            aria-label="Resize corridors"
+            aria-label="Resize split"
             tabIndex={-1}
-            className={`gg-next-interchange${isMainGridResizing ? " gg-next-interchange--active" : ""}`}
+            className={`gg-next-split${isMainGridResizing ? " gg-next-split--active" : ""}`}
             onPointerDown={beginMainGridResize}
           >
-            <span className="gg-next-interchange-cap" aria-hidden />
-            <span className="gg-next-interchange-ring" aria-hidden />
-            <span className="gg-next-interchange-cap" aria-hidden />
-            <span className="gg-next-interchange-tag">Transfer</span>
+            <span className="gg-next-split-cap" aria-hidden />
+            <span className="gg-next-split-ring" aria-hidden />
+            <span className="gg-next-split-cap" aria-hidden />
+            <span className="gg-next-split-tag">Split</span>
           </div>
         ) : null}
 
         <div className="gg-next-corridor gg-next-corridor--review">
           <section className="gg-next-plate">
             <div
-              className="gg-next-plate-band gg-next-plate-band--route"
+              className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--magenta-route)" }}
               aria-hidden
             />
             <div className="gg-next-plate-inner">
               <div className="gg-next-plate-heading">
-                <p className="gg-next-plate-kicker">Decision route</p>
+                <p className="gg-next-plate-kicker">Decision</p>
                 <h2 className="gg-next-plate-title">Graph review</h2>
               </div>
               {selectedSession ? (
@@ -467,19 +539,19 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               ) : (
                 <EmptyState
                   className="gg-next-empty"
-                  text="Select a line to review provisional graph artifacts."
+                  text="Select a session to review provisional graph artifacts."
                 />
               )}
             </div>
           </section>
 
-          <section className="gg-next-plate">
+          <section className="gg-next-plate gg-next-plate--claims">
             <div
-              className="gg-next-plate-band gg-next-plate-band--route"
+              className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--yellow-route)" }}
               aria-hidden
             />
-            <div className="gg-next-plate-inner">
+            <div className="gg-next-plate-inner gg-next-plate-inner--grow">
               <div className="gg-next-plate-heading">
                 <p className="gg-next-plate-kicker">Supporting review</p>
                 <h2 className="gg-next-plate-title">Claims</h2>
@@ -513,5 +585,61 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
         </div>
       </div>
     </main>
+  );
+}
+
+/** Evidence plate: one stacked section (Field notes or Sources). Spec: docs/product/RESEARCH_WORKBENCH_PRD.md Phase 1 §6–7. */
+function EvidenceCollapsibleSection({
+  sectionId,
+  title,
+  count,
+  open,
+  onToggle,
+  children,
+}: {
+  sectionId: string;
+  title: string;
+  count: number;
+  open: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) {
+  const headerId = `${sectionId}-header`;
+  const panelId = `${sectionId}-panel`;
+  return (
+    <div className={`gg-next-evidence-section${open ? " gg-next-evidence-section--open" : ""}`}>
+      <button
+        type="button"
+        id={headerId}
+        className="gg-next-evidence-section-header"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={onToggle}
+      >
+        <span className="gg-next-evidence-section-chevron" aria-hidden>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path
+              d="M6 9l6 6 6-6"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </span>
+        <span className="gg-next-evidence-section-title">{title}</span>
+        <span className="gg-next-badge">{count}</span>
+      </button>
+      {open ? (
+        <div
+          id={panelId}
+          role="region"
+          aria-labelledby={headerId}
+          className="gg-next-evidence-panel-scroll"
+        >
+          {children}
+        </div>
+      ) : null}
+    </div>
   );
 }

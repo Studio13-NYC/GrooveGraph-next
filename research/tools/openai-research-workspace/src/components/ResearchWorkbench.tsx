@@ -10,30 +10,20 @@ import type {
 } from "@/src/types/research-session";
 import type {
   ResearchWorkbenchModel,
-  TripletCandidate,
   TripletEditDraft,
   WorkspaceResponse,
 } from "./research-workbench-model";
 import {
   clamp,
   fetchJson,
-  formatTimestamp,
   normalizeAliases,
 } from "./research-workbench-utils";
-import {
-  DecisionRow,
-  EmptyState,
-  LaneSection,
-  MarkdownMessage,
-  MiniAction,
-  StatusBar,
-  TripletEntitySummary,
-} from "./research-workbench-widgets";
 import { WorkbenchNextView } from "./WorkbenchNextView";
 
-type ResearchWorkbenchVariant = "classic" | "next";
+/** Persists column split; key string kept for existing browser localStorage. */
+const WORKBENCH_SPLIT_STORAGE_KEY = "gg-workbench-next-split-fraction";
 
-export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchWorkbenchVariant }) {
+export function ResearchWorkbench() {
   const [sessions, setSessions] = useState<ResearchSession[]>([]);
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
   const [seedQuery, setSeedQuery] = useState("Prince");
@@ -42,7 +32,9 @@ export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchW
   const [savingTripletId, setSavingTripletId] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [leftColumnFraction, setLeftColumnFraction] = useState(0.6);
+  /** Discovery share of the split between Investigation and Review (Review gets the remainder). PRD: ~60–70% Review by default. */
+  const [leftColumnFraction, setLeftColumnFraction] = useState(0.35);
+  const [splitFractionHydrated, setSplitFractionHydrated] = useState(false);
   const [isMainGridResizing, setIsMainGridResizing] = useState(false);
   const [isNarrowWorkspaceLayout, setIsNarrowWorkspaceLayout] = useState(false);
   const latestAssistantMessageRef = useRef<HTMLElement | null>(null);
@@ -58,7 +50,7 @@ export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchW
     [selectedSessionId, sessions],
   );
 
-  const tripletCandidates = useMemo<TripletCandidate[]>(() => {
+  const tripletCandidates = useMemo(() => {
     if (!selectedSession) {
       return [];
     }
@@ -89,8 +81,6 @@ export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchW
     setSessions(data.sessions);
     if (nextSelectedSessionId) {
       setSelectedSessionId(nextSelectedSessionId);
-    } else if (!selectedSessionId && data.sessions[0]) {
-      setSelectedSessionId(data.sessions[0].id);
     }
   }
 
@@ -98,6 +88,25 @@ export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchW
     void refreshSessions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+    const raw = window.localStorage.getItem(WORKBENCH_SPLIT_STORAGE_KEY);
+    const parsed = raw ? Number.parseFloat(raw) : NaN;
+    if (Number.isFinite(parsed)) {
+      setLeftColumnFraction(clamp(parsed, 0.28, 0.72));
+    }
+    setSplitFractionHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !splitFractionHydrated) {
+      return;
+    }
+    window.localStorage.setItem(WORKBENCH_SPLIT_STORAGE_KEY, String(leftColumnFraction));
+  }, [splitFractionHydrated, leftColumnFraction]);
 
   useEffect(() => {
     setTripletEditDraft(null);
@@ -467,11 +476,6 @@ export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchW
     return latestAssistant?.id ?? null;
   }, [selectedSession]);
 
-  const headerTitle = "GROOVEGRAPH / RESEARCH WORKBENCH";
-  const headerSubtitle = selectedSession
-    ? `${selectedSession.title} / Updated ${formatTimestamp(selectedSession.updatedAt)}`
-    : "Select a past session or create a new route to begin investigating.";
-
   const model: ResearchWorkbenchModel = {
     sessions,
     selectedSessionId,
@@ -507,417 +511,5 @@ export function ResearchWorkbench({ variant = "classic" }: { variant?: ResearchW
     saveTripletEdit,
   };
 
-  if (variant === "next") {
-    return <WorkbenchNextView model={model} />;
-  }
-
-  return (
-    <main className="workspace-page workspace-variant--classic">
-      <section className="workspace-shell">
-        <header className="workspace-header">
-          <div className="workspace-header-band">
-            <div className="workspace-header-identity">
-              <span className="workspace-system-label">Current Session</span>
-              <h1 className="workspace-active-title">{headerTitle}</h1>
-              <p className="workspace-active-subtitle">{headerSubtitle}</p>
-            </div>
-            <div className="workspace-header-controls">
-              <section className="header-control-plate">
-                <label className="header-control-field">
-                  <span className="header-control-label">New Session</span>
-                  <input
-                    value={seedQuery}
-                    onChange={(event) => setSeedQuery(event.target.value)}
-                    placeholder="Artist, URL, or question"
-                    className="header-control-input"
-                  />
-                </label>
-                <button
-                  onClick={() => void createSession()}
-                  disabled={isBusy}
-                  className="primary-route-button"
-                >
-                  {isBusy ? "Working..." : "Create Session"}
-                </button>
-              </section>
-
-              <section className="header-control-plate header-session-plate">
-                <strong className="header-control-label">Past Sessions</strong>
-                <div className="session-select-list">
-                  {sessions.length === 0 ? (
-                    <EmptyState text="No sessions yet." />
-                  ) : (
-                    sessions.map((session) => (
-                      <button
-                        key={session.id}
-                        onClick={() => setSelectedSessionId(session.id)}
-                        className={`session-select-button${
-                          selectedSessionId === session.id ? " session-select-button-active" : ""
-                        }`}
-                      >
-                        <strong>{session.title}</strong>
-                        <span>{formatTimestamp(session.updatedAt)}</span>
-                      </button>
-                    ))
-                  )}
-                </div>
-              </section>
-            </div>
-          </div>
-
-          {error ? <div className="workspace-error-banner">{error}</div> : null}
-        </header>
-
-        <section
-          className="workspace-main-grid"
-          ref={mainGridRef}
-          style={{
-            display: "grid",
-            gridTemplateColumns: isNarrowWorkspaceLayout
-              ? "minmax(0, 1fr)"
-              : `minmax(0, ${leftColumnFraction}fr) 10px minmax(0, ${1 - leftColumnFraction}fr)`,
-            gap: "16px",
-            alignItems: "start",
-          }}
-        >
-          <div className="workspace-lane">
-            <LaneSection
-              label="Research Route"
-              title="Investigation"
-              railColor="var(--route-orange)"
-            >
-              {selectedSession ? (
-                <div className="investigation-stack">
-                  <div className="message-stream">
-                    {selectedSession.messages.length === 0 ? (
-                      <EmptyState text="Send a message to start the artist-seed investigation." />
-                    ) : (
-                      selectedSession.messages.map((entry) => (
-                        <article
-                          key={entry.id}
-                          ref={
-                            entry.id === latestAssistantMessageId && entry.role === "assistant"
-                              ? latestAssistantMessageRef
-                              : undefined
-                          }
-                          className={`message-card message-card-${entry.role}`}
-                        >
-                          <div className="message-card-header">
-                            <strong>{entry.role}</strong>
-                            <span>{formatTimestamp(entry.createdAt)}</span>
-                          </div>
-                          <MarkdownMessage content={entry.content} />
-                        </article>
-                      ))
-                    )}
-                  </div>
-                  <div className="composer-block">
-                    <textarea
-                      value={message}
-                      onChange={(event) => setMessage(event.target.value)}
-                      placeholder="Ask a discovery question, refine the investigation, or request more evidence."
-                      rows={3}
-                      className="composer-input"
-                    />
-                    <button
-                      onClick={() => void sendTurn()}
-                      disabled={isBusy}
-                      className="primary-route-button composer-submit"
-                    >
-                      {isBusy ? "Running Research..." : "Send Turn"}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <EmptyState text="Select or create a session to begin investigating." />
-              )}
-            </LaneSection>
-
-            <LaneSection
-              label="Informational Support"
-              title="Evidence Support"
-              railColor="var(--route-blue)"
-            >
-              <div className="support-stack">
-                <section className="support-subsection">
-                  <div className="support-subsection-header">
-                    <strong>Field Notes</strong>
-                    <span className="support-count">{selectedSession?.notes.length ?? 0}</span>
-                  </div>
-                  {selectedSession?.notes.length ? (
-                    <ul className="support-list">
-                      {selectedSession.notes.map((note, index) => (
-                        <li key={`${note}-${index}`}>{note}</li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <EmptyState text="Notes recorded by the model will appear here." />
-                  )}
-                </section>
-
-                <details className="support-details">
-                  <summary className="support-details-summary">
-                    <span>Sources</span>
-                    <span className="support-count">{selectedSession?.sources.length ?? 0}</span>
-                  </summary>
-                  <div className="support-details-body">
-                    {selectedSession?.sources.length ? (
-                      <div className="support-source-list">
-                        {selectedSession.sources.map((source) => (
-                          <article key={source.id} className="support-source-card">
-                            <a
-                              href={source.url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="support-source-title"
-                            >
-                              {source.title}
-                            </a>
-                            <p className="support-source-url">{source.url}</p>
-                            {source.citationText ? (
-                              <p className="support-source-citation">{source.citationText}</p>
-                            ) : null}
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <EmptyState text="Cited sources will appear here once the model searches the web." />
-                    )}
-                  </div>
-                </details>
-              </div>
-            </LaneSection>
-          </div>
-
-          {!isNarrowWorkspaceLayout ? (
-            <div
-              role="separator"
-              aria-orientation="vertical"
-              aria-label="Resize workspace columns"
-              tabIndex={-1}
-              className={`workspace-splitter workspace-interchange${
-                isMainGridResizing ? " workspace-splitter-active" : ""
-              }`}
-              onPointerDown={beginMainGridResize}
-            >
-              <span className="workspace-interchange-line workspace-interchange-line-top" aria-hidden />
-              <span className="workspace-interchange-core" aria-hidden>
-                <span className="workspace-interchange-ring" />
-                <span className="workspace-interchange-crossbar" />
-              </span>
-              <span className="workspace-interchange-label" aria-hidden>
-                Interchange
-              </span>
-              <span className="workspace-interchange-line workspace-interchange-line-bottom" aria-hidden />
-              <span className="workspace-splitter-grip" aria-hidden />
-            </div>
-          ) : null}
-
-          <div className="workspace-lane">
-            <LaneSection
-              label="Decision Route"
-              title="Graph Review"
-              railColor="var(--route-magenta)"
-            >
-              {selectedSession ? (
-                <div className="review-stack">
-                  {tripletCandidates.length ? (
-                    tripletCandidates.map(({ relationship, sourceEntity, targetEntity }) => {
-                      const isEditingTriplet = tripletEditDraft?.relationshipId === relationship.id;
-                      const isSavingTriplet = savingTripletId === relationship.id;
-                      const sourceDisplay = sourceEntity
-                        ? sourceEntity.displayName
-                        : `Missing source (${relationship.sourceEntityId})`;
-                      const sourceKind = sourceEntity?.provisionalKind ?? "Unresolved entity";
-                      const targetDisplay = targetEntity
-                        ? targetEntity.displayName
-                        : `Missing object (${relationship.targetEntityId})`;
-                      const targetKind = targetEntity?.provisionalKind ?? "Unresolved entity";
-                      const relationshipVerb = isEditingTriplet
-                        ? tripletEditDraft?.relationshipVerb || "related to"
-                        : relationship.verb;
-
-                      return (
-                        <article
-                          key={relationship.id}
-                          className="triplet-card"
-                        >
-                          <div className="triplet-card-header">
-                            <StatusBar status={relationship.status} />
-                            <span className="review-confidence-label">
-                              confidence: {relationship.confidence}
-                            </span>
-                          </div>
-
-                          <div className="triplet-proposition">
-                            <TripletEntitySummary
-                              align="start"
-                              displayName={sourceDisplay}
-                              kind={sourceKind}
-                              entity={sourceEntity}
-                              danglingId={relationship.sourceEntityId}
-                              isEditing={isEditingTriplet}
-                              editDraft={isEditingTriplet ? tripletEditDraft?.sourceEntity ?? null : null}
-                              kindOptions={availableKindLabels}
-                              onUpdateDraft={(field, value) =>
-                                updateTripletEntityDraft(relationship.id, "sourceEntity", field, value)
-                              }
-                              onUpdateAlias={(aliasIndex, value) =>
-                                updateTripletEntityAlias(
-                                  relationship.id,
-                                  "sourceEntity",
-                                  aliasIndex,
-                                  value,
-                                )
-                              }
-                              onAddAlias={(value) =>
-                                addTripletEntityAlias(relationship.id, "sourceEntity", value)
-                              }
-                              onRemoveAlias={(aliasIndex) =>
-                                removeTripletEntityAlias(
-                                  relationship.id,
-                                  "sourceEntity",
-                                  aliasIndex,
-                                )
-                              }
-                            />
-                            {isEditingTriplet ? (
-                              <input
-                                value={tripletEditDraft?.relationshipVerb ?? relationship.verb}
-                                onChange={(event) =>
-                                  setTripletEditDraft((current) =>
-                                    current?.relationshipId === relationship.id
-                                      ? {
-                                          ...current,
-                                          relationshipVerb: event.target.value,
-                                        }
-                                      : current,
-                                  )
-                                }
-                                disabled={isSavingTriplet}
-                                className="triplet-verb triplet-inline-input triplet-inline-verb-input"
-                                aria-label="Relationship verb"
-                              />
-                            ) : (
-                              <span className="triplet-verb">{relationshipVerb}</span>
-                            )}
-                            <TripletEntitySummary
-                              align="end"
-                              displayName={targetDisplay}
-                              kind={targetKind}
-                              entity={targetEntity}
-                              danglingId={relationship.targetEntityId}
-                              isEditing={isEditingTriplet}
-                              editDraft={isEditingTriplet ? tripletEditDraft?.targetEntity ?? null : null}
-                              kindOptions={availableKindLabels}
-                              onUpdateDraft={(field, value) =>
-                                updateTripletEntityDraft(relationship.id, "targetEntity", field, value)
-                              }
-                              onUpdateAlias={(aliasIndex, value) =>
-                                updateTripletEntityAlias(
-                                  relationship.id,
-                                  "targetEntity",
-                                  aliasIndex,
-                                  value,
-                                )
-                              }
-                              onAddAlias={(value) =>
-                                addTripletEntityAlias(relationship.id, "targetEntity", value)
-                              }
-                              onRemoveAlias={(aliasIndex) =>
-                                removeTripletEntityAlias(
-                                  relationship.id,
-                                  "targetEntity",
-                                  aliasIndex,
-                                )
-                              }
-                            />
-                          </div>
-
-                          <div className="triplet-action-row">
-                            <DecisionRow
-                              compact
-                              onDecision={(decision) =>
-                                void recordDecision({
-                                  itemType: "relationship",
-                                  itemId: relationship.id,
-                                  decision,
-                                })
-                              }
-                            />
-
-                            {isEditingTriplet ? (
-                              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                                <MiniAction
-                                  compact
-                                  label={isSavingTriplet ? "Saving..." : "Save"}
-                                  variant="primary"
-                                  disabled={isSavingTriplet}
-                                  onClick={() => void saveTripletEdit(relationship.id)}
-                                />
-                                <MiniAction
-                                  compact
-                                  label="Cancel"
-                                  variant="neutral"
-                                  disabled={isSavingTriplet}
-                                  onClick={() => setTripletEditDraft(null)}
-                                />
-                              </div>
-                            ) : (
-                              <MiniAction
-                                compact
-                                label="Edit"
-                                variant="link"
-                                disabled={Boolean(savingTripletId)}
-                                onClick={() => beginTripletEdit(relationship, sourceEntity, targetEntity)}
-                              />
-                            )}
-                          </div>
-                        </article>
-                      );
-                    })
-                  ) : (
-                    <EmptyState text="No relationship triplets yet." />
-                  )}
-                </div>
-              ) : (
-                <EmptyState text="Select a session to inspect provisional graph artifacts." />
-              )}
-            </LaneSection>
-
-            <LaneSection
-              label="Supporting Review"
-              title="Claims For Review"
-              railColor="var(--route-yellow)"
-            >
-              {selectedSession?.claims.length ? (
-                <div className="claims-review-list">
-                  {selectedSession.claims.map((claim) => (
-                    <article key={claim.id} className="claim-review-card">
-                      <strong>{claim.text}</strong>
-                      <StatusBar
-                        status={claim.status}
-                        detail={`confidence: ${claim.confidence}`}
-                      />
-                      <DecisionRow
-                        onDecision={(decision) =>
-                          void recordDecision({
-                            itemType: "claim",
-                            itemId: claim.id,
-                            decision,
-                          })
-                        }
-                      />
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <EmptyState text="Structured claims extracted from the session will appear here." />
-              )}
-            </LaneSection>
-          </div>
-        </section>
-      </section>
-    </main>
-  );
+  return <WorkbenchNextView model={model} />;
 }

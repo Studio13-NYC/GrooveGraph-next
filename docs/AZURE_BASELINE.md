@@ -49,7 +49,7 @@ From repo root:
 
 Requires App Service app settings (at minimum): `OPENAI_API_KEY` (see workspace server config).
 
-**Default route:** `https://groovegraph.s13.nyc/` **308-redirects** to `/workbench-next` (same experience as `http://localhost:3011/workbench-next`). The classic shell is at **`/classic`**.
+**Default route:** `https://groovegraph.s13.nyc/` serves the **research workbench** at **`/`** (same app as `http://localhost:3011/`). Older paths `/workbench-next` and `/classic` **308-redirect** to `/`.
 
 ## Historical note
 

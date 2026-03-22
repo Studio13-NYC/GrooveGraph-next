@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
+import "./workbench.css";
 
 export const metadata: Metadata = {
-  title: "GrooveGraph OpenAI Research Workspace",
-  description: "Discovery-first research workspace powered by the OpenAI Responses API and Conversations API.",
+  title: "GrooveGraph — Research workbench",
+  description:
+    "NYCTA manual-first workbench: modular plates, session index, column split, token-bound surfaces. Discovery-first research powered by the OpenAI APIs.",
 };
 
 export default function RootLayout({
@@ -13,7 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Script
+          src="https://mcp.figma.com/mcp/html-to-design/capture.js"
+          strategy="afterInteractive"
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -4,13 +4,21 @@
 
 **Authoritative merged language (read this for art direction):**
 
-- [`docs/design-language/FOUNDATION.md`](design-language/FOUNDATION.md)
+- [`docs/design-language/FOUNDATION.md`](design-language/FOUNDATION.md) — includes **§ Context split** (application UI vs map-shaped graphics)
+
+**Figma MCP (application UI evolution):**
+
+- [`docs/design-language/FIGMA_MCP.md`](design-language/FIGMA_MCP.md) — `create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`; **tokens win** over Figma when they disagree unless the brief updates tokens.
+
+**Workbench copy (manual-first):**
+
+- [`docs/design-language/WORKBENCH_VOCAB.md`](design-language/WORKBENCH_VOCAB.md)
 
 **Archival sources and tokens:**
 
 - `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md` — what to read; what is superseded
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg` — **primary visual reference** (1972 diagram)
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md` — NYCTA manual notes
+- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg` — **diagram / map** visual reference (1972 diagram grammar)
+- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md` — NYCTA manual notes (plates, grids, bands)
 - `framework/src/visual-system/nycta-groovegraph-tokens.css` — **CSS custom properties** (canonical). Import: `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";` from any workspace package that depends on `@groovegraph-next/framework`.
 
 **Definitive interactive reference (HTML5, typography through CSS motion):**
@@ -23,7 +31,7 @@
 
 **Research workbench (OpenAI workspace, NYCTA tokens in `globals.css`):**
 
-- Local: `http://localhost:3011/` redirects to `/workbench-next`; classic shell at `/classic` — package: `research/tools/openai-research-workspace`, `npm run dev:research-workspace` from repo root. Production: `https://groovegraph.s13.nyc/` → `/workbench-next`.
+- Local: `http://localhost:3011/` — research workbench package: `research/tools/openai-research-workspace`, `npm run dev:research-workspace` from repo root. Production: `https://groovegraph.s13.nyc/`.
 
 **External print reference (purchase / library):**
 
@@ -33,20 +41,21 @@
 
 ## One-sentence summary
 
-New-regime GrooveGraph graphics follow **Vignelli-era NYCTA map grammar** (orthogonal + 45°, uniform trunk weight, parallel corridors, engineered radii, route color as meaning) and **NYCTA signage semantics** (identification / directional / informational, decision-point information only), translated to software per **`SOFTWARE_WAYFINDING_FOUNDATION.md`** in the same MTA assets folder.
+GrooveGraph graphics use the **1970 NYCTA Graphics Standards Manual** discipline for **application UI** (modular plates, grid, functional color coding, Helvetica-scale hierarchy) and **1972 Vignelli diagram grammar** for **maps and route-shaped diagrams** (orthogonal + 45°, uniform trunk weight, parallel gutter, explicit junctions, token-bound hues). **Software** behavior follows **`SOFTWARE_WAYFINDING_FOUNDATION.md`**. **Product UI** avoids transit **metaphors** in copy (lines, stops, interchanges as journey nouns); see **WORKBENCH_VOCAB**.
 
 ---
 
 ## Quick token pointer
 
-Hex and geometry live in **`framework/src/visual-system/nycta-groovegraph-tokens.css`**. Default canvas (UI and maps): **white** (light) / **near-black** (dark) — **no warm beige**. TypeScript mirror: **`framework/src/visual-system/tokens.ts`**.
+Hex and geometry live in **`framework/src/visual-system/nycta-groovegraph-tokens.css`**. Default canvas (UI and maps): **white** (light) / **near-black** (dark) — **no warm beige**. **UI baseline type:** **Helvetica Neue** via `--gg-font-sans`, aligned with **`docs/design-language/groovegraph-design-system.fig`**. TypeScript mirror: **`framework/src/visual-system/tokens.ts`**.
 
 ---
 
 ## Use this system for
 
-- Governance maps, routing charts, framework diagrams, operating-model visuals
-- Map-like or route-like UI metaphors and campaign graphics for the “new regime”
+- **UI shells and workbenches:** manual-first layout, Figma-informed when frames exist
+- **Governance maps, routing charts, framework diagrams:** diagram grammar + tokens
+- **Campaign graphics** for the new regime
 
 ---
 
@@ -71,7 +80,9 @@ Whiteboard / editorial-cartoon language for **retrospective critique** only. Do 
 ## Review checklist
 
 - Does the piece read as **order** (new regime) or **disorder** (satire), intentionally?
-- Are **route colors** tied to **durable meaning**, not decoration?
-- Do lines obey **map grammar** (angles, weight, parallels, explicit interchanges)?
+- For **diagrams**: are **route colors** tied to **durable meaning**, not decoration?
+- For **diagrams**: do lines obey **map grammar** (angles, weight, parallels, explicit junctions)?
+- For **application UI**: is copy **manual-first** (no transit journey metaphors) unless the surface is literally a map?
+- For **Figma-linked UI**: does implementation match **`get_design_context`** and **tokens**?
 - Would the composition work at a glance on a wall or a small screen?
 - Are jokes carried by **structure and labels**, not random styling?

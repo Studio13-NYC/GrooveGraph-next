@@ -1,5 +1,11 @@
 # Documentation Index
 
+## Product
+
+| File | Purpose |
+|---|---|
+| `product/RESEARCH_WORKBENCH_PRD.md` | PRD: research workbench — triplet UX → Neo4j persistence → session graph visualization |
+
 ## Canonical docs
 
 | File | Purpose |
@@ -12,7 +18,7 @@
 | `VISUAL_STYLE_GUIDE.md` | Short entry: graphics system, regimes, checklist |
 | `design-language/FOUNDATION.md` | Merged NYCTA / Vignelli design authority (map + manual + software) |
 | `design-language/README.md` | Index for the design-language folder |
-| `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md` | Execution brief for workbench-next chrome (graphic-artist lane) |
+| `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md` | Execution brief for research workbench chrome (graphic-artist lane) |
 | `GITHUB_STRATEGY.md` | Canonical successor-repo and remote strategy |
 | `AZURE_BASELINE.md` | Current Azure environment, preservation rules, and overwrite boundaries |
 | `HYGIENE.md` | Canonical cleanup workflow, `hygienist` lane, and proposal-first removal policy |

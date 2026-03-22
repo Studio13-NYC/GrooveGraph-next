@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Triplet approval — Graph review (preview)</title>
+    <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+    <style>
+      /* Tokens aligned with nycta-groovegraph-tokens.css + globals :root (light) */
+      :root {
+        --gg-surface-canvas: #ffffff;
+        --gg-surface-canvas-ink: #111111;
+        --gg-ink: #111111;
+        --gg-slate: #5a5654;
+        --gg-route-red: #ee352e;
+        --gg-route-green: #00933c;
+        --gg-route-blue: #0039a6;
+        --gg-route-orange: #ff6319;
+        --gg-route-yellow: #fccc0a;
+        --gg-route-purple: #b933ad;
+        --paper: var(--gg-surface-canvas);
+        --ink: var(--gg-surface-canvas-ink);
+        --slate: var(--gg-slate);
+        --red-route: var(--gg-route-red);
+        --blue-route: var(--gg-route-blue);
+        --green-route: var(--gg-route-green);
+        --orange-route: var(--gg-route-orange);
+        --magenta-route: var(--gg-route-purple);
+        --yellow-route: var(--gg-route-yellow);
+        --gg-font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --gg-radius-r2: 14px;
+        --gg-accent-directional: var(--gg-route-orange);
+        --panel: #ffffff;
+        --surface-strong: color-mix(in srgb, var(--paper) 94%, var(--ink) 6%);
+        --muted: var(--slate);
+        --border: color-mix(in srgb, var(--ink) 18%, transparent);
+        --accent-orange: var(--gg-accent-directional);
+        --link-blue: var(--blue-route);
+        --state-accept: var(--green-route);
+        --state-reject: var(--red-route);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--paper);
+        color: var(--ink);
+        font-family: var(--gg-font-sans);
+      }
+
+      .preview-root {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 24px 48px;
+      }
+
+      .preview-kicker {
+        margin: 0 0 8px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .preview-title {
+        margin: 0 0 24px;
+        font-size: 1.125rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      /* Plate shell (Graph review module) */
+      .gg-next-plate {
+        border: 2px solid var(--ink);
+        border-radius: var(--gg-radius-r2);
+        background: var(--panel);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .gg-next-plate-band--module {
+        height: 6px;
+        background: var(--magenta-route);
+        flex-shrink: 0;
+      }
+
+      .gg-next-plate-inner {
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .gg-next-plate-heading {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .gg-next-plate-kicker {
+        margin: 0;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .gg-next-plate-title {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
+
+      /* Triplet card (from workbench + globals) */
+      .gg-next-triplet {
+        border: 2px solid var(--ink);
+        border-radius: var(--gg-radius-r2);
+        padding: 14px;
+        background: var(--paper);
+      }
+
+      .triplet-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .status-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .status-bar-rail {
+        width: 16px;
+        height: 4px;
+        border-radius: 999px;
+        background: currentColor;
+        display: inline-block;
+      }
+
+      .status-bar-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .status-bar-proposed {
+        color: var(--ink);
+      }
+
+      .review-confidence-label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .triplet-proposition {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: baseline;
+      }
+
+      .gg-next-triplet .triplet-proposition {
+        grid-template-columns: minmax(0, 1fr) max-content minmax(0, 1fr);
+        column-gap: 12px;
+        row-gap: 12px;
+        align-items: baseline;
+      }
+
+      .gg-next-triplet .triplet-proposition > .triplet-entity-summary-start {
+        justify-self: end;
+        width: max-content;
+        max-width: 100%;
+      }
+
+      .gg-next-triplet .triplet-proposition > .triplet-entity-summary-end {
+        justify-self: start;
+        width: max-content;
+        max-width: 100%;
+      }
+
+      .triplet-entity-summary {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .triplet-entity-summary-start {
+        justify-items: start;
+        text-align: left;
+      }
+
+      .triplet-entity-summary-end {
+        justify-items: start;
+        text-align: left;
+      }
+
+      .triplet-entity-name {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 750;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        word-break: break-word;
+      }
+
+      .gg-next-triplet .triplet-entity-summary-end .triplet-entity-name {
+        text-align: left;
+      }
+
+      .triplet-entity-kind {
+        margin: 0;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .gg-next-triplet .triplet-entity-summary-end .triplet-entity-kind,
+      .gg-next-triplet .triplet-entity-summary-end .triplet-dangling-note {
+        text-align: left;
+      }
+
+      .entity-aliases summary {
+        cursor: default;
+        font-size: 11px;
+        color: var(--link-blue);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        list-style: none;
+      }
+
+      .entity-aliases summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .entity-aliases ul {
+        margin: 6px 0 0;
+        padding-left: 16px;
+        font-size: 11px;
+      }
+
+      .triplet-verb {
+        align-self: auto;
+        padding-top: 0;
+        font-family: var(--gg-font-sans);
+        font-size: 22px;
+        font-weight: 750;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        color: var(--ink);
+        text-align: center;
+      }
+
+      .gg-next-triplet .triplet-verb {
+        justify-self: center;
+        width: max-content;
+        max-width: min(100%, 36ch);
+      }
+
+      .triplet-action-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .decision-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .mini-action {
+        border: 1px solid var(--border);
+        background: var(--surface-strong);
+        padding: 4px 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        cursor: default;
+        border-radius: 2px;
+      }
+
+      .mini-action-accept {
+        color: var(--state-accept);
+      }
+
+      .mini-action-defer {
+        color: var(--accent-orange);
+      }
+
+      .mini-action-reject {
+        color: var(--state-reject);
+      }
+
+      .mini-action-link {
+        color: var(--link-blue);
+        background: transparent;
+        border-color: transparent;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
+
+      .preview-note {
+        margin-top: 24px;
+        padding: 12px 14px;
+        border-left: 4px solid var(--blue-route);
+        background: color-mix(in srgb, var(--blue-route) 6%, var(--paper));
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        color: var(--ink);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preview-root gg-next-root">
+      <p class="preview-kicker">Proposed UI · Research workbench</p>
+      <h1 class="preview-title">Relationship triplet — review &amp; approval</h1>
+
+      <section class="gg-next-plate" aria-label="Graph review">
+        <div class="gg-next-plate-band--module" aria-hidden="true"></div>
+        <div class="gg-next-plate-inner">
+          <div class="gg-next-plate-heading">
+            <p class="gg-next-plate-kicker">Decision</p>
+            <h2 class="gg-next-plate-title">Graph review</h2>
+          </div>
+
+          <article class="gg-next-triplet" aria-label="Triplet candidate">
+            <div class="triplet-card-header">
+              <div class="status-bar status-bar-proposed">
+                <span class="status-bar-rail" aria-hidden="true"></span>
+                <span class="status-bar-label">proposed</span>
+              </div>
+              <span class="review-confidence-label">confidence: 0.82</span>
+            </div>
+
+            <div class="triplet-proposition">
+              <div class="triplet-entity-summary triplet-entity-summary-start">
+                <p class="triplet-entity-name">Chaka Khan</p>
+                <p class="triplet-entity-kind">Person</p>
+                <details class="entity-aliases triplet-entity-aliases" open>
+                  <summary>2 aliases</summary>
+                  <ul>
+                    <li>Yvette Stevens</li>
+                    <li>Chaka Adunne Aduffe Yemoja Hodarhi Karifi Khan</li>
+                  </ul>
+                </details>
+              </div>
+
+              <span class="triplet-verb">influenced</span>
+
+              <div class="triplet-entity-summary triplet-entity-summary-end">
+                <p class="triplet-entity-name">Prince</p>
+                <p class="triplet-entity-kind">Person</p>
+                <details class="entity-aliases triplet-entity-aliases" open>
+                  <summary>1 alias</summary>
+                  <ul>
+                    <li>Prince Rogers Nelson</li>
+                  </ul>
+                </details>
+              </div>
+            </div>
+
+            <div class="triplet-action-row">
+              <div class="decision-row">
+                <button type="button" class="mini-action mini-action-accept" tabindex="-1">Accept</button>
+                <button type="button" class="mini-action mini-action-defer" tabindex="-1">Defer</button>
+                <button type="button" class="mini-action mini-action-reject" tabindex="-1">Reject</button>
+              </div>
+              <button type="button" class="mini-action mini-action-link" tabindex="-1">Edit</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <p class="preview-note">
+        Reading order: <strong>subject → relationship → object</strong>. Subject stack is flush to the relationship
+        (right edge of subject column meets the verb); object stack is flush from the other side. Kind and aliases line
+        up on the <strong>left edge of each entity name</strong>. Approve with Accept / Defer / Reject; Edit opens inline
+        controls in the live app.
+      </p>
+    </div>
+  </body>
+</html>

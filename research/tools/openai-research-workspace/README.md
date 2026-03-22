@@ -40,9 +40,7 @@ The workspace runs on `http://localhost:3011`.
 
 | Route | Purpose |
 |-------|---------|
-| `/` | **308 redirect** to `/workbench-next` (default home locally and on production). |
-| `/classic` | **Classic** workbench chrome (original layout). |
-| `/workbench-next` | **Next-regime** shell: NYCTA sign-plate grammar (`--gg-sign-band`, modular plates, token rails, tighter 8/16/24 rhythm). Same APIs and behavior as `/classic` — presentation only. Art direction brief: graphic-artist lane + `docs/design-language/FOUNDATION.md`. |
+| `/` | **Research workbench** (default): NYCTA manual-first plates (`--gg-sign-band`, session index, split control — **no** module-legend strip per PRD). **Evidence:** Field notes + Sources are **stacked** collapsible sections (notes open, sources closed by default), each independently scrollable; **Claims** uses the same **height band** (`--gg-workbench-module-max-h`). Briefs: `docs/design-language/FOUNDATION.md`, `GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md`, `FIGMA_MCP.md`, `docs/product/RESEARCH_WORKBENCH_PRD.md`. Legacy paths `/workbench-next` and `/classic` **308-redirect** to `/`. |
 
 Production: [groovegraph.s13.nyc](https://groovegraph.s13.nyc/) serves this app on App Service; deploy with `.\scripts\deploy-appservice-research-workbench.ps1` from the repo root (deploy may lag this repo).
 

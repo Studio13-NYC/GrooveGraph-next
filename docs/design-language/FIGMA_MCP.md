@@ -1,0 +1,71 @@
+# Figma MCP — design documentation and evolution
+
+This repo treats **Figma** as the **living visual specification** for application UI (especially the research workbench). **Markdown and CSS tokens** remain the **engineering contract**; **Figma** is where layout, spacing, and component structure are iterated before or alongside code.
+
+## Authority
+
+- **Tokens and geometry:** [`framework/src/visual-system/nycta-groovegraph-tokens.css`](../../framework/src/visual-system/nycta-groovegraph-tokens.css) — if Figma and tokens disagree, **tokens win** unless the brief explicitly updates tokens.
+- **Art direction:** [`FOUNDATION.md`](FOUNDATION.md), then Figma frames for scoped UI work.
+- **Code ↔ design linkage:** [Code Connect](https://www.figma.com/developers/code-connect) — use Figma MCP **suggestions** and persist approved mappings so repeat passes stay aligned.
+
+## Canonical design system file
+
+- **Figma document (repo):** [`groovegraph-design-system.fig`](groovegraph-design-system.fig) — **the** GrooveGraph Next design system file. Open in **Figma Desktop** to edit; commit changes when the system evolves.
+- **Typography baseline:** **Helvetica Neue** — must match production: CSS **`--gg-font-sans`** (first family is `"Helvetica Neue"`). In Figma, set default text to **Helvetica Neue** (and shared text styles) so frames match the web stack.
+- **MCP tools and cloud URLs:** `get_design_context`, Code Connect, and `generate_figma_design` target a **hosted** Figma file (`fileKey` from `figma.com/design/...`). **Hosted design system (team):** [GrooveGraph](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt) — `fileKey` **`0qV7zjnUZ6kAHBzI0wxFEt`**. A **html-to-design** capture from the research workbench (`/`) was written into this file (e.g. [captured frame `5-2`](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt?node-id=5-2)). Keep the local [`.fig`](groovegraph-design-system.fig) and the hosted file in sync as your workflow evolves.
+
+**Why the file may not match the live app:** Implementing UI in the repo **does not** update Figma. Frames only change after a **new capture** (`generate_figma_design` from localhost or static HTML), **manual** edits in the hosted file, or a **published** update from Figma Desktop. If you expect Phase 1 workbench changes (PRD) in Figma, run a fresh capture or edit the frames—otherwise you will still see an older snapshot (e.g. legend strip) at historical node IDs.
+
+## Design system board (import source)
+
+- **HTML (token swatches + workbench modules + proposed spacing/focus):** [`research/tools/openai-research-workspace/public/design-system-board.html`](../../research/tools/openai-research-workspace/public/design-system-board.html) — served at **`http://localhost:3011/design-system-board.html`** when the workspace dev server runs.
+- **Structured rules for MCP / humans:** [`FIGMA_DESIGN_SYSTEM_RULES.md`](FIGMA_DESIGN_SYSTEM_RULES.md).
+- **Imported board (hosted):** [Design system board — captured frame `7-2`](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt?node-id=7-2) (`nodeId` **`7:2`** for `get_design_context`).
+- **Triplet approval (Graph review) — current frame:** [`node-id=10-3`](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt/GrooveGraph?node-id=10-3) — `nodeId` **`10:3`** for `get_design_context`. Iterated from the html-to-design capture; may differ from [`triplet-approval-preview.html`](../../research/tools/openai-research-workspace/public/triplet-approval-preview.html) (`http://localhost:3011/triplet-approval-preview.html` when dev runs). Earlier import-only snapshot: `9-2` (`9:2`).
+
+Run **`mcp_figma_generate_figma_design`** against that URL (or open the HTML in the browser and capture) to materialize the board as Figma frames. Remote Figma servers cannot reach `localhost`; use a tunnel, paste from a local capture tool, or run the MCP from an environment that can reach your dev URL.
+
+## MCP workflow (order)
+
+Use these tools when adding or overhauling UI surfaces (e.g. `research/tools/openai-research-workspace` at `/`).
+
+| Step | Tool | When |
+|------|------|------|
+| 1 | **`mcp_figma_create_design_system_rules`** | Early in a design-system refresh: generates a **rules prompt** aligned with this codebase (TypeScript, React, Next.js, Tailwind where used, tokens from `nycta-groovegraph-tokens.css`). |
+| 2 | **`mcp_figma_generate_figma_design`** | Import or capture **reference layouts** (localhost workbench, static HTML) into Figma as **baseline frames** — not the only spec, but the shared visual anchor. |
+| 3 | **`mcp_figma_get_design_context`** | **Before** large implementation edits: pass **`fileKey`** + **`nodeId`** (from `figma.com/design/{fileKey}/...?node-id=1-2` → node id `1:2`) to pull structure and implementation hints. |
+| 4 | **`mcp_figma_get_code_connect_suggestions`** | Propose **Figma node → repo component** mappings; after human review, save with **`mcp_figma_send_code_connect_mappings`**. |
+
+### Hygiene
+
+- **fileKey:** From the Figma URL path segment after `/design/`.
+- **nodeId:** URL uses `1-2`; MCP APIs expect `1:2`.
+- **Naming in Figma:** Prefer **manual / plate / module / index / split** vocabulary — avoid transit metaphors (**line**, **stop**, **interchange**) in frame and component names for **application UI**.
+
+## Repo facts (for Figma rules and handoff)
+
+**Tokens**
+
+- Canonical CSS: `framework/src/visual-system/nycta-groovegraph-tokens.css`.
+- Consumed via: `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`
+- TypeScript mirror: `framework/src/visual-system/tokens.ts` (keep in sync with CSS).
+
+**Research workbench**
+
+- Package: `research/tools/openai-research-workspace`.
+- Research workbench UI: route `/`, root class **`.gg-next-root`**, styles in `app/workbench.css`.
+
+**Stack (workspace app)**
+
+- Next.js App Router, React 18+, global CSS + scoped workbench sheet (not Tailwind inside `openai-research-workspace` by default — confirm `package.json` for each app).
+
+**Assets**
+
+- NYCTA / Vignelli references: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`.
+
+## Ownership
+
+- **`graphic-artist`:** Frames, naming, token fidelity, manual-first vocabulary.
+- **`implementer`:** Wiring React to match `get_design_context` and tokens; Code Connect file paths.
+
+Workbench frames should live in **`groovegraph-design-system.fig`** (or its published twin); add the **full Figma URL** to [`GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md`](GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md) once hosted.

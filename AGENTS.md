@@ -61,3 +61,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 ## Visual default
 
 Use the NYCTA-inspired transit/signage system for authoritative "new regime" graphics. Use the whiteboard/cartoon style only for retrospective critique of legacy behavior.
+
+## Research workbench (`research/tools/openai-research-workspace`)
+
+- **Research workbench (`/`) Evidence:** **Field notes** and **Sources** are **stacked** collapsible sections (Field notes open, Sources closed by default); each body scrolls independently; **Evidence** and **Claims** plates share the same fixed height band (`--gg-workbench-module-max-h`). Locked spec: `docs/product/RESEARCH_WORKBENCH_PRD.md` Phase 1 (requirements 6–7) and `docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md` §5.

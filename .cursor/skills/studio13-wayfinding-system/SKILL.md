@@ -19,7 +19,7 @@ Return:
 
 ## Primary stance
 
-Think like a transit-signage designer adapting a subway wayfinding system to software.
+Think like a **standards-manual / environmental graphics** designer: the **1970 NYCTA Graphics Standards Manual** discipline (grid, plates, bands, functional color) adapted to software — **not** a subway-themed product.
 
 Every surface should answer:
 
@@ -31,27 +31,29 @@ Every surface should answer:
 
 - Treat identification, directional, and informational layers as distinct jobs.
 - Use Helvetica first, then Arial or compatible sans-serif fallbacks.
-- **Directional emphasis** uses the **NYCTA orange route** token (`--gg-accent-directional` / `--gg-route-orange` in `nycta-groovegraph-tokens.css`) — one system with the Vignelli map, not a separate decorative accent color.
-- **Route and map hues** come only from **`nycta-groovegraph-tokens.css`** for new-regime work.
-- Use weight, spacing, rails, and grouping to create hierarchy before reaching for extra effects.
+- **Directional emphasis** uses the **NYCTA orange** token (`--gg-accent-directional` / `--gg-route-orange` in `nycta-groovegraph-tokens.css`) — one system with diagram color families, not a separate decorative accent.
+- **Diagram hues** come only from **`nycta-groovegraph-tokens.css`** for new-regime work.
+- Use weight, spacing, **grid alignment**, and grouping to create hierarchy before reaching for extra effects.
 - Keep labels short, decisive, and easy to scan.
 - Remove repetition unless it improves orientation.
 - Keep motion restrained, directional, and functional.
+- **Avoid transit metaphors** in UI copy (**lines**, **stops**, **interchanges**, **routes** as journey nouns); use **manual** terms — see `docs/design-language/WORKBENCH_VOCAB.md`.
 
 ## Source order
 
 Read these in order when the task needs concrete reference material:
 
 1. `docs/design-language/FOUNDATION.md`
-2. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg`
-3. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
-4. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
-5. `framework/src/visual-system/nycta-groovegraph-tokens.css` (package import: `@groovegraph-next/framework/nycta-groovegraph-tokens.css`)
-6. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
-7. `graphic-design-agent-assets/graphic-designer.md`
-8. `graphic-design-agent-assets/mta-design-foundation.mdc`
+2. `docs/design-language/FIGMA_MCP.md` (when Figma is in scope)
+3. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg` (for **diagram** / map-like visuals)
+4. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
+5. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
+6. `framework/src/visual-system/nycta-groovegraph-tokens.css` (package import: `@groovegraph-next/framework/nycta-groovegraph-tokens.css`)
+7. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
+8. `graphic-design-agent-assets/graphic-designer.md`
+9. `graphic-design-agent-assets/mta-design-foundation.mdc`
 
-If the files disagree, follow **FOUNDATION.md** and the **vignelli map reference**, then the software wayfinding foundation, then v3 manual notes.
+If the files disagree, follow **FOUNDATION.md**, then the **software wayfinding foundation**, then v3 manual notes; use the **vignelli map** for **diagram** geometry only.
 
 ## Working method
 
@@ -64,11 +66,12 @@ If the files disagree, follow **FOUNDATION.md** and the **vignelli map reference
 ## What to avoid
 
 - decorative display fonts in primary UI
-- color drift away from **NYCTA route tokens** without explicit semantic need
+- color drift away from **NYCTA tokens** without explicit semantic need
 - ornamental motion or glows that do not improve comprehension
 - generic SaaS gradients or glassmorphism
-- arbitrary curves on map-style routes (use horizontal, vertical, 45°, repeatable radii)
+- arbitrary curves on **map-style** route graphics (use horizontal, vertical, 45°, repeatable radii)
 - overly long labels or metadata piles at decision points
+- **Transit journey metaphors** in default product UI copy
 
 ## Additional reference
 

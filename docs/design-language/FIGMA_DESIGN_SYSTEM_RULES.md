@@ -1,0 +1,98 @@
+# GrooveGraph Next — Figma / MCP design system rules (repo analysis)
+
+Structured reference for integrating Figma with this codebase via MCP. **CSS tokens** in `framework/src/visual-system/nycta-groovegraph-tokens.css` remain the implementation contract unless a brief updates them.
+
+---
+
+## 1. Token definitions
+
+| Kind | Location | Format |
+|------|----------|--------|
+| Colors, radii, type scale, strokes | `framework/src/visual-system/nycta-groovegraph-tokens.css` | CSS custom properties on `:root`, dark mode via `@media (prefers-color-scheme: dark)` |
+| TS mirror (optional) | `framework/src/visual-system/tokens.ts` | Keep aligned with CSS when used |
+
+**Consumption:**
+
+```css
+@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";
+```
+
+No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same names (e.g. `gg/route/orange` → `--gg-route-orange`) for designer ↔ engineer parity.
+
+---
+
+## 2. Component library
+
+| Area | Location | Notes |
+|------|----------|--------|
+| Research workbench (Next regime) | `research/tools/openai-research-workspace/src/components/` | `WorkbenchNextView`, `ResearchWorkbench`, `research-workbench-widgets` |
+| Framework UI | `framework/` | Shared tokens; app-specific plates live in workspace |
+
+**Architecture:** React function components; scoped CSS under `.gg-next-root` for `/` (`app/workbench.css`). No Storybook in this package by default.
+
+---
+
+## 3. Frameworks and libraries
+
+- **UI:** React 19, Next.js App Router (`research/tools/openai-research-workspace`).
+- **Styling:** Global CSS + scoped workbench sheet; tokens from framework package (not Tailwind in the research workspace package by default).
+- **Build:** Next.js (Turbopack in dev per project config).
+
+---
+
+## 4. Assets
+
+- NYCTA / Vignelli references: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`.
+- Posts / static: `assets/` as applicable.
+- No dedicated CDN config in the research workspace package.
+
+---
+
+## 5. Icons
+
+- No central icon font in the research workbench; prefer **text labels** and **plate bands** per manual vocabulary. Lucide/shadcn may appear in other apps in the monorepo — follow each package’s `package.json`.
+
+---
+
+## 6. Styling approach
+
+- **Methodology:** Token-driven CSS variables; logical properties where used in the workbench.
+- **Globals:** `app/globals.css` (shared widgets + triplet/markdown helpers); `app/workbench.css` scopes the workbench shell.
+- **Responsive:** Breakpoint ~980px collapses main grid; `prefers-reduced-motion` respected for transitions.
+
+---
+
+## 7. Project structure (research workspace)
+
+```
+research/tools/openai-research-workspace/
+  app/
+    page.tsx              # `/` — research workbench
+    layout.tsx
+    workbench.css         # scoped workbench shell (`.gg-next-root`)
+    globals.css
+  public/
+    design-system-board.html   # Figma capture source (token board + proposals)
+  src/components/
+```
+
+---
+
+## 8. Visual import board (Figma)
+
+**URL (dev):** `http://localhost:3011/design-system-board.html`  
+**File:** `research/tools/openai-research-workspace/public/design-system-board.html`
+
+Use **`mcp_figma_generate_figma_design`** (existing GrooveGraph file or new team file) to import this page after `npm run dev` in the workspace, or open the HTML file locally and use your html-to-design workflow.
+
+The board includes **proposed** additions (spacing scale, focus ring semantic, module aliases) for Figma Variables — not all are in CSS yet; treat proposals as design-system backlog unless promoted into `nycta-groovegraph-tokens.css`.
+
+**Hosted capture:** [Figma — design system board](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt?node-id=7-2) (`7:2`). Re-capture after changing the HTML to refresh the frame.
+
+**Triplet approval (Graph review):** [Figma — current frame](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt/GrooveGraph?node-id=10-3) (`10:3`). Source HTML: `public/triplet-approval-preview.html` — see [`FIGMA_MCP.md`](FIGMA_MCP.md).
+
+---
+
+## 9. Naming in Figma
+
+Prefer **manual / plate / module / index / split** vocabulary in frames and components. Avoid transit metaphors (**line**, **stop**, **interchange**) on application UI per `WORKBENCH_VOCAB.md`.

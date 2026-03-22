@@ -1,5 +1,7 @@
 # Research Workbench Wayfinding Plan
 
+> **Architectural note (2026):** The **interchange / route-strip** metaphor below is **superseded** for product direction by the **manual-first** model in [`docs/design-language/FOUNDATION.md`](design-language/FOUNDATION.md) (§ Context split), [`docs/design-language/WORKBENCH_VOCAB.md`](design-language/WORKBENCH_VOCAB.md), and [`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md`](design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md). Keep this document as **historical context** for the live-site critique and early lane-based implementation; new work should **not** reintroduce transit nouns in UI copy.
+
 ## Purpose
 
 This document turns the live-site critique of `https://groovegraph.s13.nyc` into two operational artifacts:

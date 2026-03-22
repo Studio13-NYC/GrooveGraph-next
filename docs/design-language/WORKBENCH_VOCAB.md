@@ -1,0 +1,19 @@
+# Research workbench — locked vocabulary (manual-first)
+
+Defaults adopted for **user-visible copy**, **ARIA labels**, and **Figma frame names**. NYCTA **token** names (e.g. `--orange-route`) may stay in CSS; avoid **transit nouns** in UI strings.
+
+| Concept | Term |
+|--------|------|
+| UI typeface | **Helvetica Neue** first (`--gg-font-sans`); Figma: [`groovegraph-design-system.fig`](groovegraph-design-system.fig) |
+| Left column (session list) | **Index** |
+| Create + list sessions | **Session** / **sessions** |
+| Primary CTA (orange) | **Open session** / **Create Session** |
+| Draggable column boundary | **Split** |
+| Module identity (no legend strip) | **Plate bands** + token hues only — **no** top swatch row (PRD Phase 1) |
+| Investigation plate | **Investigation** (kicker: directional emphasis via band color) |
+| Evidence plate | **Evidence** (kicker: **Informational support**). Inside: **Field notes** + **Sources** — stacked; each may expand/collapse |
+| Graph triplet plate | **Graph review** (kicker: **Decision**) |
+| Claims plate | **Claims** |
+| Directional masthead line | **Active session** / select or open — never “line” or “route” |
+
+**Diagram / map artifacts** (not the workbench shell) may still use **map grammar** per [`FOUNDATION.md`](FOUNDATION.md) §1.

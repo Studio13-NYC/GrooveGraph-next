@@ -15,9 +15,9 @@ Every screen should reduce ambiguity, remove decorative clutter, and present the
 
 ## UI Translation
 
-Transit signage concepts map cleanly to product UI:
+Signage concepts from the NYCTA manual map cleanly to product UI:
 
-- Identification: page titles, object names, section headers, route or product labels
+- Identification: page titles, object names, section headers, **product or surface** labels (here “route” means **identity label**, not a transit line)
 - Directional: navigation, breadcrumbs, grouped actions, next-step links, filters, sort controls
 - Information: metadata, supporting descriptions, status, timestamps, context, guidance copy
 
@@ -77,7 +77,7 @@ This preserves the Studio13 identity while adopting the MTA discipline of color 
 
 Layout should feel like a signage system:
 
-- strong alignment
+- strong alignment to a **grid** (use **grid lines** and columns, not “rails” as a metaphor unless discussing map diagrams)
 - clear grouping
 - consistent margins and gutters
 - obvious transitions between sections
@@ -102,7 +102,7 @@ Navigation should behave like wayfinding:
 - labels should be brief and unambiguous
 - options should be grouped by intent
 - active state should be obvious
-- links should feel like routes, not decoration
+- links should read as **deliberate choices**, not decoration
 - breadcrumbs and back-links should clarify orientation
 
 When a user changes context, the page should re-establish:

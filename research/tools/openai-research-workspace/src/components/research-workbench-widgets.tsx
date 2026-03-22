@@ -1,37 +1,10 @@
 "use client";
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import type { EntityCandidate } from "@/src/types/research-session";
 import type { EntityEditDraft } from "./research-workbench-model";
-
-export function LaneSection({
-  label,
-  title,
-  railColor,
-  children,
-}: {
-  label: string;
-  title: string;
-  railColor: string;
-  children: ReactNode;
-}) {
-  return (
-    <section
-      className="lane-section"
-      style={{ "--lane-color": railColor } as CSSProperties}
-    >
-      <div className="lane-section-header">
-        <div className="lane-section-copy">
-          <span className="lane-section-kicker">{label}</span>
-          <h2 className="lane-section-title">{title}</h2>
-        </div>
-      </div>
-      <div className="lane-section-body">{children}</div>
-    </section>
-  );
-}
 
 export function MarkdownMessage({ content }: { content: string }) {
   return (

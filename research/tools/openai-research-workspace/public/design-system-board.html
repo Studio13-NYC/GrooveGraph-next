@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GrooveGraph Next — Design System Board</title>
+    <!-- Figma html-to-design: load with hash from FIGMA_MCP capture flow -->
+    <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+    <style>
+      /* Mirrors framework/src/visual-system/nycta-groovegraph-tokens.css (light). */
+      :root {
+        --gg-surface-canvas: #ffffff;
+        --gg-surface-canvas-ink: #111111;
+        --gg-ink: #111111;
+        --gg-slate: #5a5654;
+        --gg-route-red: #ee352e;
+        --gg-route-green: #00933c;
+        --gg-route-blue: #0039a6;
+        --gg-route-orange: #ff6319;
+        --gg-route-yellow: #fccc0a;
+        --gg-route-brown: #996633;
+        --gg-route-gray: #a7a9ac;
+        --gg-route-purple: #b933ad;
+        --gg-route-lime: #6cbe45;
+        --gg-sign-panel: #ffffff;
+        --gg-sign-band: #111111;
+        --gg-sign-band-height: 6px;
+        --gg-sign-exit-bg: #ee352e;
+        --gg-sign-exit-fg: #ffffff;
+        --gg-sign-transfer-bg: #fccc0a;
+        --gg-sign-transfer-fg: #111111;
+        --gg-route-stroke-ui: 6px;
+        --gg-route-stroke-hairline: 1px;
+        --gg-route-parallel-gap: calc(var(--gg-route-stroke-ui) * 0.52);
+        --gg-radius-r1: 10px;
+        --gg-radius-r2: 14px;
+        --gg-radius-r3: 20px;
+        --gg-radius-r4: 28px;
+        --gg-radius-r5: 40px;
+        --gg-font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        --gg-type-grid-1: 0.8125rem;
+        --gg-type-grid-2: 1.125rem;
+        --gg-type-grid-3: clamp(1.75rem, 4vw, 2.75rem);
+        --gg-tracking-label: 0.08em;
+        --gg-leading-tight: 1.1;
+        --gg-leading-body: 1.35;
+        --gg-accent-directional: var(--gg-route-orange);
+        --gg-on-dark-fg: #ffffff;
+        /* Proposed: explicit focus ring for Figma + code parity */
+        --gg-focus-ring: #0039a6;
+        /* Proposed: 8px rhythm spacing scale (Figma variables) */
+        --space-0: 0;
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 20px;
+        --space-6: 24px;
+        --space-8: 32px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: var(--gg-font-sans);
+        background: var(--gg-surface-canvas);
+        color: var(--gg-ink);
+        line-height: var(--gg-leading-body);
+      }
+
+      .board {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: var(--space-6);
+      }
+
+      .band {
+        height: var(--gg-sign-band-height);
+        background: var(--gg-sign-band);
+        margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) var(--space-6);
+      }
+
+      h1 {
+        margin: 0 0 var(--space-2);
+        font-size: var(--gg-type-grid-3);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        line-height: var(--gg-leading-tight);
+      }
+
+      .kicker {
+        margin: 0 0 var(--space-2);
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: var(--gg-tracking-label);
+        text-transform: uppercase;
+        color: var(--gg-slate);
+      }
+
+      .section {
+        margin-top: var(--space-8);
+        padding-top: var(--space-6);
+        border-top: 1px solid color-mix(in srgb, var(--gg-ink) 12%, transparent);
+      }
+
+      .section h2 {
+        margin: 0 0 var(--space-4);
+        font-size: var(--gg-type-grid-2);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .grid {
+        display: grid;
+        gap: var(--space-4);
+      }
+
+      .swatches {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: var(--space-3);
+      }
+
+      .swatch {
+        border: 1px solid color-mix(in srgb, var(--gg-ink) 14%, transparent);
+        border-radius: var(--gg-radius-r1);
+        overflow: hidden;
+        background: var(--gg-sign-panel);
+      }
+
+      .swatch-top {
+        height: 48px;
+      }
+
+      .swatch-body {
+        padding: var(--space-2) var(--space-3);
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+
+      .swatch-token {
+        color: var(--gg-slate);
+        font-weight: 600;
+        margin-top: 4px;
+        font-size: 9px;
+      }
+
+      .type-sample {
+        border: 1px solid color-mix(in srgb, var(--gg-ink) 14%, transparent);
+        border-radius: var(--gg-radius-r1);
+        padding: var(--space-4);
+        background: var(--gg-sign-panel);
+      }
+
+      .type-grid-1 {
+        font-size: var(--gg-type-grid-1);
+      }
+      .type-grid-2 {
+        font-size: var(--gg-type-grid-2);
+        font-weight: 800;
+      }
+
+      .radii {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-4);
+        align-items: flex-end;
+      }
+
+      .radius-demo {
+        width: 72px;
+        height: 72px;
+        background: color-mix(in srgb, var(--gg-route-orange) 25%, var(--gg-surface-canvas));
+        border: 2px solid var(--gg-ink);
+      }
+
+      .module-row {
+        display: grid;
+        grid-template-columns: 6px 1fr;
+        gap: var(--space-3);
+        align-items: center;
+        padding: var(--space-3) var(--space-4);
+        border: 2px solid var(--gg-ink);
+        border-radius: var(--gg-radius-r2);
+        margin-bottom: var(--space-3);
+        background: var(--gg-sign-panel);
+      }
+
+      .module-band {
+        align-self: stretch;
+        min-height: 40px;
+        border-radius: 2px;
+      }
+
+      .module-copy strong {
+        display: block;
+        font-size: var(--gg-type-grid-2);
+        font-weight: 800;
+      }
+
+      .module-copy span {
+        font-size: var(--gg-type-grid-1);
+        color: var(--gg-slate);
+      }
+
+      .proposal {
+        background: color-mix(in srgb, var(--gg-route-blue) 6%, var(--gg-surface-canvas));
+        border-left: 4px solid var(--gg-route-blue);
+        padding: var(--space-4);
+        border-radius: 0 var(--gg-radius-r1) var(--gg-radius-r1) 0;
+        margin-top: var(--space-4);
+      }
+
+      .proposal h3 {
+        margin: 0 0 var(--space-2);
+        font-size: var(--gg-type-grid-1);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: var(--gg-tracking-label);
+      }
+
+      .proposal ul {
+        margin: 0;
+        padding-left: 1.2em;
+        font-size: var(--gg-type-grid-1);
+      }
+
+      .spacing-bar {
+        display: flex;
+        align-items: flex-end;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+      }
+
+      .spacing-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        font-size: 9px;
+        font-weight: 700;
+        color: var(--gg-slate);
+      }
+
+      .spacing-item i {
+        display: block;
+        background: var(--gg-ink);
+        border-radius: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="band" aria-hidden="true"></div>
+    <main class="board">
+      <p class="kicker">GrooveGraph Next · Figma import board</p>
+      <h1>Design system</h1>
+      <p class="type-grid-1">
+        Source: <code>framework/src/visual-system/nycta-groovegraph-tokens.css</code>. Capture this page into Figma
+        (<code>generate_figma_design</code> or html-to-design). Tokens win over Figma unless the brief updates CSS.
+      </p>
+
+      <section class="section" aria-labelledby="colors-heading">
+        <h2 id="colors-heading">Color — route families & UI</h2>
+        <div class="swatches">
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-surface-canvas)"></div>
+            <div class="swatch-body">
+              Canvas
+              <div class="swatch-token">--gg-surface-canvas</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-ink)"></div>
+            <div class="swatch-body" style="color: #fff; background: var(--gg-ink)">
+              Ink
+              <div class="swatch-token" style="color: #ccc">--gg-ink</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-slate)"></div>
+            <div class="swatch-body">
+              Slate
+              <div class="swatch-token">--gg-slate</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-accent-directional)"></div>
+            <div class="swatch-body">
+              Directional accent
+              <div class="swatch-token">--gg-accent-directional</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-red)"></div>
+            <div class="swatch-body">
+              Red
+              <div class="swatch-token">--gg-route-red</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-green)"></div>
+            <div class="swatch-body">
+              Green
+              <div class="swatch-token">--gg-route-green</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-blue)"></div>
+            <div class="swatch-body" style="color: #fff">
+              Blue
+              <div class="swatch-token" style="color: #cce">--gg-route-blue</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-orange)"></div>
+            <div class="swatch-body">
+              Orange
+              <div class="swatch-token">--gg-route-orange</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-yellow)"></div>
+            <div class="swatch-body">
+              Yellow
+              <div class="swatch-token">--gg-route-yellow</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-purple)"></div>
+            <div class="swatch-body" style="color: #fff">
+              Purple / magenta
+              <div class="swatch-token" style="color: #ece">--gg-route-purple</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-route-gray)"></div>
+            <div class="swatch-body">
+              Gray
+              <div class="swatch-token">--gg-route-gray</div>
+            </div>
+          </div>
+          <div class="swatch">
+            <div class="swatch-top" style="background: var(--gg-sign-band)"></div>
+            <div class="swatch-body" style="color: #fff; background: var(--gg-sign-band)">
+              Sign band
+              <div class="swatch-token" style="color: #ccc">--gg-sign-band</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="type-heading">
+        <h2 id="type-heading">Typography</h2>
+        <p class="kicker">Helvetica Neue first (--gg-font-sans)</p>
+        <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 16px">
+          <div class="type-sample">
+            <span class="kicker">type-grid-1 · body / captions</span>
+            <p class="type-grid-1" style="margin: 8px 0 0">
+              The quick brown fox jumps over the lazy dog. 0.8125rem · leading body 1.35.
+            </p>
+          </div>
+          <div class="type-sample">
+            <span class="kicker">type-grid-2 · module titles</span>
+            <p class="type-grid-2" style="margin: 8px 0 0">Investigation · Evidence</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="radius-heading">
+        <h2 id="radius-heading">Radius scale (r1–r5)</h2>
+        <div class="radii">
+          <div>
+            <div class="radius-demo" style="border-radius: var(--gg-radius-r1)"></div>
+            <p class="kicker" style="margin-top: 8px">r1 10px</p>
+          </div>
+          <div>
+            <div class="radius-demo" style="border-radius: var(--gg-radius-r2)"></div>
+            <p class="kicker" style="margin-top: 8px">r2 14px</p>
+          </div>
+          <div>
+            <div class="radius-demo" style="border-radius: var(--gg-radius-r3)"></div>
+            <p class="kicker" style="margin-top: 8px">r3 20px</p>
+          </div>
+          <div>
+            <div class="radius-demo" style="border-radius: var(--gg-radius-r4)"></div>
+            <p class="kicker" style="margin-top: 8px">r4 28px</p>
+          </div>
+          <div>
+            <div class="radius-demo" style="border-radius: var(--gg-radius-r5)"></div>
+            <p class="kicker" style="margin-top: 8px">r5 40px</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="workbench-heading">
+        <h2 id="workbench-heading">Workbench — module color coding (plates)</h2>
+        <p class="type-grid-1" style="margin-top: 0; color: var(--gg-slate)">
+          No top legend strip in app (PRD Phase 1). Identity = plate band only.
+        </p>
+        <div class="module-row">
+          <div class="module-band" style="background: var(--gg-route-orange)"></div>
+          <div class="module-copy">
+            <strong>Investigation</strong>
+            <span>Primary workspace · stream + composer</span>
+          </div>
+        </div>
+        <div class="module-row">
+          <div class="module-band" style="background: var(--gg-route-blue)"></div>
+          <div class="module-copy">
+            <strong>Evidence</strong>
+            <span>Field notes · sources</span>
+          </div>
+        </div>
+        <div class="module-row">
+          <div class="module-band" style="background: var(--gg-route-purple)"></div>
+          <div class="module-copy">
+            <strong>Graph review</strong>
+            <span>Triplet decisions</span>
+          </div>
+        </div>
+        <div class="module-row">
+          <div class="module-band" style="background: var(--gg-route-yellow)"></div>
+          <div class="module-copy">
+            <strong>Claims</strong>
+            <span>Supporting review</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="proposed-heading">
+        <h2 id="proposed-heading">Proposed Figma variables (not yet in CSS)</h2>
+        <div class="proposal">
+          <h3>Spacing · 8px rhythm</h3>
+          <p class="type-grid-1" style="margin: 0 0 12px">
+            Add matching <strong>number</strong> variables in Figma for padding/margin: 0, 4, 8, 12, 16, 20, 24, 32.
+          </p>
+          <div class="spacing-bar">
+            <div class="spacing-item">
+              <i style="width: 4px; height: 12px"></i>
+              4
+            </div>
+            <div class="spacing-item">
+              <i style="width: 8px; height: 16px"></i>
+              8
+            </div>
+            <div class="spacing-item">
+              <i style="width: 12px; height: 20px"></i>
+              12
+            </div>
+            <div class="spacing-item">
+              <i style="width: 16px; height: 24px"></i>
+              16
+            </div>
+            <div class="spacing-item">
+              <i style="width: 24px; height: 28px"></i>
+              24
+            </div>
+            <div class="spacing-item">
+              <i style="width: 32px; height: 32px"></i>
+              32
+            </div>
+          </div>
+        </div>
+        <div class="proposal">
+          <h3>Focus ring</h3>
+          <p class="type-grid-1" style="margin: 0">
+            Proposed token <code>--gg-focus-ring</code> = route blue; outline 2px solid, offset 2px — align Figma
+            “focus” style with inputs in the research workbench.
+          </p>
+        </div>
+        <div class="proposal">
+          <h3>Semantic aliases (optional)</h3>
+          <ul>
+            <li><code>module/investigation</code> → orange route</li>
+            <li><code>module/evidence</code> → blue route</li>
+            <li><code>module/graph-review</code> → purple route</li>
+            <li><code>module/claims</code> → yellow route</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section">
+        <p class="kicker">Geometry</p>
+        <p class="type-grid-1" style="margin: 0">
+          Hairline: <strong>1px</strong> · Route UI stroke: <strong>6px</strong> · Parallel gap ≈ <strong>3.12px</strong>
+          (0.52 × stroke).
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

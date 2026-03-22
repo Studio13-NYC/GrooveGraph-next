@@ -2,6 +2,8 @@
 
 This document is the **single merged authority** for how GrooveGraph Next interprets NYCTA / Vignelli transit graphics for maps, diagrams, signage-shaped UI, and related artifacts.
 
+**Figma (application UI):** For **workbench and product UI** layout and component structure, **Figma is the living spec** alongside this doc — canonical file **[`groovegraph-design-system.fig`](groovegraph-design-system.fig)** (baseline type **Helvetica Neue**, aligned with **`--gg-font-sans`**). See [`FIGMA_MCP.md`](FIGMA_MCP.md) for the MCP workflow (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`). **CSS tokens** remain the implementation source of truth unless a brief explicitly changes them.
+
 **Physical and digitized sources** (archived under `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`):
 
 1. **`vignelli-subway-map-19721.jpg`** — 1972 New York City Subway diagram (Massimo Vignelli). Primary reference for **color**, **line weight**, **parallel corridors**, **curve language**, **symbols**, and **figure/ground** (land, water, parks).
@@ -13,6 +15,15 @@ This document is the **single merged authority** for how GrooveGraph Next interp
 (add `"@groovegraph-next/framework": "file:../framework"` or another correct relative path to `framework/` from that package’s `package.json`).  
 Re-export next to map scans: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/nycta-groovegraph-tokens.css`.  
 **Index of what to read first:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
+
+**Workbench copy vocabulary:** [`WORKBENCH_VOCAB.md`](WORKBENCH_VOCAB.md) — manual-first terms (index, module, split); no transit metaphors in UI strings.
+
+---
+
+## Context split: application UI vs map-shaped graphics
+
+- **Application shell and workbench** — Lead with the **1970 NYCTA Graphics Standards Manual** mental model: **modular plates**, **bands**, **grids**, **hairlines**, **functional color coding**, **Helvetica Neue** (see **`groovegraph-design-system.fig`** and **`--gg-font-sans`**). Do **not** label features **lines**, **stops**, **interchanges**, or **routes** in user-facing copy unless the surface is literally a **map or diagram**.
+- **Maps, schematics, graph edges, governance diagrams** — Use **1972 diagram grammar** (§1): orthogonal + 45°, trunk weight, parallel gutter, explicit junctions, route color as meaning.
 
 ---
 
@@ -28,9 +39,9 @@ These rules are **non-negotiable** for new-regime map-shaped or route-shaped gra
 - **Stations:** Simple **high-contrast dots** on the line; **interchanges** read as **deliberate junctions** (e.g. open ring or emphasized node) — transfer is **explicit**, never implied only by crossing lines.
 - **Figure / ground:** **Neutral land** (same white / dark canvas as product — no warm substrate), **white water fields**, **flat grey park blocks** — high clarity, minimal texture.
 
-For **software** (dashboards, graph views, workflows), translate map grammar into:
+For **software layout** (dashboards, workflows), prefer **manual** structuring — **alignment grid**, **primary stage**, **adjacent modules**, **split control** between major contexts — not transit metaphors. Reserve **map grammar** vocabulary for **actual map- or diagram-shaped** UI and assets.
 
-- **Rails** for primary journeys, **parallel lanes** for concurrent workflows, **explicit interchange states** when context changes (e.g. search → evidence → graph review).
+When a **graph view** or **map panel** is literally route-shaped, then apply §1 visually (angles, weight, parallel gutter, explicit junctions).
 
 ---
 

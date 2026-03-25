@@ -14989,6 +14989,752 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "dsKitLib",
+      "x": -560,
+      "y": -3192.6717283497223,
+      "name": "Design system — library (tokens + reusable components)",
+      "width": 760,
+      "height": 3800,
+      "fill": "#f8f8f8ff",
+      "stroke": {
+        "align": "inside",
+        "thickness": 2,
+        "fill": "#111111ff"
+      },
+      "layout": "vertical",
+      "gap": 32,
+      "padding": 28,
+      "children": [
+        {
+          "type": "frame",
+          "id": "dsKitHd",
+          "name": "Library header",
+          "width": "fill_container",
+          "height": 72,
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "dsKitT1",
+              "name": "Title",
+              "fill": "#111111ff",
+              "content": "GrooveGraph Next — design system",
+              "fontFamily": "Helvetica Neue LT Pro",
+              "fontSize": 24,
+              "fontWeight": "800",
+              "letterSpacing": -0.4
+            },
+            {
+              "type": "text",
+              "id": "dsKitT2",
+              "name": "Subtitle",
+              "fill": "#5a5654ff",
+              "content": "Aligns with framework/src/visual-system/nycta-groovegraph-tokens.css · NYCTA route palette · 8px spacing rhythm",
+              "fontFamily": "Helvetica",
+              "fontSize": 12,
+              "fontWeight": "normal",
+              "lineHeight": 1.35
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dsSecTok",
+          "name": "Section — Color tokens",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "text",
+              "id": "dsSecTokL",
+              "name": "Section label",
+              "fill": "#111111ff",
+              "content": "COLOR TOKENS (--gg-route-*)",
+              "fontFamily": "Helvetica",
+              "fontSize": 10,
+              "fontWeight": "800",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "frame",
+              "id": "dsSwRow",
+              "name": "Swatch row",
+              "width": "fill_container",
+              "layout": "horizontal",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dsSw01",
+                  "name": "Swatch",
+                  "width": 88,
+                  "height": 56,
+                  "fill": "#ee352eff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dsSw01t",
+                      "fill": "#ffffffff",
+                      "content": "red",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 9,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsSw02",
+                  "name": "Swatch",
+                  "width": 88,
+                  "height": 56,
+                  "fill": "#00933cff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dsSw02t",
+                      "fill": "#ffffffff",
+                      "content": "green",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 9,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsSw03",
+                  "name": "Swatch",
+                  "width": 88,
+                  "height": 56,
+                  "fill": "#0039a6ff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dsSw03t",
+                      "fill": "#ffffffff",
+                      "content": "blue",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 9,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsSw04",
+                  "name": "Swatch",
+                  "width": 88,
+                  "height": 56,
+                  "fill": "#ff6319ff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dsSw04t",
+                      "fill": "#111111ff",
+                      "content": "orange",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 9,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsSw05",
+                  "name": "Swatch",
+                  "width": 88,
+                  "height": 56,
+                  "fill": "#fccc0aff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dsSw05t",
+                      "fill": "#111111ff",
+                      "content": "yellow",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 9,
+                      "fontWeight": "800"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsSw06",
+                  "name": "Swatch",
+                  "width": 88,
+                  "height": 56,
+                  "fill": "#a7a9acff",
+                  "cornerRadius": 4,
+                  "layout": "vertical",
+                  "padding": [
+                    6,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "dsSw06t",
+                      "fill": "#111111ff",
+                      "content": "gray",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 9,
+                      "fontWeight": "800"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dsSecRad",
+          "name": "Section — Radius",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "children": [
+            {
+              "type": "text",
+              "id": "dsSecRadL",
+              "fill": "#111111ff",
+              "content": "RADIUS (--gg-radius-r1 … r5)",
+              "fontFamily": "Helvetica",
+              "fontSize": 10,
+              "fontWeight": "800",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "frame",
+              "id": "dsRadRow",
+              "layout": "horizontal",
+              "gap": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dsRd1",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#111111ff",
+                  "cornerRadius": 10
+                },
+                {
+                  "type": "frame",
+                  "id": "dsRd2",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#111111ff",
+                  "cornerRadius": 14
+                },
+                {
+                  "type": "frame",
+                  "id": "dsRd3",
+                  "width": 48,
+                  "height": 48,
+                  "fill": "#111111ff",
+                  "cornerRadius": 20
+                },
+                {
+                  "type": "text",
+                  "id": "dsRdCap",
+                  "fill": "#5a5654ff",
+                  "content": "10 · 14 · 20 px (r1–r3)",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 11
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dsSecTyp",
+          "name": "Section — Typography",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "text",
+              "id": "dsSecTypL",
+              "fill": "#111111ff",
+              "content": "TYPOGRAPHY",
+              "fontFamily": "Helvetica",
+              "fontSize": 10,
+              "fontWeight": "800",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "text",
+              "id": "dsTyK",
+              "fill": "#5a5654ff",
+              "content": "KICKER / LABEL",
+              "fontFamily": "Helvetica",
+              "fontSize": 10,
+              "fontWeight": "800",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "text",
+              "id": "dsTyH1",
+              "fill": "#111111ff",
+              "content": "Heading — Helvetica 28 / 800",
+              "fontFamily": "Helvetica",
+              "fontSize": 28,
+              "fontWeight": "800",
+              "letterSpacing": -0.84
+            },
+            {
+              "type": "text",
+              "id": "dsTyH2",
+              "fill": "#111111ff",
+              "content": "Section title — 18 / 800",
+              "fontFamily": "Helvetica",
+              "fontSize": 18,
+              "fontWeight": "800"
+            },
+            {
+              "type": "text",
+              "id": "dsTyBd",
+              "fill": "#111111ff",
+              "content": "Body — Inter 13 / 1.35 (notes, longform)",
+              "fontFamily": "Inter",
+              "fontSize": 13,
+              "fontWeight": "normal",
+              "lineHeight": 1.35
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dsSecCmp",
+          "name": "Section — Reusable components",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 20,
+          "children": [
+            {
+              "type": "text",
+              "id": "dsSecCmpL",
+              "fill": "#111111ff",
+              "content": "COMPONENTS (reusable: true — drag into screens as instances)",
+              "fontFamily": "Helvetica",
+              "fontSize": 10,
+              "fontWeight": "800",
+              "letterSpacing": 0.8
+            },
+            {
+              "type": "frame",
+              "id": "dsRC01",
+              "name": "Button / Primary",
+              "reusable": true,
+              "width": "fit_content",
+              "height": 36,
+              "fill": "#00933cff",
+              "cornerRadius": 10,
+              "padding": [
+                10,
+                16
+              ],
+              "layout": "none",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dsRC01x",
+                  "x": 16,
+                  "y": 9,
+                  "fill": "#ffffffff",
+                  "content": "Primary action",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 11,
+                  "fontWeight": "800",
+                  "letterSpacing": 0.07
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC02",
+              "name": "Button / Outline",
+              "reusable": true,
+              "width": "fit_content",
+              "height": 36,
+              "fill": "#ffffff00",
+              "cornerRadius": 10,
+              "stroke": {
+                "align": "inside",
+                "thickness": 2,
+                "fill": "#111111ff"
+              },
+              "padding": [
+                10,
+                16
+              ],
+              "layout": "none",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dsRC02x",
+                  "x": 16,
+                  "y": 9,
+                  "fill": "#111111ff",
+                  "content": "Secondary",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 11,
+                  "fontWeight": "800"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC03",
+              "name": "Button / Link",
+              "reusable": true,
+              "width": "fit_content",
+              "height": 32,
+              "layout": "none",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dsRC03x",
+                  "fill": "#0039a6ff",
+                  "content": "Link action",
+                  "fontFamily": "Arial",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC04",
+              "name": "Sign band",
+              "reusable": true,
+              "width": 320,
+              "height": 6,
+              "fill": "#111111ff"
+            },
+            {
+              "type": "frame",
+              "id": "dsRC05",
+              "name": "Plate / Masthead block",
+              "reusable": true,
+              "width": 320,
+              "height": 120,
+              "layout": "vertical",
+              "gap": 6,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dsRC05a",
+                  "fill": "#5a5654ff",
+                  "content": "Identification",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 10,
+                  "fontWeight": "800",
+                  "letterSpacing": 0.8
+                },
+                {
+                  "type": "text",
+                  "id": "dsRC05b",
+                  "fill": "#111111ff",
+                  "content": "GrooveGraph",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 28,
+                  "fontWeight": "800",
+                  "letterSpacing": -0.84
+                },
+                {
+                  "type": "text",
+                  "id": "dsRC05c",
+                  "fill": "#5a5654ff",
+                  "content": "Research workbench",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 13,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC06",
+              "name": "Badge / Status proposed",
+              "reusable": true,
+              "width": "fit_content",
+              "height": 22,
+              "fill": "#ff631933",
+              "cornerRadius": 4,
+              "padding": [
+                4,
+                8
+              ],
+              "layout": "none",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dsRC06x",
+                  "fill": "#111111ff",
+                  "content": "proposed",
+                  "fontFamily": "Arial",
+                  "fontSize": 10,
+                  "fontWeight": "700"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC07",
+              "name": "Decision row",
+              "reusable": true,
+              "width": "fit_content",
+              "height": 28,
+              "layout": "horizontal",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "dsRC07a",
+                  "width": 72,
+                  "height": 28,
+                  "cornerRadius": 2,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#11111144"
+                  },
+                  "padding": [
+                    4,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "fill": "#00933cff",
+                      "content": "Accept",
+                      "fontFamily": "Arial",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsRC07b",
+                  "width": 64,
+                  "height": 28,
+                  "cornerRadius": 2,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#11111144"
+                  },
+                  "padding": [
+                    4,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "fill": "#ff6319ff",
+                      "content": "Defer",
+                      "fontFamily": "Arial",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "dsRC07c",
+                  "width": 72,
+                  "height": 28,
+                  "cornerRadius": 2,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#11111144"
+                  },
+                  "padding": [
+                    4,
+                    8
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "fill": "#ee352eff",
+                      "content": "Reject",
+                      "fontFamily": "Arial",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC08",
+              "name": "Field / Label + value",
+              "reusable": true,
+              "width": 280,
+              "height": 110,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dsRC08a",
+                  "fill": "#5a5654ff",
+                  "content": "Compose turn",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 10,
+                  "fontWeight": "800",
+                  "letterSpacing": 0.06
+                },
+                {
+                  "type": "frame",
+                  "id": "dsRC08b",
+                  "width": "fill_container",
+                  "height": 72,
+                  "fill": "#ffffffff",
+                  "cornerRadius": 10,
+                  "stroke": {
+                    "align": "inside",
+                    "thickness": 1,
+                    "fill": "#1111112e"
+                  },
+                  "padding": [
+                    10,
+                    12
+                  ],
+                  "children": [
+                    {
+                      "type": "text",
+                      "fill": "#5a5654cc",
+                      "content": "Placeholder…",
+                      "fontFamily": "Helvetica",
+                      "fontSize": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC09",
+              "name": "Alert / Info rail",
+              "reusable": true,
+              "width": 320,
+              "height": 72,
+              "fill": "#ffffffff",
+              "stroke": {
+                "align": "inside",
+                "thickness": {
+                  "left": 4
+                },
+                "fill": "#0039a6ff"
+              },
+              "padding": [
+                12,
+                16
+              ],
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "fill": "#111111ff",
+                  "content": "Informational note for the plate body.",
+                  "fontFamily": "Inter",
+                  "fontSize": 13,
+                  "lineHeight": 1.45
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "dsRC10",
+              "name": "Route chip",
+              "reusable": true,
+              "width": "fit_content",
+              "height": 24,
+              "fill": "#0039a6ff",
+              "cornerRadius": 4,
+              "padding": [
+                4,
+                10
+              ],
+              "layout": "none",
+              "children": [
+                {
+                  "type": "text",
+                  "fill": "#ffffffff",
+                  "content": "N Q R W",
+                  "fontFamily": "Helvetica",
+                  "fontSize": 11,
+                  "fontWeight": "800"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "dsInstEx",
+          "name": "How to reuse",
+          "width": "fill_container",
+          "height": 56,
+          "layout": "vertical",
+          "gap": 6,
+          "children": [
+            {
+              "type": "text",
+              "id": "dsInstTx",
+              "fill": "#5a5654ff",
+              "content": "In Pencil: insert → component → pick a reusable frame above. In exports, reusable frames keep stable ids (dsRC01…dsRC10).",
+              "fontFamily": "Helvetica",
+              "fontSize": 10,
+              "lineHeight": 1.35
+            }
+          ]
+        }
+      ]
     }
   ]
 }

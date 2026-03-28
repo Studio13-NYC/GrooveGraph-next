@@ -17,7 +17,7 @@
 | `USAGE_ACCOUNTING.mdc` | Canonical rough slice-cost model and JSONL telemetry persistence |
 | `VISUAL_STYLE_GUIDE.mdc` | Short entry: graphics system, regimes, checklist |
 | `design-language/FOUNDATION.mdc` | Merged NYCTA / Vignelli design authority (map + manual + software) |
-| `design-language/README.mdc` | Index for the design-language folder |
+| `design-language/README.md` | Index for the design-language folder |
 | `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` | Execution brief for research workbench chrome (graphic-artist lane) |
 | `GITHUB_STRATEGY.mdc` | Canonical successor-repo and remote strategy |
 | `AZURE_BASELINE.mdc` | Current Azure environment, preservation rules, and overwrite boundaries |
@@ -27,7 +27,7 @@
 | `SUBAGENT_MAINTENANCE.mdc` | Checklist for adding or changing subagents |
 | `HEADCOUNT.mdc` | Canonical serial and async orchestration test suite for current agents |
 | `WORKFLOW_VALIDATION.mdc` | Evidence from representative framework workflow checks |
-| `GENERALIZATION_AUDIT.mdc` | Audit against `generalized.md`; reusable vs product-specific; fork checklist |
+| `GENERALIZATION_AUDIT.mdc` | Audit for reuse vs product-specific; fork checklist |
 | `RESEARCH_WORKBENCH_WAYFINDING_PLAN.mdc` | Live-site design critique turned into a `graphic-artist` execution brief and implementation-ready S13/MTA redesign plan for the research workbench |
 
 ## Precedence
@@ -44,12 +44,6 @@ When files drift, use this precedence:
 8. `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc` for graphics and visual regime decisions
 9. `AGENTS.mdc` as the repo-level operating summary
 10. `.cursor/rules/*.mdc` as executable mirrors that must stay in sync with the docs
-
-## Root references
-
-| File | Purpose |
-|---|---|
-| `../generalized.md` | Portable blueprint (no cloud-, web-framework, or product-domain specifics). Use when deriving a new project or auditing generalization. |
 
 ## Related surfaces
 

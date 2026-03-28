@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "npm run dev -w @groovegraph-next/product",
     "validate:repo": "node -e \"console.log('groovegraph-next repo scaffold ready')\"",
-    "validate:docs": "node -e \"const fs=require('fs'); ['README.md','AGENTS.mdc','docs/AGENT_ORCHESTRATION.mdc','docs/MODEL_ROUTING.mdc','docs/CONTEXT_PACKETS.mdc','docs/USAGE_ACCOUNTING.mdc','docs/HYGIENE.mdc','docs/OBSERVABILITY.mdc','docs/VISUAL_STYLE_GUIDE.mdc','docs/design-language/FOUNDATION.mdc','docs/design-language/README.mdc'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('docs present')\"",
+    "validate:docs": "node -e \"const fs=require('fs'); ['README.md','AGENTS.mdc','docs/AGENT_ORCHESTRATION.mdc','docs/MODEL_ROUTING.mdc','docs/CONTEXT_PACKETS.mdc','docs/USAGE_ACCOUNTING.mdc','docs/HYGIENE.mdc','docs/OBSERVABILITY.mdc','docs/VISUAL_STYLE_GUIDE.mdc','docs/design-language/FOUNDATION.mdc','docs/design-language/README.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('docs present')\"",
     "validate:visual-system": "node -e \"const fs=require('fs'); ['framework/src/visual-system/tokens.ts','assets/examples/new-regime-governance-map.svg','assets/examples/old-regime-satire-panel.svg','assets/examples/graphic-brief-template.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system assets present')\"",
     "validate:framework": "npm run validate:framework -w @groovegraph-next/framework",
     "cleanup:check": "npm prune && npx knip",

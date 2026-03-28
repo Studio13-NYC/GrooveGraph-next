@@ -2,14 +2,16 @@
 
 ## Purpose
 
-This document audits `GrooveGraph-next` against `generalized.md` (the portable blueprint). It identifies what is reusable versus what is GrooveGraph-specific, and proposes bounded cleanup slices for framework extraction or public-example derivation.
+This document audits `GrooveGraph-next` against **portable multi-agent blueprint** expectations (reusable layout versus product-specific baggage). It identifies what is reusable versus what is GrooveGraph-specific, and proposes bounded cleanup slices for framework extraction or public-example derivation.
 
-The blueprint states: *"the whole system can be copied to another project without carrying product-specific baggage"* (§17).
+The blueprint criterion used here: *"the whole system can be copied to another project without carrying product-specific baggage"* (§17-style framing).
+
+**Live contract in this repo:** **`AGENTS.mdc`**, **`docs/INDEX.mdc`**, and the canonical docs they point to—not a separate root blueprint file.
 
 ## Audit Date
 
 - Run: `2026-03-18`
-- Reference: `generalized.md` (Generalized Project Blueprint)
+- Reference: `AGENTS.mdc`, `docs/INDEX.mdc` (canonical map and operating contract)
 
 ---
 
@@ -31,7 +33,6 @@ The blueprint states: *"the whole system can be copied to another project withou
 | Blueprint recommendation | Repo state | Evidence |
 |---|---|---|
 | `AGENTS.mdc` | Present | Root `AGENTS.mdc` |
-| `generalized.md` | Present | Root (blueprint) |
 | `.cursor/agents/` | Present | Orchestrator, explorer, implementer, reviewer, tester, hygienist, graphic-artist, composer-meta, infrastructure-deployment |
 | `.cursor/rules/` | Present | subagent-routing, context-passing, forthright-guidance, etc. |
 | `.cursor/skills/` | Present | agent-orchestrator, context-packet-builder |
@@ -81,7 +82,7 @@ These are correct for this repo and should remain. When forking, they are the pr
 
 ### 2.2 Framework surfaces with product branding
 
-Per the blueprint, the framework layer should avoid product-domain specifics where possible. These files use "GrooveGraph Next" in role descriptions and could be generalized for a reusable template.
+Per a portable blueprint, the framework layer should avoid product-domain specifics where possible. These files use "GrooveGraph Next" in role descriptions and could be generalized for a reusable template.
 
 | Location | Current wording | Recommendation |
 |---|---|---|
@@ -96,7 +97,6 @@ Per the blueprint, the framework layer should avoid product-domain specifics whe
 
 | Item | Status |
 |---|---|
-| `generalized.md` not listed in `docs/INDEX.mdc` | Resolved: added to INDEX under Root references |
 | `.cursor/rules/infrastructure-deployment.mdc` references `rg-groovegraph` | Expected; infrastructure lane is product-scoped |
 
 ---
@@ -114,18 +114,16 @@ Per the blueprint, the framework layer should avoid product-domain specifics whe
 
 ## 4. Highest-Value Next Cleanup Slice
 
-**Proposed slice:** Add the portable blueprint (`generalized.md`) to the documentation index and record hygiene evidence for traceability.
+**Proposed slice:** Keep fork-readiness traceable: run `npm run cleanup:check` and record hygiene outcomes in `research/hygiene/HYGIENE_LOG.md` when doing generalization or extraction work.
 
 **Rationale:**
 
-- `docs/INDEX.mdc` is the canonical doc map but omits `generalized.md`, which is the source blueprint for the whole system.
-- Explicitly linking the blueprint improves discoverability and clarifies that `AGENTS.mdc` is the project-specific instantiation of `generalized.md`.
-- Appending hygiene evidence to `research/` keeps the audit traceable per the blueprint's evidence contract.
+- **`docs/INDEX.mdc`** is the canonical doc map; **`AGENTS.mdc`** is the project-specific operating contract. This audit (`docs/GENERALIZATION_AUDIT.mdc`) summarizes reusable vs product-specific surfaces for forks.
+- Appending hygiene evidence to `research/` keeps the audit traceable alongside the evidence contract in `docs/HYGIENE.mdc`.
 
 **Scope:**
 
-- Update `docs/INDEX.mdc` to include `generalized.md` under root references.
-- Add a dated section to `research/hygiene/HYGIENE_LOG.md` with this run's evidence (log consolidated 2026-03-21).
+- Add a dated section to `research/hygiene/HYGIENE_LOG.md` when running a new generalization pass (log consolidated 2026-03-21 for historical runs).
 
 ---
 

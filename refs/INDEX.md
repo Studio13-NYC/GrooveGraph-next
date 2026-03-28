@@ -24,7 +24,7 @@ Use **`@refs/INDEX.md`** when you want one place that maps short names to canoni
 | Azure | `docs/AZURE_BASELINE.mdc` | Environment and deploy boundaries |
 | Workflow validation | `docs/WORKFLOW_VALIDATION.mdc` | Framework check evidence |
 | Headcount suite | `docs/HEADCOUNT.mdc` | Serial/async orchestration tests |
-| Generalization blueprint | `generalized.md` | Portable fork / audit source |
+| Generalization audit | `docs/GENERALIZATION_AUDIT.mdc` | Reuse vs product-specific; fork checklist |
 
 ## Rule mirrors (`.cursor/rules`)
 

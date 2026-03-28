@@ -14993,8 +14993,8 @@
     {
       "type": "frame",
       "id": "dsKitLib",
-      "x": -560,
-      "y": -3192.6717283497223,
+      "x": -559,
+      "y": -906,
       "name": "Design system — library (tokens + reusable components)",
       "width": 760,
       "height": 3800,
@@ -15034,10 +15034,10 @@
               "name": "Subtitle",
               "fill": "#5a5654ff",
               "content": "Aligns with framework/src/visual-system/nycta-groovegraph-tokens.css · NYCTA route palette · 8px spacing rhythm",
+              "lineHeight": 1.35,
               "fontFamily": "Helvetica",
               "fontSize": 12,
-              "fontWeight": "normal",
-              "lineHeight": 1.35
+              "fontWeight": "normal"
             }
           ]
         },
@@ -15065,7 +15065,6 @@
               "id": "dsSwRow",
               "name": "Swatch row",
               "width": "fill_container",
-              "layout": "horizontal",
               "gap": 8,
               "children": [
                 {
@@ -15243,7 +15242,6 @@
             {
               "type": "frame",
               "id": "dsRadRow",
-              "layout": "horizontal",
               "gap": 12,
               "children": [
                 {
@@ -15276,7 +15274,8 @@
                   "fill": "#5a5654ff",
                   "content": "10 · 14 · 20 px (r1–r3)",
                   "fontFamily": "Helvetica",
-                  "fontSize": 11
+                  "fontSize": 11,
+                  "fontWeight": "normal"
                 }
               ]
             }
@@ -15334,10 +15333,10 @@
               "id": "dsTyBd",
               "fill": "#111111ff",
               "content": "Body — Inter 13 / 1.35 (notes, longform)",
+              "lineHeight": 1.35,
               "fontFamily": "Inter",
               "fontSize": 13,
-              "fontWeight": "normal",
-              "lineHeight": 1.35
+              "fontWeight": "normal"
             }
           ]
         },
@@ -15364,14 +15363,10 @@
               "id": "dsRC01",
               "name": "Button / Primary",
               "reusable": true,
-              "width": "fit_content",
+              "width": "fit_content(0)",
               "height": 36,
               "fill": "#00933cff",
               "cornerRadius": 10,
-              "padding": [
-                10,
-                16
-              ],
               "layout": "none",
               "children": [
                 {
@@ -15393,7 +15388,7 @@
               "id": "dsRC02",
               "name": "Button / Outline",
               "reusable": true,
-              "width": "fit_content",
+              "width": "fit_content(0)",
               "height": 36,
               "fill": "#ffffff00",
               "cornerRadius": 10,
@@ -15402,10 +15397,6 @@
                 "thickness": 2,
                 "fill": "#111111ff"
               },
-              "padding": [
-                10,
-                16
-              ],
               "layout": "none",
               "children": [
                 {
@@ -15426,13 +15417,15 @@
               "id": "dsRC03",
               "name": "Button / Link",
               "reusable": true,
-              "width": "fit_content",
+              "width": "fit_content(0)",
               "height": 32,
               "layout": "none",
               "children": [
                 {
                   "type": "text",
                   "id": "dsRC03x",
+                  "x": 0,
+                  "y": 0,
                   "fill": "#0039a6ff",
                   "content": "Link action",
                   "fontFamily": "Arial",
@@ -15496,19 +15489,17 @@
               "id": "dsRC06",
               "name": "Badge / Status proposed",
               "reusable": true,
-              "width": "fit_content",
+              "width": "fit_content(0)",
               "height": 22,
               "fill": "#ff631933",
               "cornerRadius": 4,
-              "padding": [
-                4,
-                8
-              ],
               "layout": "none",
               "children": [
                 {
                   "type": "text",
                   "id": "dsRC06x",
+                  "x": 0,
+                  "y": 0,
                   "fill": "#111111ff",
                   "content": "proposed",
                   "fontFamily": "Arial",
@@ -15522,9 +15513,7 @@
               "id": "dsRC07",
               "name": "Decision row",
               "reusable": true,
-              "width": "fit_content",
               "height": 28,
-              "layout": "horizontal",
               "gap": 8,
               "children": [
                 {
@@ -15545,6 +15534,7 @@
                   "children": [
                     {
                       "type": "text",
+                      "id": "0po3p",
                       "fill": "#00933cff",
                       "content": "Accept",
                       "fontFamily": "Arial",
@@ -15571,6 +15561,7 @@
                   "children": [
                     {
                       "type": "text",
+                      "id": "XthR0",
                       "fill": "#ff6319ff",
                       "content": "Defer",
                       "fontFamily": "Arial",
@@ -15597,6 +15588,7 @@
                   "children": [
                     {
                       "type": "text",
+                      "id": "0bv0q",
                       "fill": "#ee352eff",
                       "content": "Reject",
                       "fontFamily": "Arial",
@@ -15646,10 +15638,12 @@
                   "children": [
                     {
                       "type": "text",
+                      "id": "iYb39",
                       "fill": "#5a5654cc",
                       "content": "Placeholder…",
                       "fontFamily": "Helvetica",
-                      "fontSize": 13
+                      "fontSize": 13,
+                      "fontWeight": "normal"
                     }
                   ]
                 }
@@ -15670,20 +15664,22 @@
                 },
                 "fill": "#0039a6ff"
               },
+              "layout": "vertical",
+              "gap": 4,
               "padding": [
                 12,
                 16
               ],
-              "layout": "vertical",
-              "gap": 4,
               "children": [
                 {
                   "type": "text",
+                  "id": "LMrn9",
                   "fill": "#111111ff",
                   "content": "Informational note for the plate body.",
+                  "lineHeight": 1.45,
                   "fontFamily": "Inter",
                   "fontSize": 13,
-                  "lineHeight": 1.45
+                  "fontWeight": "normal"
                 }
               ]
             },
@@ -15692,18 +15688,17 @@
               "id": "dsRC10",
               "name": "Route chip",
               "reusable": true,
-              "width": "fit_content",
+              "width": "fit_content(0)",
               "height": 24,
               "fill": "#0039a6ff",
               "cornerRadius": 4,
-              "padding": [
-                4,
-                10
-              ],
               "layout": "none",
               "children": [
                 {
                   "type": "text",
+                  "id": "cft7V",
+                  "x": 0,
+                  "y": 0,
                   "fill": "#ffffffff",
                   "content": "N Q R W",
                   "fontFamily": "Helvetica",
@@ -15728,9 +15723,10 @@
               "id": "dsInstTx",
               "fill": "#5a5654ff",
               "content": "In Pencil: insert → component → pick a reusable frame above. In exports, reusable frames keep stable ids (dsRC01…dsRC10).",
+              "lineHeight": 1.35,
               "fontFamily": "Helvetica",
               "fontSize": 10,
-              "lineHeight": 1.35
+              "fontWeight": "normal"
             }
           ]
         }

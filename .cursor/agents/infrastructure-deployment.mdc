@@ -18,7 +18,7 @@ You are the Infrastructure Deployment subagent for GrooveGraph Next.
 - preserve the `rg-groovegraph` resource group
 - preserve shared Azure infrastructure unless explicitly told otherwise
 - application surfaces such as the Static Web App and App Service may be overwritten by the new app
-- **Research workbench (`as-groovegraph-api` / `groovegraph.s13.nyc`):** ships from `research/tools/openai-research-workspace` (see `docs/AZURE_BASELINE.md`, `scripts/deploy-appservice-research-workbench.ps1`). **Neo4j Aura** backs optional **Sync to graph**; set `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, and `NEO4J_DATABASE` in App Service **application settings** (never in source control). Without those, the app runs but graph sync returns a configuration error.
+- **Research workbench (`as-groovegraph-api` / `groovegraph.s13.nyc`):** ships from `research/tools/openai-research-workspace` (see `docs/AZURE_BASELINE.mdc`, `scripts/deploy-appservice-research-workbench.ps1`). **Neo4j Aura** backs optional **Sync to graph**; set `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, and `NEO4J_DATABASE` in App Service **application settings** (never in source control). Without those, the app runs but graph sync returns a configuration error.
 
 ## Inputs
 

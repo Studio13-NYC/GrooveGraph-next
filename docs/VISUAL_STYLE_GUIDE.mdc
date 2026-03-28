@@ -4,15 +4,15 @@
 
 **Authoritative merged language (read this for art direction):**
 
-- [`docs/design-language/FOUNDATION.md`](design-language/FOUNDATION.md) — includes **§ Context split** (application UI vs map-shaped graphics)
+- [`docs/design-language/FOUNDATION.mdc`](design-language/FOUNDATION.mdc) — includes **§ Context split** (application UI vs map-shaped graphics)
 
 **Figma MCP (application UI evolution):**
 
-- [`docs/design-language/FIGMA_MCP.md`](design-language/FIGMA_MCP.md) — `create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`; **tokens win** over Figma when they disagree unless the brief updates tokens.
+- [`docs/design-language/FIGMA_MCP.mdc`](design-language/FIGMA_MCP.mdc) — `create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`; **tokens win** over Figma when they disagree unless the brief updates tokens.
 
 **Workbench copy (manual-first):**
 
-- [`docs/design-language/WORKBENCH_VOCAB.md`](design-language/WORKBENCH_VOCAB.md)
+- [`docs/design-language/WORKBENCH_VOCAB.mdc`](design-language/WORKBENCH_VOCAB.mdc)
 
 **Archival sources and tokens:**
 
@@ -61,13 +61,13 @@ Hex and geometry live in **`framework/src/visual-system/nycta-groovegraph-tokens
 
 ## Motion
 
-Directional, structure-bearing, `prefers-reduced-motion` safe — see `.cursor/skills/gsap-motion-system/SKILL.md`.
+Directional, structure-bearing, `prefers-reduced-motion` safe — see `.cursor/skills/gsap-motion-system/SKILL.mdc`.
 
 ---
 
 ## Graph data visualization
 
-Investigative clarity, progressive disclosure — see `.cursor/skills/graph-data-viz-system/SKILL.md`.
+Investigative clarity, progressive disclosure — see `.cursor/skills/graph-data-viz-system/SKILL.mdc`.
 
 ---
 

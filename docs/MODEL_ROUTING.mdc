@@ -8,7 +8,7 @@ Use the strongest model only where it adds real leverage. Everything else should
 
 This document is the routing source of truth for GrooveGraph Next.
 
-If routing guidance here conflicts with `AGENTS.md`, `README.md`, `.cursor/rules/subagent-routing.mdc`, or `docs/AGENT_REGISTRY.md`, update those files to match this document.
+If routing guidance here conflicts with `AGENTS.mdc`, `README.md`, `.cursor/rules/subagent-routing.mdc`, or `docs/AGENT_REGISTRY.mdc`, update those files to match this document.
 
 ## Operating rules
 
@@ -29,7 +29,7 @@ If routing guidance here conflicts with `AGENTS.md`, `README.md`, `.cursor/rules
 - `GPT-5.4-nano`: routing, compression, triage, and bounded hygiene analysis
 - `GPT-5.3-codex`: bounded implementation after scope is explicit
 
-See `docs/AGENT_REGISTRY.md` for the current operator matrix.
+See `docs/AGENT_REGISTRY.mdc` for the current operator matrix.
 
 ## Concision
 

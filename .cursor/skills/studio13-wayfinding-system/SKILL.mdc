@@ -37,14 +37,14 @@ Every surface should answer:
 - Keep labels short, decisive, and easy to scan.
 - Remove repetition unless it improves orientation.
 - Keep motion restrained, directional, and functional.
-- **Avoid transit metaphors** in UI copy (**lines**, **stops**, **interchanges**, **routes** as journey nouns); use **manual** terms — see `docs/design-language/WORKBENCH_VOCAB.md`.
+- **Avoid transit metaphors** in UI copy (**lines**, **stops**, **interchanges**, **routes** as journey nouns); use **manual** terms — see `docs/design-language/WORKBENCH_VOCAB.mdc`.
 
 ## Source order
 
 Read these in order when the task needs concrete reference material:
 
-1. `docs/design-language/FOUNDATION.md`
-2. `docs/design-language/FIGMA_MCP.md` (when Figma is in scope)
+1. `docs/design-language/FOUNDATION.mdc`
+2. `docs/design-language/FIGMA_MCP.mdc` (when Figma is in scope)
 3. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg` (for **diagram** / map-like visuals)
 4. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
 5. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
@@ -75,4 +75,4 @@ If the files disagree, follow **FOUNDATION.md**, then the **software wayfinding 
 
 ## Additional reference
 
-For the distilled design rules and implementation cues, read [reference.md](reference.md).
+For the distilled design rules and implementation cues, read [reference.mdc](reference.mdc).

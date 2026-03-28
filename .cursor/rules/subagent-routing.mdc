@@ -12,8 +12,8 @@ Use these routing rules for all GrooveGraph Next work.
 
 ## Workflow and packet skills
 
-- **Orchestration checklist:** `.cursor/skills/agent-orchestrator/SKILL.md` — use when turning a goal into a bounded multi-agent flow.
-- **Packet shape:** `.cursor/skills/context-packet-builder/SKILL.md` — use before every delegation; **canonical field definitions** in `docs/CONTEXT_PACKETS.md`.
+- **Orchestration checklist:** `.cursor/skills/agent-orchestrator/SKILL.mdc` — use when turning a goal into a bounded multi-agent flow.
+- **Packet shape:** `.cursor/skills/context-packet-builder/SKILL.mdc` — use before every delegation; **canonical field definitions** in `docs/CONTEXT_PACKETS.mdc`.
 
 ## Override rule
 
@@ -41,7 +41,7 @@ Use these routing rules for all GrooveGraph Next work.
 - `hygienist` -> `GPT-5.4-nano`
 - `implementer` -> `GPT-5.3-codex`
 
-See `docs/AGENT_REGISTRY.md` for the current matrix.
+See `docs/AGENT_REGISTRY.mdc` for the current matrix.
 
 ## Concision
 

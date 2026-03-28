@@ -5,7 +5,7 @@ This repo treats **Figma** as the **living visual specification** for applicatio
 ## Authority
 
 - **Tokens and geometry:** [`framework/src/visual-system/nycta-groovegraph-tokens.css`](../../framework/src/visual-system/nycta-groovegraph-tokens.css) — if Figma and tokens disagree, **tokens win** unless the brief explicitly updates tokens.
-- **Art direction:** [`FOUNDATION.md`](FOUNDATION.md), then Figma frames for scoped UI work.
+- **Art direction:** [`FOUNDATION.mdc`](FOUNDATION.mdc), then Figma frames for scoped UI work.
 - **Code ↔ design linkage:** [Code Connect](https://www.figma.com/developers/code-connect) — use Figma MCP **suggestions** and persist approved mappings so repeat passes stay aligned.
 
 ## Canonical design system file
@@ -19,7 +19,7 @@ This repo treats **Figma** as the **living visual specification** for applicatio
 ## Design system board (import source)
 
 - **HTML (token swatches + workbench modules + proposed spacing/focus):** [`research/tools/openai-research-workspace/public/design-system-board.html`](../../research/tools/openai-research-workspace/public/design-system-board.html) — served at **`http://localhost:3011/design-system-board.html`** when the workspace dev server runs.
-- **Structured rules for MCP / humans:** [`FIGMA_DESIGN_SYSTEM_RULES.md`](FIGMA_DESIGN_SYSTEM_RULES.md).
+- **Structured rules for MCP / humans:** [`FIGMA_DESIGN_SYSTEM_RULES.mdc`](FIGMA_DESIGN_SYSTEM_RULES.mdc).
 - **Imported board (hosted):** [Design system board — captured frame `7-2`](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt?node-id=7-2) (`nodeId` **`7:2`** for `get_design_context`).
 - **Triplet approval (Graph review) — current frame:** [`node-id=10-3`](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt/GrooveGraph?node-id=10-3) — `nodeId` **`10:3`** for `get_design_context`. Iterated from the html-to-design capture; may differ from [`triplet-approval-preview.html`](../../research/tools/openai-research-workspace/public/triplet-approval-preview.html) (`http://localhost:3011/triplet-approval-preview.html` when dev runs). Earlier import-only snapshot: `9-2` (`9:2`).
 
@@ -68,4 +68,4 @@ Use these tools when adding or overhauling UI surfaces (e.g. `research/tools/ope
 - **`graphic-artist`:** Frames, naming, token fidelity, manual-first vocabulary.
 - **`implementer`:** Wiring React to match `get_design_context` and tokens; Code Connect file paths.
 
-Workbench frames should live in **`groovegraph-design-system.fig`** (or its published twin); add the **full Figma URL** to [`GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md`](GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md) once hosted.
+Workbench frames should live in **`groovegraph-design-system.fig`** (or its published twin); add the **full Figma URL** to [`GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`](GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc) once hosted.

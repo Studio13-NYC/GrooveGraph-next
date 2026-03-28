@@ -16,4 +16,4 @@ Defaults adopted for **user-visible copy**, **ARIA labels**, and **Figma frame n
 | Claims plate | **Claims** |
 | Directional masthead line | **Active session** / select or open — never “line” or “route” |
 
-**Diagram / map artifacts** (not the workbench shell) may still use **map grammar** per [`FOUNDATION.md`](FOUNDATION.md) §1.
+**Diagram / map artifacts** (not the workbench shell) may still use **map grammar** per [`FOUNDATION.mdc`](FOUNDATION.mdc) §1.

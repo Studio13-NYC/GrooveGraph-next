@@ -66,9 +66,9 @@ Use this file as the authority for hierarchy and authority model.
 
 When related files drift:
 
-- `docs/MODEL_ROUTING.md` wins for model selection and routing
-- `docs/CONTEXT_PACKETS.md` wins for delegation packet fields
-- `AGENTS.md` summarizes but does not override these docs
+- `docs/MODEL_ROUTING.mdc` wins for model selection and routing
+- `docs/CONTEXT_PACKETS.mdc` wins for delegation packet fields
+- `AGENTS.mdc` summarizes but does not override these docs
 - `.cursor/rules/` mirrors these decisions operationally and must stay in sync
 
 ## Authority model

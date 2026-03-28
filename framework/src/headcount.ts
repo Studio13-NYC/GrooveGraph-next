@@ -60,7 +60,7 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Locate the smallest working surface",
       goal:
         "Identify the exact files and docs needed for a tiny smoke-page revision without over-searching.",
-      inputs: ["user goal", "repo state", "docs/INDEX.md", "product/"],
+      inputs: ["user goal", "repo state", "docs/INDEX.mdc", "product/"],
       handoffFrom: [],
       output: "Relevant paths, why they matter, and the minimum writable surface.",
       successChecks: [
@@ -91,7 +91,7 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Define the execution contract",
       goal:
         "Turn the discovered surface into a tight execution rubric and packet shape for the downstream agents.",
-      inputs: ["explorer output", "product-manager output", "docs/CONTEXT_PACKETS.md", ".cursor/rules/"],
+      inputs: ["explorer output", "product-manager output", "docs/CONTEXT_PACKETS.mdc", ".cursor/rules/"],
       handoffFrom: ["serial-explorer", "serial-product-manager"],
       output: "A concise packet/rubric defining acceptance criteria and non-goals.",
       successChecks: [
@@ -110,8 +110,8 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
         "explorer output",
         "product-manager output",
         "composer-meta rubric",
-        "docs/design-language/FOUNDATION.md",
-        "docs/VISUAL_STYLE_GUIDE.md",
+        "docs/design-language/FOUNDATION.mdc",
+        "docs/VISUAL_STYLE_GUIDE.mdc",
       ],
       handoffFrom: ["serial-explorer", "serial-product-manager", "serial-composer-meta"],
       output: "A focused visual brief or title treatment for the smoke change.",
@@ -172,7 +172,7 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Generate the cleanup proposal",
       goal:
         "Run the bounded hygiene lens over the changed surface and turn any cleanup findings into a proposal-first table.",
-      inputs: ["implementer output", "tester output", "docs/HYGIENE.md"],
+      inputs: ["implementer output", "tester output", "docs/HYGIENE.mdc"],
       handoffFrom: ["serial-implementer", "serial-tester"],
       output: "Cleanup status plus a proposal table or an explicit no-removal recommendation.",
       successChecks: [
@@ -187,7 +187,7 @@ export const HEADCOUNT_SERIAL_TEST: HeadcountTest = {
       title: "Prepare the release path",
       goal:
         "Summarize how the bounded change would move to the target surface without breaking preserved infrastructure.",
-      inputs: ["implementer output", "tester output", "hygienist output", "docs/AZURE_BASELINE.md"],
+      inputs: ["implementer output", "tester output", "hygienist output", "docs/AZURE_BASELINE.mdc"],
       handoffFrom: ["serial-implementer", "serial-tester", "serial-hygienist"],
       output: "Deployment path, preserved surfaces, overwrite surfaces, and smoke-check plan.",
       successChecks: [
@@ -222,7 +222,7 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       agent: "explorer",
       title: "Map the launch surfaces",
       goal: "Return the exact files and docs that matter for a launch-pack workflow.",
-      inputs: ["repo state", "docs/INDEX.md"],
+      inputs: ["repo state", "docs/INDEX.mdc"],
       handoffFrom: [],
       output: "The smallest set of relevant paths for the launch pack.",
       successChecks: ["Returns a bounded path set.", "Avoids repo-wide drift."],
@@ -248,7 +248,7 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       agent: "composer-meta",
       title: "Draft the run contract",
       goal: "Produce a reusable packet template and scoring rubric for rerunning headcount.",
-      inputs: ["docs/CONTEXT_PACKETS.md", ".cursor/rules/"],
+      inputs: ["docs/CONTEXT_PACKETS.mdc", ".cursor/rules/"],
       handoffFrom: [],
       output: "A reusable packet and scoring template for future runs.",
       successChecks: ["Defines exact outputs.", "Keeps the packet concise."],
@@ -260,8 +260,8 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       title: "Set the launch-pack visual frame",
       goal: "Provide a title treatment and visual direction for the final pack.",
       inputs: [
-        "docs/design-language/FOUNDATION.md",
-        "docs/VISUAL_STYLE_GUIDE.md",
+        "docs/design-language/FOUNDATION.mdc",
+        "docs/VISUAL_STYLE_GUIDE.mdc",
         "message and audience",
       ],
       handoffFrom: [],
@@ -298,7 +298,7 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       title: "Audit the launch-pack surface",
       goal:
         "Check the bounded artifact plan for stale or contradictory surfaces and define proposal-first cleanup follow-up.",
-      inputs: ["docs/HYGIENE.md", "target artifact surface", "expected final pack behavior"],
+      inputs: ["docs/HYGIENE.mdc", "target artifact surface", "expected final pack behavior"],
       handoffFrom: [],
       output: "Cleanup proposal notes for the launch pack or an explicit no-action recommendation.",
       successChecks: [
@@ -323,7 +323,7 @@ export const HEADCOUNT_ASYNC_TEST: HeadcountTest = {
       agent: "infrastructure-deployment",
       title: "Define the release envelope",
       goal: "Produce deployment, smoke, and rollback notes for the final pack while preserving the framework-only boundary.",
-      inputs: ["docs/AZURE_BASELINE.md", "target release surface", "framework-only boundary"],
+      inputs: ["docs/AZURE_BASELINE.mdc", "target release surface", "framework-only boundary"],
       handoffFrom: [],
       output: "Release envelope with preserve/overwrite boundaries.",
       successChecks: ["Respects preserved resources.", "Provides a concrete smoke plan."],

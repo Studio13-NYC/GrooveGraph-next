@@ -39,7 +39,7 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - `hygienist`: cleanup analysis and removal proposals
 - `animator`: GSAP timelines, scroll choreography, and React/Next motion implementation
 - `infrastructure-deployment`: Azure baseline, deployment flow, and preservation rules
-- See `docs/AGENT_REGISTRY.md` for the current lane matrix and default models.
+- See `docs/AGENT_REGISTRY.mdc` for the current lane matrix and default models.
 
 ## Usage accounting
 
@@ -62,4 +62,4 @@ Use the NYCTA-inspired transit/signage system for authoritative "new regime" gra
 
 ## Research workbench (`research/tools/openai-research-workspace`)
 
-- **Research workbench (`/`) Evidence:** **Field notes** and **Sources** are **stacked** collapsible sections (Field notes open, Sources closed by default); each body scrolls independently; **Evidence** and **Claims** plates share the same fixed height band (`--gg-workbench-module-max-h`). Locked spec: `docs/product/RESEARCH_WORKBENCH_PRD.md` Phase 1 (requirements 6–7) and `docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md` §5.
+- **Research workbench (`/`) Evidence:** **Field notes** and **Sources** are **stacked** collapsible sections (Field notes open, Sources closed by default); each body scrolls independently; **Evidence** and **Claims** plates share the same fixed height band (`--gg-workbench-module-max-h`). Locked spec: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 1 (requirements 6–7) and `docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` §5.

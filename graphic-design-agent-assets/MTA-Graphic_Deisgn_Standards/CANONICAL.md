@@ -15,8 +15,8 @@ This folder is the **archival source** for scans, the 1972 diagram reference, an
 
 | File | Role |
 |------|------|
-| `docs/design-language/FOUNDATION.md` | Merged design language: map grammar + manual rules + software + GrooveGraph regimes. |
-| `docs/VISUAL_STYLE_GUIDE.md` | Short entry point and checklist; defers detail to FOUNDATION + this folder. |
+| `docs/design-language/FOUNDATION.mdc` | Merged design language: map grammar + manual rules + software + GrooveGraph regimes. |
+| `docs/VISUAL_STYLE_GUIDE.mdc` | Short entry point and checklist; defers detail to FOUNDATION + this folder. |
 
 ## Superseded or archival (do not extend)
 

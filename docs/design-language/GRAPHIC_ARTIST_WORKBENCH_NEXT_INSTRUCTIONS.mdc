@@ -2,13 +2,13 @@
 
 Use this brief when designing or implementing the research workbench at **`/`** in `research/tools/openai-research-workspace`. **Visual reference:** the shipped **manual / plate** shell (`.gg-next-root`); preserve **functional requirements** (same APIs, session lifecycle, decisions, edits).
 
-**Vocabulary:** [`WORKBENCH_VOCAB.md`](WORKBENCH_VOCAB.md). **Figma:** [`FIGMA_MCP.md`](FIGMA_MCP.md). **Design system file:** [`groovegraph-design-system.fig`](groovegraph-design-system.fig) — work in this document; baseline type **Helvetica Neue** (see `--gg-font-sans`). **Hosted:** [GrooveGraph](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt) (`fileKey` `0qV7zjnUZ6kAHBzI0wxFEt`) — use `get_design_context` with **`node-id`** from the URL (e.g. `5-2` → `5:2`).
+**Vocabulary:** [`WORKBENCH_VOCAB.mdc`](WORKBENCH_VOCAB.mdc). **Figma:** [`FIGMA_MCP.mdc`](FIGMA_MCP.mdc). **Design system file:** [`groovegraph-design-system.fig`](groovegraph-design-system.fig) — work in this document; baseline type **Helvetica Neue** (see `--gg-font-sans`). **Hosted:** [GrooveGraph](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt) (`fileKey` `0qV7zjnUZ6kAHBzI0wxFEt`) — use `get_design_context` with **`node-id`** from the URL (e.g. `5-2` → `5:2`).
 
 ---
 
 ## 1. Role
 
-You are the **graphic-artist** lane (`.cursor/agents/graphic-artist.md`). You own **composition, typography hierarchy, token binding**, **manual / plate grammar**, and **motion intent**. Output must be executable in code without orphan hex or decorative SaaS chrome.
+You are the **graphic-artist** lane (`.cursor/agents/graphic-artist.mdc`). You own **composition, typography hierarchy, token binding**, **manual / plate grammar**, and **motion intent**. Output must be executable in code without orphan hex or decorative SaaS chrome.
 
 ---
 
@@ -27,8 +27,8 @@ You are the **graphic-artist** lane (`.cursor/agents/graphic-artist.md`). You ow
 
 ## 3. Design authority (order)
 
-1. `docs/design-language/FOUNDATION.md` (§ Context split)
-2. `docs/design-language/FIGMA_MCP.md` + Figma **`get_design_context`** when frames exist
+1. `docs/design-language/FOUNDATION.mdc` (§ Context split)
+2. `docs/design-language/FIGMA_MCP.mdc` + Figma **`get_design_context`** when frames exist
 3. `framework/src/visual-system/nycta-groovegraph-tokens.css` — **only** CSS color/geometry source
 4. `graphic-design-agent-assets/.../SOFTWARE_WAYFINDING_FOUNDATION.md` — decision-point information
 

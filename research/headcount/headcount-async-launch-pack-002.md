@@ -6,7 +6,7 @@
 - Test id: `headcount-async-launch-pack`
 - Mode: `async`
 - Source of truth: `framework/src/headcount.ts`
-- Human-readable runbook: `docs/HEADCOUNT.md`
+- Human-readable runbook: `docs/HEADCOUNT.mdc`
 - Purpose: refreshed framework-only async evidence that includes the current `hygienist` lane
 - Prior: `headcount-async-launch-pack-001` (same test id, pre-hygienist narrative) was retired during repo consolidation; this file is the canonical async evidence.
 - Status: `complete`
@@ -19,11 +19,11 @@ The async boundary remains framework-only.
 
 - Writable boundary: `research/headcount/headcount-async-launch-pack-002.md`
 - Read reference boundary:
-  - `docs/HEADCOUNT.md`
-  - `docs/INDEX.md`
-  - `docs/USAGE_ACCOUNTING.md`
-  - `docs/OBSERVABILITY.md`
-  - `AGENTS.md`
+  - `docs/HEADCOUNT.mdc`
+  - `docs/INDEX.mdc`
+  - `docs/USAGE_ACCOUNTING.mdc`
+  - `docs/OBSERVABILITY.mdc`
+  - `AGENTS.mdc`
   - `framework/src/headcount.ts`
   - `framework/src/usage-accounting.ts`
   - `framework/src/telemetry-log.ts`
@@ -50,7 +50,7 @@ The async boundary remains framework-only.
 
 | Check | Evidence basis | Result | Notes |
 |---|---|---|---|
-| Async test identity is current | `HEADCOUNT_ASYNC_TEST` in `framework/src/headcount.ts` and `docs/HEADCOUNT.md` | Pass | The contract now includes the current lane set |
+| Async test identity is current | `HEADCOUNT_ASYNC_TEST` in `framework/src/headcount.ts` and `docs/HEADCOUNT.mdc` | Pass | The contract now includes the current lane set |
 | Parallel fan-out is preserved | Async steps remain independently bounded | Pass | No lane requires a sibling result to finish |
 | Coherent final synthesis is required | The run contract still demands one launch pack rather than fragments | Pass | This artifact is synthesized as one report |
 | Current lane coverage is complete | Lane set includes `hygienist` | Pass | All current lanes are represented explicitly |

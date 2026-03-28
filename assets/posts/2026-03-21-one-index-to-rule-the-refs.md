@@ -13,7 +13,7 @@ GrooveGraph Next had grown a polite kind of clutter: nineteen tiny files under `
 
 **Hygiene runs.** Three short runs with the same skeleton became `research/hygiene/HYGIENE_LOG.md`, dated sections, same proposal tables and judgments. File count drops; the knip story, generalization audit link, and `.data/` gitignore note all remain findable.
 
-**Research workspace validation.** Bootstrap pass and first Prince end-to-end session are documented together in `research/openai-research-workspace-validation.md` (Part A / Part B). `docs/WORKFLOW_VALIDATION.md`, `research/README.md`, and the tool README now point at the single path.
+**Research workspace validation.** Bootstrap pass and first Prince end-to-end session are documented together in `research/openai-research-workspace-validation.md` (Part A / Part B). `docs/WORKFLOW_VALIDATION.mdc`, `research/README.md`, and the tool README now point at the single path.
 
 **Product surface.** `product/README.md` now describes the smoke app, the SWA static sibling, and the static styleguides in `public/` instead of deferring everything to a vague future. Static HTML demos that need motion load GSAP from a CDN; the Next smoke bundle stays a small React surface.
 
@@ -21,4 +21,4 @@ GrooveGraph Next had grown a polite kind of clutter: nineteen tiny files under `
 
 Documentation hygiene is not aesthetics. It is **latency and trust**: fewer places to edit, less chance that an alias rots while the canonical doc moves. The hygienist’s table format still applies—this work was reviewed against a removal proposal before anything hit the tree.
 
-If you fork the repo, start from `docs/INDEX.md` and `refs/INDEX.md`; they are the two maps. Everything else is supposed to be boring after that.
+If you fork the repo, start from `docs/INDEX.mdc` and `refs/INDEX.md`; they are the two maps. Everything else is supposed to be boring after that.

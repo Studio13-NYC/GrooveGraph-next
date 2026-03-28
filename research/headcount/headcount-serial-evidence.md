@@ -123,7 +123,7 @@ These are not billing figures. They are rough orchestration-reference estimates.
 
 Notes:
 
-- where a subagent returned only a range or `unknown`, the estimate was normalized to the midpoint of the `headcount` reference envelope in `docs/HEADCOUNT.md`
+- where a subagent returned only a range or `unknown`, the estimate was normalized to the midpoint of the `headcount` reference envelope in `docs/HEADCOUNT.mdc`
 - orchestrator synthesis cost is not included in the subtotal above
 
 ### Judgment
@@ -155,7 +155,7 @@ Mirror the existing smoke API `body` line on `product/swa-smoke/index.html` dire
 ### 1. Explorer
 
 - set the minimum writable surface to `product/swa-smoke/index.html`
-- used `product/app/page.tsx`, `product/app/api/smoke/route.ts`, `docs/HEADCOUNT.md`, and `docs/AZURE_BASELINE.md` as read-only references
+- used `product/app/page.tsx`, `product/app/api/smoke/route.ts`, `docs/HEADCOUNT.mdc`, and `docs/AZURE_BASELINE.mdc` as read-only references
 
 ### 2. Composer Meta
 
@@ -263,7 +263,7 @@ These are not billing figures. They are rough orchestration-reference estimates.
 
 Notes:
 
-- values are midpoint-style rough references derived from the current `docs/HEADCOUNT.md` envelope and the actual lane mix used in this rerun
+- values are midpoint-style rough references derived from the current `docs/HEADCOUNT.mdc` envelope and the actual lane mix used in this rerun
 - orchestrator synthesis cost is still not metered by this runtime and is excluded from the subtotal above
 
 ### Judgment

@@ -620,7 +620,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
   );
 }
 
-/** Evidence plate: one stacked section (Field notes or Sources). Spec: docs/product/RESEARCH_WORKBENCH_PRD.md Phase 1 §6–7. */
+/** Evidence plate: one stacked section (Field notes or Sources). Spec: docs/product/RESEARCH_WORKBENCH_PRD.mdc Phase 1 §6–7. */
 function EvidenceCollapsibleSection({
   sectionId,
   title,

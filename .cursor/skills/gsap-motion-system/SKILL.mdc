@@ -190,4 +190,4 @@ export { gsap };
 
 ## Additional reference
 
-For plugin-specific guidance, React usage, performance rules, and design patterns, read [reference.md](reference.md).
+For plugin-specific guidance, React usage, performance rules, and design patterns, read [reference.mdc](reference.mdc).

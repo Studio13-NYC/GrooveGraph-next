@@ -3,9 +3,9 @@
 **Status:** Draft  
 **Scope:** `research/tools/openai-research-workspace` (route `/`)  
 **Delivery order (locked):** **1) Triplet UX** → **2) Neo4j persistence** → **3) Session graph visualization**  
-**Sources:** UX interview (thread), [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.md`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.md), design briefs in [`docs/design-language/`](../design-language/)
+**Sources:** UX interview (thread), [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc), design briefs in [`docs/design-language/`](../design-language/)
 
-**Design owner (start here):** [`.cursor/agents/graphic-artist.md`](../../.cursor/agents/graphic-artist.md) — this lane **owns** Figma-informed layout, token fidelity, and manual-first chrome for Phases 1 and 3. **Collaboration contract:** [`docs/design-language/FIGMA_MCP.md`](../design-language/FIGMA_MCP.md) (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, Code Connect when available).
+**Design owner (start here):** [`.cursor/agents/graphic-artist.mdc`](../../.cursor/agents/graphic-artist.mdc) — this lane **owns** Figma-informed layout, token fidelity, and manual-first chrome for Phases 1 and 3. **Collaboration contract:** [`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc) (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, Code Connect when available).
 
 ---
 
@@ -48,17 +48,17 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 | Role | Responsibility for this PRD |
 |------|-------------------------------|
-| **`graphic-artist`** ([`.cursor/agents/graphic-artist.md`](../../.cursor/agents/graphic-artist.md)) | **Leads Phase 1 and Phase 3 visual work:** triplet row layout, index/split/index disclosure, removal of the module legend, graph viz presentation. Uses **Figma MCP** per [`FIGMA_MCP.md`](../design-language/FIGMA_MCP.md): baseline frames in [`groovegraph-design-system.fig`](../design-language/groovegraph-design-system.fig) / hosted GrooveGraph file, **`get_design_context`** before large UI edits, html-to-design capture when refreshing screenshots. |
+| **`graphic-artist`** ([`.cursor/agents/graphic-artist.mdc`](../../.cursor/agents/graphic-artist.mdc)) | **Leads Phase 1 and Phase 3 visual work:** triplet row layout, index/split/index disclosure, removal of the module legend, graph viz presentation. Uses **Figma MCP** per [`FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc): baseline frames in [`groovegraph-design-system.fig`](../design-language/groovegraph-design-system.fig) / hosted GrooveGraph file, **`get_design_context`** before large UI edits, html-to-design capture when refreshing screenshots. |
 | **`implementer`** | Implements React/CSS/API changes against PRD acceptance criteria and Figma handoff; wires persistence (Phase 2) and Neo4j. |
 | **`product-manager`** | Optional: scope cuts, open questions (§10). |
 
-**Surface for collaboration:** All Figma ↔ repo expectations (tool order, `fileKey` / `nodeId`, tokens-win rule, Code Connect ownership) live in **[`docs/design-language/FIGMA_MCP.md`](../design-language/FIGMA_MCP.md)**. The PRD does not duplicate that workflow; it **references** it.
+**Surface for collaboration:** All Figma ↔ repo expectations (tool order, `fileKey` / `nodeId`, tokens-win rule, Code Connect ownership) live in **[`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc)**. The PRD does not duplicate that workflow; it **references** it.
 
 ---
 
 ## 6. Non-goals (this PRD)
 
-- Replacing the **manual-first** visual system with transit metaphors (see [`docs/design-language/FOUNDATION.md`](../design-language/FOUNDATION.md)).
+- Replacing the **manual-first** visual system with transit metaphors (see [`docs/design-language/FOUNDATION.mdc`](../design-language/FOUNDATION.mdc)).
 - **Mobile-first** parity (desktop-first is acceptable).
 - **Claims** as mandatory nodes in Neo4j (unless a later product decision explicitly expands scope).
 
@@ -68,7 +68,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ### Phase 1 — Triplet UX (ship first)
 
-**Design lead:** `graphic-artist` + [`FIGMA_MCP.md`](../design-language/FIGMA_MCP.md) (frames/spec before or alongside code).
+**Design lead:** `graphic-artist` + [`FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc) (frames/spec before or alongside code).
 
 **Objective:** Graph review feels like reading a sentence, not a dashboard card.
 
@@ -112,7 +112,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 - **UI:** Graph review → **Sync to graph**; optional checkbox **Include deferred** (default: accepted items only).
 - **API:** `POST /api/sessions/[sessionId]/neo4j/sync` with body `{ "includeDeferred"?: boolean }`.
 - **Server:** `research/tools/openai-research-workspace/src/lib/server/neo4j-graph-persistence.ts` — entities matched in order: `candidateKeys` (`sessionId:candidateId`), overlapping `externalIds`, then `nameNorm` + `provisionalKind`; existing nodes are **enriched** (merged lists and attributes). Labels: `ResearchSession`, `Entity`; relationship types: `SESSION_INCLUDES_ENTITY`, `GRAPH_REL`.
-- **Env:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` — see [`research/tools/openai-research-workspace/README.md`](../../research/tools/openai-research-workspace/README.md) and [`docs/AZURE_BASELINE.md`](../AZURE_BASELINE.md) for App Service.
+- **Env:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` — see [`research/tools/openai-research-workspace/README.md`](../../research/tools/openai-research-workspace/README.md) and [`docs/AZURE_BASELINE.mdc`](../AZURE_BASELINE.mdc) for App Service.
 - **Hosting:** Production uses **Neo4j Aura** (credentials in App Service application settings, not in source control).
 - **Bloom / other labels:** The workbench persists **`Entity`** / **`GRAPH_REL`** only. Neo4j Bloom perspectives that target **`Artist`**, **`IS_A`**, **`EntityType`**, etc. show a **separate** subgraph (ontology or other pipelines). Operators must query **`Entity`** (or add a Bloom perspective for `Entity` + `GRAPH_REL`) to see synced session data; unifying with `Artist` is a **normalization** follow-on.
 
@@ -125,7 +125,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ### Phase 3 — Session graph visualization
 
-**Design lead:** `graphic-artist` + [`graph-data-viz-system`](../../.cursor/skills/graph-data-viz-system/SKILL.md) + [`FIGMA_MCP.md`](../design-language/FIGMA_MCP.md) as needed for the viz shell.
+**Design lead:** `graphic-artist` + [`graph-data-viz-system`](../../.cursor/skills/graph-data-viz-system/SKILL.mdc) + [`FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc) as needed for the viz shell.
 
 **Objective:** User can see a **graph view** of the **session’s** persisted data (or linked subgraph).
 
@@ -134,7 +134,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 1. **Input:** Reads from Neo4j (or same API that exposes persisted session data).
 2. **Scope:** Minimum — **nodes and edges** corresponding to the session’s persisted graph; **labels** readable; **filters** optional (nice-to-have).
 3. **Integration:** Entry point from the workbench (e.g. “View graph”) — **desktop-only** acceptable.
-4. **Visual language:** Follow [`docs/design-language/FOUNDATION.md`](../design-language/FOUNDATION.md) and [`graph-data-viz-system`](../../.cursor/skills/graph-data-viz-system/SKILL.md) for investigative clarity.
+4. **Visual language:** Follow [`docs/design-language/FOUNDATION.mdc`](../design-language/FOUNDATION.mdc) and [`graph-data-viz-system`](../../.cursor/skills/graph-data-viz-system/SKILL.mdc) for investigative clarity.
 
 **Acceptance**
 
@@ -149,7 +149,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 |------|-------------|
 | Errors | **Retry** must not lose **typed message** / composer draft (Q8). |
 | Claims | **Contextual** capture; **not** required in Neo4j graph core unless Phase 2 spec expands. |
-| Design | **Owner:** `graphic-artist`. **Figma / MCP:** [`docs/design-language/FIGMA_MCP.md`](../design-language/FIGMA_MCP.md). **Copy / IA:** [`docs/design-language/WORKBENCH_VOCAB.md`](../design-language/WORKBENCH_VOCAB.md). |
+| Design | **Owner:** `graphic-artist`. **Figma / MCP:** [`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc). **Copy / IA:** [`docs/design-language/WORKBENCH_VOCAB.mdc`](../design-language/WORKBENCH_VOCAB.mdc). |
 
 ---
 
@@ -166,7 +166,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ## 10. Open questions
 
-1. **Neo4j hosting:** **Aura** in production; local/dev uses the same env vars against Aura or a local instance — see README and `docs/AZURE_BASELINE.md`.
+1. **Neo4j hosting:** **Aura** in production; local/dev uses the same env vars against Aura or a local instance — see README and `docs/AZURE_BASELINE.mdc`.
 2. **Persistence trigger:** **Resolved:** explicit **Sync to graph** (batch); automatic-on-decision remains optional for a later iteration.
 3. **Claims in Neo4j:** Properties on session node, text nodes, or omit entirely.
 4. **Graph library:** Cytoscape.js, D3, other — align with existing product patterns.
@@ -175,8 +175,8 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ## 11. References
 
-- [`.cursor/agents/graphic-artist.md`](../../.cursor/agents/graphic-artist.md) — design owner; Figma MCP authority order
-- [`docs/design-language/FIGMA_MCP.md`](../design-language/FIGMA_MCP.md) — collaboration surface (tools, workflow, file keys)
-- [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.md`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.md)
-- [`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md`](../design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md)
+- [`.cursor/agents/graphic-artist.mdc`](../../.cursor/agents/graphic-artist.mdc) — design owner; Figma MCP authority order
+- [`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc) — collaboration surface (tools, workflow, file keys)
+- [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc)
+- [`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`](../design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc)
 - [`research/tools/openai-research-workspace/README.md`](../../research/tools/openai-research-workspace/README.md)

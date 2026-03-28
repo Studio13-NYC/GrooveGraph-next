@@ -83,15 +83,15 @@ scope:
     - assets/
     - docs/
   readable:
-    - docs/design-language/FOUNDATION.md
-    - docs/VISUAL_STYLE_GUIDE.md
+    - docs/design-language/FOUNDATION.mdc
+    - docs/VISUAL_STYLE_GUIDE.mdc
     - graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg
     - framework/src/visual-system/nycta-groovegraph-tokens.css
     - research/
 inputs:
   files:
-    - docs/design-language/FOUNDATION.md
-    - docs/VISUAL_STYLE_GUIDE.md
+    - docs/design-language/FOUNDATION.mdc
+    - docs/VISUAL_STYLE_GUIDE.mdc
   prior_findings:
     - "Follow Vignelli 1972 map grammar and NYCTA manual discipline per FOUNDATION.md."
 constraints:

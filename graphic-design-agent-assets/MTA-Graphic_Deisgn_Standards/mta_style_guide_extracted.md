@@ -1,6 +1,6 @@
 # MTA Style Guide — Extracted Notes
 
-> **Superseded for authoring:** use **`mta_style_guide_extracted_v3.md`** plus **`docs/design-language/FOUNDATION.md`**. This file is kept for historical diff only.
+> **Superseded for authoring:** use **`mta_style_guide_extracted_v3.md`** plus **`docs/design-language/FOUNDATION.mdc`**. This file is kept for historical diff only.
 
 This document organizes the supplied JPG pages into a readable page-by-page reference.
 Image links are relative and assume this `.md` file is stored in the same folder as the JPGs.

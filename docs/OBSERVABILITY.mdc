@@ -15,7 +15,7 @@ The goal is not maximum log volume. The goal is end-to-end correlation with enou
 Today the repo has:
 
 - local slice-cost telemetry in `.telemetry/slice-costs.jsonl`
-- rough `cost_summary` guidance in `docs/USAGE_ACCOUNTING.md`
+- rough `cost_summary` guidance in `docs/USAGE_ACCOUNTING.mdc`
 - validation artifacts in `research/`
 
 That is useful, but it is not yet a full observability contract.
@@ -56,7 +56,7 @@ Local framework telemetry remains the first-line evidence surface:
 
 - append rough slice summaries to `.telemetry/slice-costs.jsonl`
 - persist human-readable run artifacts in `research/`
-- keep `docs/WORKFLOW_VALIDATION.md` aligned with the latest meaningful evidence
+- keep `docs/WORKFLOW_VALIDATION.mdc` aligned with the latest meaningful evidence
 
 ## Azure runtime telemetry
 

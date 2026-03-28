@@ -49,7 +49,7 @@ This was a useful hygiene run because it fixed the cleanup workflow itself and t
 
 ### .gitignore coverage
 
-Per `docs/HYGIENE.md`, known tool surfaces were audited:
+Per `docs/HYGIENE.mdc`, known tool surfaces were audited:
 
 | Surface | In .gitignore | Notes |
 | --- | --- | --- |
@@ -66,7 +66,7 @@ No missing coverage detected for known local tool surfaces.
 
 ### Context
 
-This run was executed during the generalization audit (`docs/GENERALIZATION_AUDIT.md`). Hygiene evidence supports the audit's conclusion that the framework surface is clean and ready for bounded generalization work.
+This run was executed during the generalization audit (`docs/GENERALIZATION_AUDIT.mdc`). Hygiene evidence supports the audit's conclusion that the framework surface is clean and ready for bounded generalization work.
 
 ---
 
@@ -85,7 +85,7 @@ This run was executed during the generalization audit (`docs/GENERALIZATION_AUDI
 
 ### .gitignore coverage
 
-Per `docs/HYGIENE.md`, known tool and machine-local surfaces were audited:
+Per `docs/HYGIENE.mdc`, known tool and machine-local surfaces were audited:
 
 | Surface | In .gitignore | Notes |
 | --- | --- | --- |

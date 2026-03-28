@@ -2,7 +2,7 @@
 
 This document is the **single merged authority** for how GrooveGraph Next interprets NYCTA / Vignelli transit graphics for maps, diagrams, signage-shaped UI, and related artifacts.
 
-**Figma (application UI):** For **workbench and product UI** layout and component structure, **Figma is the living spec** alongside this doc — canonical file **[`groovegraph-design-system.fig`](groovegraph-design-system.fig)** (baseline type **Helvetica Neue**, aligned with **`--gg-font-sans`**). See [`FIGMA_MCP.md`](FIGMA_MCP.md) for the MCP workflow (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`). **CSS tokens** remain the implementation source of truth unless a brief explicitly changes them.
+**Figma (application UI):** For **workbench and product UI** layout and component structure, **Figma is the living spec** alongside this doc — canonical file **[`groovegraph-design-system.fig`](groovegraph-design-system.fig)** (baseline type **Helvetica Neue**, aligned with **`--gg-font-sans`**). See [`FIGMA_MCP.mdc`](FIGMA_MCP.mdc) for the MCP workflow (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`). **CSS tokens** remain the implementation source of truth unless a brief explicitly changes them.
 
 **Physical and digitized sources** (archived under `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`):
 
@@ -16,7 +16,7 @@ This document is the **single merged authority** for how GrooveGraph Next interp
 Re-export next to map scans: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/nycta-groovegraph-tokens.css`.  
 **Index of what to read first:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
 
-**Workbench copy vocabulary:** [`WORKBENCH_VOCAB.md`](WORKBENCH_VOCAB.md) — manual-first terms (index, module, split); no transit metaphors in UI strings.
+**Workbench copy vocabulary:** [`WORKBENCH_VOCAB.mdc`](WORKBENCH_VOCAB.mdc) — manual-first terms (index, module, split); no transit metaphors in UI strings.
 
 ---
 
@@ -114,13 +114,13 @@ Use CSS / SVG variables from **`framework/src/visual-system/nycta-groovegraph-to
 
 ## 5. Motion (cross-lane)
 
-Motion is **directional** and **structure-bearing** — see `.cursor/skills/gsap-motion-system/SKILL.md`. It must respect **`prefers-reduced-motion`**.
+Motion is **directional** and **structure-bearing** — see `.cursor/skills/gsap-motion-system/SKILL.mdc`. It must respect **`prefers-reduced-motion`**.
 
 ---
 
 ## 6. Graph-shaped interfaces
 
-Treat relationship views as **investigative**, not decorative — see `.cursor/skills/graph-data-viz-system/SKILL.md`. Map grammar still applies: **explicit junctions**, **bundled edges**, **color = durable meaning**.
+Treat relationship views as **investigative**, not decorative — see `.cursor/skills/graph-data-viz-system/SKILL.mdc`. Map grammar still applies: **explicit junctions**, **bundled edges**, **color = durable meaning**.
 
 ---
 

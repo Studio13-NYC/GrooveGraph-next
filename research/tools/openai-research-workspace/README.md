@@ -41,7 +41,7 @@ The workspace runs on `http://localhost:3011`.
 
 | Route | Purpose |
 |-------|---------|
-| `/` | **Research workbench** (default): NYCTA manual-first plates (`--gg-sign-band`, session index, split control — **no** module-legend strip per PRD). **Evidence:** Field notes + Sources are **stacked** collapsible sections (notes open, sources closed by default), each independently scrollable; **Claims** uses the same **height band** (`--gg-workbench-module-max-h`). Briefs: `docs/design-language/FOUNDATION.md`, `GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md`, `FIGMA_MCP.md`, `docs/product/RESEARCH_WORKBENCH_PRD.md`. Legacy paths `/workbench-next` and `/classic` **308-redirect** to `/`. |
+| `/` | **Research workbench** (default): NYCTA manual-first plates (`--gg-sign-band`, session index, split control — **no** module-legend strip per PRD). **Evidence:** Field notes + Sources are **stacked** collapsible sections (notes open, sources closed by default), each independently scrollable; **Claims** uses the same **height band** (`--gg-workbench-module-max-h`). Briefs: `docs/design-language/FOUNDATION.mdc`, `GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`, `FIGMA_MCP.mdc`, `docs/product/RESEARCH_WORKBENCH_PRD.mdc`. Legacy paths `/workbench-next` and `/classic` **308-redirect** to `/`. |
 
 Production: [groovegraph.s13.nyc](https://groovegraph.s13.nyc/) serves this app on App Service; deploy with `.\scripts\deploy-appservice-research-workbench.ps1` from the repo root (deploy may lag this repo).
 

@@ -89,10 +89,10 @@ The board includes **proposed** additions (spacing scale, focus ring semantic, m
 
 **Hosted capture:** [Figma — design system board](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt?node-id=7-2) (`7:2`). Re-capture after changing the HTML to refresh the frame.
 
-**Triplet approval (Graph review):** [Figma — current frame](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt/GrooveGraph?node-id=10-3) (`10:3`). Source HTML: `public/triplet-approval-preview.html` — see [`FIGMA_MCP.md`](FIGMA_MCP.md).
+**Triplet approval (Graph review):** [Figma — current frame](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt/GrooveGraph?node-id=10-3) (`10:3`). Source HTML: `public/triplet-approval-preview.html` — see [`FIGMA_MCP.mdc`](FIGMA_MCP.mdc).
 
 ---
 
 ## 9. Naming in Figma
 
-Prefer **manual / plate / module / index / split** vocabulary in frames and components. Avoid transit metaphors (**line**, **stop**, **interchange**) on application UI per `WORKBENCH_VOCAB.md`.
+Prefer **manual / plate / module / index / split** vocabulary in frames and components. Avoid transit metaphors (**line**, **stop**, **interchange**) on application UI per `WORKBENCH_VOCAB.mdc`.

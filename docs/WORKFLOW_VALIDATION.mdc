@@ -41,16 +41,16 @@ Observed result:
 - the repo was structurally sufficient for rule-authoring
 - the validator identified the expected sync points:
   - `.cursor/rules/subagent-routing.mdc`
-  - `docs/MODEL_ROUTING.md`
-  - `docs/AGENT_ORCHESTRATION.md`
-  - `AGENTS.md`
+  - `docs/MODEL_ROUTING.mdc`
+  - `docs/AGENT_ORCHESTRATION.mdc`
+  - `AGENTS.mdc`
 - mild ambiguity was found around canonical precedence and missing maintenance docs
 
 Framework response:
 
-- added `docs/INDEX.md`
-- added `docs/SUBAGENT_MAINTENANCE.md`
-- clarified canonical precedence in `docs/AGENT_ORCHESTRATION.md` and `docs/MODEL_ROUTING.md`
+- added `docs/INDEX.mdc`
+- added `docs/SUBAGENT_MAINTENANCE.mdc`
+- clarified canonical precedence in `docs/AGENT_ORCHESTRATION.mdc` and `docs/MODEL_ROUTING.mdc`
 
 ## Validation 4: bounded implementation workflow
 
@@ -66,7 +66,7 @@ Observed result:
 
 Framework response:
 
-- added `docs/SUBAGENT_MAINTENANCE.md`
+- added `docs/SUBAGENT_MAINTENANCE.mdc`
 
 ## Validation 5: graphic workflow
 
@@ -81,7 +81,7 @@ Observed result:
 
 Framework response:
 
-- expanded `docs/VISUAL_STYLE_GUIDE.md` with:
+- expanded `docs/VISUAL_STYLE_GUIDE.mdc` with:
   - palette guidance
   - typography direction
   - stroke and layout grammar
@@ -110,7 +110,7 @@ The repo is ready for future execution work as a clean-start framework surface.
 Validation method:
 
 - framework-owned test design in `framework/src/headcount.ts`
-- human-readable runbook in `docs/HEADCOUNT.md`
+- human-readable runbook in `docs/HEADCOUNT.mdc`
 
 Observed result:
 
@@ -121,8 +121,8 @@ Observed result:
 Framework response:
 
 - added `framework/src/headcount.ts`
-- added `docs/HEADCOUNT.md`
-- updated `docs/INDEX.md`
+- added `docs/HEADCOUNT.mdc`
+- updated `docs/INDEX.mdc`
 
 ## Validation 7: serial headcount execution
 
@@ -182,10 +182,10 @@ Observed result:
 
 Framework response:
 
-- added `.cursor/agents/hygienist.md`
-- added `docs/HYGIENE.md`
+- added `.cursor/agents/hygienist.mdc`
+- added `docs/HYGIENE.mdc`
 - updated routing, orchestration, and maintenance docs to include the hygiene lane
-- updated `docs/HEADCOUNT.md` and `framework/src/headcount.ts` so the current agent set is represented honestly
+- updated `docs/HEADCOUNT.mdc` and `framework/src/headcount.ts` so the current agent set is represented honestly
 - added hygiene evidence (now `research/hygiene/HYGIENE_LOG.md`, 2026-03-18 Run 001)
 
 ## Validation 10: refreshed serial headcount evidence
@@ -244,10 +244,10 @@ Observed result:
 
 Framework response:
 
-- added `.cursor/agents/product-manager.md`
+- added `.cursor/agents/product-manager.mdc`
 - updated `framework/src/subagent-registry.ts`
 - updated routing, orchestration, maintenance, and operating-contract docs to include the lane
-- updated `framework/src/headcount.ts` and `docs/HEADCOUNT.md` so the canonical lane set is represented honestly
+- updated `framework/src/headcount.ts` and `docs/HEADCOUNT.mdc` so the canonical lane set is represented honestly
 - added `research/product/productmanager-reboot-brief-001.md`
 
 ## Validation 13: OpenAI research workspace bootstrap

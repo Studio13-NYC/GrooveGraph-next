@@ -25,16 +25,16 @@ When `graphic-artist` has produced a brief or explicit direction for the same ar
 
 For file-level reference order when you must read sources yourself:
 
-1. `docs/design-language/FOUNDATION.md`
-2. `docs/VISUAL_STYLE_GUIDE.md`
-3. `.cursor/skills/studio13-wayfinding-system/SKILL.md`
-4. `.cursor/skills/studio13-wayfinding-system/reference.md`
-5. `.cursor/skills/gsap-motion-system/SKILL.md` and its `reference.md`
-6. `.cursor/skills/graph-data-viz-system/SKILL.md` when motion touches node-link or relationship-heavy UI
+1. `docs/design-language/FOUNDATION.mdc`
+2. `docs/VISUAL_STYLE_GUIDE.mdc`
+3. `.cursor/skills/studio13-wayfinding-system/SKILL.mdc`
+4. `.cursor/skills/studio13-wayfinding-system/reference.mdc`
+5. `.cursor/skills/gsap-motion-system/SKILL.mdc` and its `reference.mdc`
+6. `.cursor/skills/graph-data-viz-system/SKILL.mdc` when motion touches node-link or relationship-heavy UI
 
-If references disagree, prefer **`docs/design-language/FOUNDATION.md`** and **`graphic-artist`** output, then Studio13 wayfinding, then GSAP execution detail—**unless** `graphic-artist` already decided the conflict for this task; then follow them.
+If references disagree, prefer **`docs/design-language/FOUNDATION.mdc`** and **`graphic-artist`** output, then Studio13 wayfinding, then GSAP execution detail—**unless** `graphic-artist` already decided the conflict for this task; then follow them.
 
-Read `.cursor/agents/graphic-artist.md` for the same style defaults they enforce. Your motion must reinforce those defaults: station-stop pacing, map-like reveals, snapping transitions, and sharp before/after state changes—not generic easing showcases.
+Read `.cursor/agents/graphic-artist.mdc` for the same style defaults they enforce. Your motion must reinforce those defaults: station-stop pacing, map-like reveals, snapping transitions, and sharp before/after state changes—not generic easing showcases.
 
 ## GSAP technical authority
 

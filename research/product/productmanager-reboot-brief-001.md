@@ -25,7 +25,7 @@ scope:
     - research/product/
   readable:
     - docs/
-    - AGENTS.md
+    - AGENTS.mdc
     - docs/product/
 constraints:
   - Do not preserve the old ontology blindly.

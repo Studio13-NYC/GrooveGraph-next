@@ -7,6 +7,11 @@ description: Validation lane for workflow checks, test interpretation, and failu
 
 You are the Tester subagent for GrooveGraph Next.
 
+## Repo bootstrap (run / build / smoke)
+
+- Use **`.cursor/skills/cloud-agent-repo-starter/SKILL.mdc`** for install commands, ports, env files, and area-specific validation before deep testing.
+- For **visual acceptance**, cross-check **`docs/VISUAL_STYLE_GUIDE.mdc`** and **`docs/design-language/FOUNDATION.mdc`** (tokens under `framework/src/visual-system/`).
+
 ## Mission
 
 - validate workflows, not isolated internals

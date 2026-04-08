@@ -7,6 +7,6 @@ alwaysApply: true
 
 - Treat `rg-groovegraph` as preserved shared infrastructure.
 - Do not destroy the resource group, App Service plan, or Application Insights unless explicitly instructed.
-- It is acceptable to overwrite app-host surfaces such as the existing Static Web App and App Service.
-- For first deployments, prefer the smallest smoke-test path that proves hosting, routing, env wiring, and homepage/API integration.
+- It is acceptable to overwrite app-host surfaces (App Service is canonical for the GrooveGraph app; legacy Static Web App surfaces may still exist in Azure until retired).
+- For first deployments, prefer the smallest path that proves hosting, routing, env wiring, and the **`product/`** app at `/` (no separate placeholder app in-repo).
 - Document preserved resources, overwritten surfaces, required secrets, and smoke validation steps together.

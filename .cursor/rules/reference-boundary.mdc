@@ -4,7 +4,7 @@ description: Canonical work happens only in this repository; no external legacy 
 
 # Reference boundary
 
-**This repository** is the source of truth for GrooveGraph Next: docs, rules, skills, framework code, research artifacts, and product surfaces.
+**This repository** is the source of truth for GrooveGraph Next: docs, rules, skills, framework code, ontology, and the **`product/`** app (research workbench). There is no separate in-tree `research/` package; validation and briefs live under **`docs/`** where applicable.
 
 ## Rules
 

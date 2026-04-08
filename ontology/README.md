@@ -28,13 +28,13 @@ Planning a Neo4j → TypeDB move means: **freeze conceptual types here**, implem
 From repo root (uses root `.env.local` for Aura):
 
 ```bash
-cd research/tools/openai-research-workspace
-node --env-file="../../../.env.local" scripts/introspect-neo4j-schema.mjs
-cd ../../..
+cd product
+node --env-file="../.env.local" scripts/introspect-neo4j-schema.mjs
+cd ..
 node ontology/scripts/generate-typeql-from-introspection.mjs
 ```
 
-Or, if `research/tools/openai-research-workspace/.env.local` holds Neo4j vars: `npm run introspect-neo4j -w @groovegraph-next/openai-research-workspace` then `node ontology/scripts/generate-typeql-from-introspection.mjs` from the repo root.
+Or, if `product/.env.local` holds Neo4j vars: `npm run introspect-neo4j -w @groovegraph-next/product` then `node ontology/scripts/generate-typeql-from-introspection.mjs` from the repo root.
 
 Root shortcuts: `npm run ontology:introspect` and `npm run ontology:generate`.
 
@@ -63,9 +63,9 @@ Root shortcuts: `npm run ontology:introspect` and `npm run ontology:generate`.
 
 ## Source of truth in code (for alignment, not definition)
 
-- Session and candidate shapes: `research/tools/openai-research-workspace/src/types/research-session.ts`
-- Current graph **adapter** (Neo4j): `research/tools/openai-research-workspace/src/lib/server/neo4j-graph-persistence.ts`
-- Product expectations: `docs/product/RESEARCH_WORKBENCH_PRD.mdc`, `research/product/productmanager-reboot-brief-001.md`
+- Session and candidate shapes: `product/src/types/research-session.ts`
+- Current graph **adapter** (Neo4j): `product/src/lib/server/neo4j-graph-persistence.ts`
+- Product expectations: `docs/product/RESEARCH_WORKBENCH_PRD.mdc`
 
 ## Conceptual mapping: ontology ↔ Neo4j adapter (migration aid)
 
@@ -105,4 +105,4 @@ Distinct attribute types per slot satisfy TypeDB’s rule that a type cannot own
 
 ## Research workbench (live sync)
 
-The Next.js app under `research/tools/openai-research-workspace` syncs accepted (and optionally deferred) graph candidates through a small **graph persistence** port. Set `GRAPH_PERSISTENCE_BACKEND=neo4j` (default) or `typedb`, plus the matching env vars in that package’s `.env.example`. The TypeDB adapter applies a workbench subset of types consistent with `groovegraph-schema.tql` (`research-session`, `graph-entity`, `graph-relationship`, `session-includes-entity`) alongside any existing migrated Aura schema in the same database.
+The Next.js app under `product/` syncs accepted (and optionally deferred) graph candidates through a small **graph persistence** port. Set `GRAPH_PERSISTENCE_BACKEND=neo4j` (default) or `typedb`, plus the matching env vars in `product/.env.example`. The TypeDB adapter applies a workbench subset of types consistent with `groovegraph-schema.tql` (`research-session`, `graph-entity`, `graph-relationship`, `session-includes-entity`) alongside any existing migrated Aura schema in the same database.

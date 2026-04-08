@@ -4,7 +4,8 @@
 
 | File | Purpose |
 |---|---|
-| `product/RESEARCH_WORKBENCH_PRD.mdc` | PRD: research workbench — triplet UX → Neo4j persistence (Sync to graph; see PRD §7 Phase 2) → session graph visualization |
+| `product/README.md` | Run, env, Neo4j verify, deploy pointers for the canonical Next.js app |
+| `docs/product/RESEARCH_WORKBENCH_PRD.mdc` | PRD: research workbench — triplet UX → Neo4j persistence (Sync to graph; see PRD §7 Phase 2) → session graph visualization |
 
 ## Canonical docs
 
@@ -52,7 +53,7 @@ When files drift, use this precedence:
 - `.cursor/skills/` for reusable operational helpers — orchestration checklist (`agent-orchestrator`), packet template (`context-packet-builder`, canonical schema in `CONTEXT_PACKETS.mdc`), visual/motion helpers (`studio13-wayfinding-system`, `gsap-motion-system`, `graph-data-viz-system`), and **Cloud agent run/test bootstrap** (`cloud-agent-repo-starter`)
 - `../refs/INDEX.md` for the consolidated alias map (`@refs/INDEX.md`) to canonical docs and rules
 - `assets/posts/` for narrative updates and framework blog posts
-- `research/` for validation evidence, reboot briefs, and experimental product surfaces
+- `docs/research-workbench-validation.md` for workbench validation evidence; **`docs/product/`** for PRD and product-manager-style briefs; historical `research/*` paths are **git history** only after repo consolidation
 
 ## Posts
 

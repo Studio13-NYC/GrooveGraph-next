@@ -113,15 +113,8 @@ Sorted by path:
 - `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
 - `graphic-design-agent-assets/graphic-designer.md`
 - `product/README.md`
-- `prototypes/README.md`
 - `refs/INDEX.md`
-- `research/README.md`
-- `research/headcount/headcount-async-launch-pack-002.md`
-- `research/headcount/headcount-serial-evidence.md`
-- `research/hygiene/HYGIENE_LOG.md`
-- `research/openai-research-workspace-validation.md`
-- `research/product/productmanager-reboot-brief-001.md`
-- `research/tools/openai-research-workspace/README.md`
+- `docs/research-workbench-validation.md`
 
 ---
 

@@ -1,7 +1,7 @@
 # PRD — Research workbench (OpenAI workspace)
 
 **Status:** Draft  
-**Scope:** `research/tools/openai-research-workspace` (route `/`)  
+**Scope:** `product` (route `/`)  
 **Delivery order (locked):** **1) Triplet UX** → **2) Neo4j persistence** → **3) Session graph visualization**  
 **Sources:** UX interview (thread), [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc), design briefs in [`docs/design-language/`](../design-language/)
 
@@ -82,7 +82,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 3. **Remove** the top **module color legend** strip (per UX decision); keep module identity via **plate bands** / existing tokens only.
 4. **Index:** Default UI emphasizes **new session**; **past sessions** live behind **explicit disclosure** (e.g. button, drawer, collapsible panel) — not the default list.
 5. **Default split** (wide viewports): **~60–70%** width to **Review** column, remainder to Investigation — **persisted** in local storage or equivalent so it survives reloads.
-6. **Evidence module (stacked, locked in code):** **Field notes** and **Sources** are **two sections stacked vertically** (not side-by-side). **Field notes** is **expanded** on first paint; **Sources** is **collapsed**. Each section has a **header button** with a **chevron** affordance, `aria-expanded`, and `aria-controls` pointing at its scroll region. Each body is **independently scrollable** (`overflow: auto` in its own pane). Implementation: `EvidenceCollapsibleSection` in `research/tools/openai-research-workspace/src/components/WorkbenchNextView.tsx`; styles under `.gg-next-evidence-*` in `app/workbench.css`.
+6. **Evidence module (stacked, locked in code):** **Field notes** and **Sources** are **two sections stacked vertically** (not side-by-side). **Field notes** is **expanded** on first paint; **Sources** is **collapsed**. Each section has a **header button** with a **chevron** affordance, `aria-expanded`, and `aria-controls` pointing at its scroll region. Each body is **independently scrollable** (`overflow: auto` in its own pane). Implementation: `EvidenceCollapsibleSection` in `product/src/components/WorkbenchNextView.tsx`; styles under `.gg-next-evidence-*` in `app/workbench.css`.
 7. **Evidence / Claims vertical alignment (locked in code):** The **Evidence** plate and **Claims** plate use the **same fixed band height** — `height` and `max-height` both set to **`--gg-workbench-module-max-h`** (same token as Investigation / Graph review cap: `min(58vh, 680px)` in `.gg-next-root`). This gives nested flex children a **definite height** so scroll regions do not collapse; inner scroll panes use **`min-height: 0`** in the flex chain.
 
 **Acceptance**
@@ -111,8 +111,8 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 - **UI:** Graph review → **Sync to graph**; optional checkbox **Include deferred** (default: accepted items only).
 - **API:** `POST /api/sessions/[sessionId]/neo4j/sync` with body `{ "includeDeferred"?: boolean }`.
-- **Server:** `research/tools/openai-research-workspace/src/lib/server/neo4j-graph-persistence.ts` — entities matched in order: `candidateKeys` (`sessionId:candidateId`), overlapping `externalIds`, then `nameNorm` + `provisionalKind`; existing nodes are **enriched** (merged lists and attributes). Labels: `ResearchSession`, `Entity`; relationship types: `SESSION_INCLUDES_ENTITY`, `GRAPH_REL`.
-- **Env:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` — see [`research/tools/openai-research-workspace/README.md`](../../research/tools/openai-research-workspace/README.md) and [`docs/AZURE_BASELINE.mdc`](../AZURE_BASELINE.mdc) for App Service.
+- **Server:** `product/src/lib/server/neo4j-graph-persistence.ts` — entities matched in order: `candidateKeys` (`sessionId:candidateId`), overlapping `externalIds`, then `nameNorm` + `provisionalKind`; existing nodes are **enriched** (merged lists and attributes). Labels: `ResearchSession`, `Entity`; relationship types: `SESSION_INCLUDES_ENTITY`, `GRAPH_REL`.
+- **Env:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` — see [`product/README.md`](../../product/README.md) and [`docs/AZURE_BASELINE.mdc`](../AZURE_BASELINE.mdc) for App Service.
 - **Hosting:** Production uses **Neo4j Aura** (credentials in App Service application settings, not in source control).
 - **Bloom / other labels:** The workbench persists **`Entity`** / **`GRAPH_REL`** only. Neo4j Bloom perspectives that target **`Artist`**, **`IS_A`**, **`EntityType`**, etc. show a **separate** subgraph (ontology or other pipelines). Operators must query **`Entity`** (or add a Bloom perspective for `Entity` + `GRAPH_REL`) to see synced session data; unifying with `Artist` is a **normalization** follow-on.
 
@@ -179,4 +179,4 @@ The research workbench is the discovery-first surface for artist-seed investigat
 - [`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc) — collaboration surface (tools, workflow, file keys)
 - [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc)
 - [`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`](../design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc)
-- [`research/tools/openai-research-workspace/README.md`](../../research/tools/openai-research-workspace/README.md)
+- [`product/README.md`](../../product/README.md)

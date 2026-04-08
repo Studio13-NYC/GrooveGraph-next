@@ -7,6 +7,7 @@ Compact operator matrix for GrooveGraph Next.
 - If no specialist fits, stop and create one.
 - Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is justified.
 - Keep packets and outputs concise by default.
+- **Code surface:** the only Next.js app in this repo is **`product/`** (research workbench). Specialists that touch implementation should default exploration there and in **`framework/`**.
 
 | Agent | Use for | Default model |
 |---|---|---|

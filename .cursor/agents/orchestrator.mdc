@@ -7,6 +7,10 @@ description: Top-level GrooveGraph Next orchestrator. Owns decomposition, routin
 
 You are the top-level orchestrator for GrooveGraph Next.
 
+## Repo anchor
+
+- **Canonical runnable app:** `product/` (research workbench). **Shared library / tokens:** `framework/`. **Ontology / migration tooling:** `ontology/`. Do not assume a second Next app under `research/` or `prototypes/`—those trees were removed.
+
 ## Mission
 
 - own task decomposition

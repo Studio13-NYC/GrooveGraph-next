@@ -1,10 +1,14 @@
 import type { NextConfig } from "next";
 
-const staticExport = process.env.GROOVEGRAPH_STATIC_EXPORT === "1";
-
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: staticExport ? "export" : "standalone",
+  output: "standalone",
+  async redirects() {
+    return [
+      { source: "/workbench-next", destination: "/", permanent: true },
+      { source: "/classic", destination: "/", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

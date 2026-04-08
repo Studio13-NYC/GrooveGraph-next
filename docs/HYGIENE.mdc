@@ -48,7 +48,7 @@ Known audit targets should include:
 
 - `.firecrawl/`
 - `.telemetry/`
-- `research/tools/openai-research-workspace/.data/` (local session store for the research workbench)
+- `product/.data/` (local session store for the research workbench)
 - future machine-local tool directories introduced by repo tooling, plugins, or research workflows
 
 Secrets (e.g. `OPENAI_API_KEY`, `NEO4J_*` in `.env.local`) must remain out of git; flag accidental commits as **critical** hygiene findings.
@@ -63,7 +63,11 @@ npm run cleanup:check
 
 ## Knip and workspace packages
 
-Root `knip.json` lists `@groovegraph-next/framework` under `ignoreDependencies` because workspace apps (for example `product/` and `research/tools/openai-research-workspace/`) import `nycta-groovegraph-tokens.css` via CSS `@import`, which `knip` does not treat as a JavaScript dependency. Do not drop that ignore unless you add another traceable consumption path or CSS-aware analysis.
+Root `knip.json` lists `@groovegraph-next/framework` under `ignoreDependencies` because `product/` imports `nycta-groovegraph-tokens.css` via CSS `@import`, which `knip` does not treat as a JavaScript dependency. Do not drop that ignore unless you add another traceable consumption path or CSS-aware analysis.
+
+## Where to log hygiene evidence (post-consolidation)
+
+- **`research/hygiene/`** no longer exists. For **generalization / fork-prep** runs, append a dated note to **`docs/GENERALIZATION_AUDIT.mdc` §3** and/or **`docs/DECISION_LOG.mdc`**. Older hygiene logs remain in **git history**.
 
 ## Current stance
 

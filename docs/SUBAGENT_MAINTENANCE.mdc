@@ -19,10 +19,11 @@ Use this checklist whenever you add, rename, remove, or materially change a suba
 5. Update `docs/AGENT_ORCHESTRATION.mdc` if authority or handoff behavior changes
 6. Update `docs/MODEL_ROUTING.mdc` if the model lane changes
 7. Update `AGENTS.mdc` if the repo-level operating contract changes
-8. Record the change in `docs/DECISION_LOG.mdc` if it affects governance
-9. Update `docs/HYGIENE.mdc` if the lane affects cleanup or removal policy
-10. Update `README.md` only if the top-level operating stance changes
-11. If the lane is canonical, update `framework/src/headcount.ts`, `docs/HEADCOUNT.mdc`, and `docs/WORKFLOW_VALIDATION.mdc`
+8. If the lane owns product briefs or PRD-adjacent prose, confirm **`docs/product/`** (or linked canonical doc) stays accurate
+9. Record the change in `docs/DECISION_LOG.mdc` if it affects governance
+10. Update `docs/HYGIENE.mdc` if the lane affects cleanup or removal policy
+11. Update `README.md` only if the top-level operating stance changes
+12. If the lane is canonical, update `framework/src/headcount.ts`, `docs/HEADCOUNT.mdc`, and `docs/WORKFLOW_VALIDATION.mdc`
 
 ## Add-a-subagent checklist
 

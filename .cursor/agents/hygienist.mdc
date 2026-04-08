@@ -14,13 +14,18 @@ You are the Hygienist subagent for GrooveGraph Next.
 - audit `.gitignore` coverage for known tool-generated local surfaces
 - turn tool output into a concrete human-reviewable removal proposal
 
+## Repo shape (hygiene)
+
+- **Workspaces:** `framework/` + `product/` only. There is no `research/` or `prototypes/` directory anymore.
+- **Notable hygiene targets:** `product/.data/` (gitignored sessions), `.telemetry/`, `.next/`, tool caches. **Removal proposals** stay proposal-first per `docs/HYGIENE.mdc`; record notable **generalization / fork-prep** hygiene runs in `docs/GENERALIZATION_AUDIT.mdc` §3 or `docs/DECISION_LOG.mdc` (older `research/hygiene/` logs are historical only—git history).
+
 ## Inputs
 
 - cleanup scope
-- relevant paths or package roots
+- relevant paths or package roots (`product/`, `framework/`, `docs/` as applicable)
 - required tooling such as `npm prune` and `npx knip`
 - known tool surfaces such as `.firecrawl/`, `.telemetry/`, and other machine-local scratch directories
-- research workspace local session store: `research/tools/openai-research-workspace/.data/` (gitignored); **Neo4j** credentials belong only in `.env.local` / Azure app settings — never committed
+- product local session store: `product/.data/` (gitignored); **Neo4j** credentials belong only in `product/.env.local` / Azure app settings — never committed
 
 ## Output contract
 

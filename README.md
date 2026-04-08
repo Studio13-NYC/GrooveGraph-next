@@ -2,7 +2,7 @@
 
 `GrooveGraph Next` is a clean-start, workflow-first framework for the GrooveGraph product direction.
 
-**This repository** is the canonical home for orchestration, policy, context-passing contracts, visual system, research tools, and product foundation. Do not depend on or sync against any other GrooveGraph-named codebase outside this repo.
+**This repository** is the canonical home for orchestration, policy, context-passing contracts, visual system, and the GrooveGraph product app. Do not depend on or sync against any other GrooveGraph-named codebase outside this repo.
 
 ## What lives here
 
@@ -13,15 +13,14 @@
 - `.cursor/skills/`: reusable skills for orchestration and packet generation
 - `refs/INDEX.md`: single alias map (`@refs/INDEX.md`) to canonical docs and `.cursor/rules`
 - `docs/`: canonical framework documentation
-- `framework/`: first implementation target for orchestration utilities and reusable support code
-- `product/`: smoke test app, static styleguides (`public/`), and SWA sibling (`swa-smoke/`)
-- `prototypes/`: experiments and disposable spikes
-- `research/`: validation evidence, experimental tools, and distilled findings
+- `framework/`: orchestration utilities and reusable support code
+- `product/`: **GrooveGraph Next.js app** — investigation / graph-review workbench (same surface as [groovegraph.s13.nyc](https://groovegraph.s13.nyc/))
+- `ontology/`: canonical TypeQL model and Neo4j → TypeDB migration helpers
 
 ## Local development
 
-- **`npm run dev`** — Research workbench ([`research/tools/openai-research-workspace`](research/tools/openai-research-workspace)), **http://localhost:3011** (same app family as the deployed workbench).
-- **`npm run dev:product`** — Product smoke app on **http://localhost:3000** (homepage + styleguides only).
+- **`npm run dev`** — Product app ([`product/`](product/)), **http://localhost:3000**
+- **`npm run build:product`** / **`npm run start:product`** — production build and serve
 
 ## Default operating stance
 

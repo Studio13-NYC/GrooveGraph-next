@@ -1,5 +1,7 @@
 # Workflow Validation
 
+**Path note:** Older bullets reference `research/…` files that were removed when the app was consolidated into `product/`. Retrieve those artifacts from **git history** if needed; the live workbench validation record is `docs/research-workbench-validation.md`.
+
 ## Goal
 
 Validate that the new framework supports representative workflows before any new GrooveGraph product build begins.
@@ -193,7 +195,7 @@ Framework response:
 Validation method:
 
 - reran the serial `headcount-serial-release-packet` workflow against the current lane set
-- used one bounded implementation surface: `product/swa-smoke/index.html`
+- used one bounded implementation surface: the product app under `product/` (historical smoke HTML was removed on consolidation)
 - validated the rendered result through a local browser-served static page
 
 Observed result:
@@ -254,22 +256,22 @@ Framework response:
 
 Validation method:
 
-- implemented a standalone research tool under `research/tools/openai-research-workspace/`
+- implemented a standalone research tool under `product/`
 - wired the tool around the OpenAI `Responses API`, `Conversations API`, built-in `web_search`, application function tools, and structured outputs
 - validated the workspace through build and local runtime checks
 
 Observed result:
 
 - pass with one operational blocker
-- the workspace builds successfully and runs locally on `http://localhost:3011`
+- the workspace builds successfully and runs locally on `http://localhost:3000`
 - the homepage and session routes are reachable
 - the expected end-to-end blocker is missing local `OPENAI_API_KEY` configuration, which prevents a true artist-seed session from being created until credentials are supplied
 - local session persistence and review surfaces are implemented, but OpenAI-backed runtime validation remains gated on environment setup
 
 Framework response:
 
-- added `research/tools/openai-research-workspace/`
-- added research workspace validation notes (now `research/openai-research-workspace-validation.md`, Part A)
+- added `product/`
+- added research workspace validation notes (now `docs/research-workbench-validation.md`, Part A)
 
 ## Validation 14: OpenAI research workspace end-to-end artist-seed session
 
@@ -291,13 +293,13 @@ Observed result:
   - provisional entities
   - provisional relationships
   - operator-visible session notes
-- local UI inspection confirmed the session, sources, notes, and accept/defer/reject review controls all render at `http://localhost:3011`
+- local UI inspection confirmed the session, sources, notes, and accept/defer/reject review controls all render at `http://localhost:3000`
 - live runtime testing also exposed and helped fix two real API-boundary issues in the tool/schema layer:
   - nullable-versus-optional field handling for structured outputs
   - `z.record()` generating an OpenAI-rejected function schema for flexible attributes
 
 Framework response:
 
-- updated `research/tools/openai-research-workspace/src/lib/server/research-runtime.ts` to make the tool/output schemas OpenAI-safe
-- extended validation record (now `research/openai-research-workspace-validation.md`, Part B)
+- updated `product/src/lib/server/research-runtime.ts` to make the tool/output schemas OpenAI-safe
+- extended validation record (now `docs/research-workbench-validation.md`, Part B)
 - added a narrative milestone post under `assets/posts/2026-03-19-the-research-loop-leaves-the-lab.md`

@@ -13,6 +13,13 @@ You are the Explorer subagent for GrooveGraph Next.
 - find the smallest set of paths that explain the task
 - avoid over-searching
 
+## Default search roots (unless the packet narrows scope)
+
+- **`product/`** — Next.js research workbench (routes, `src/`, `app/`)
+- **`framework/`** — shared tokens and library surface
+- **`docs/`** — policy and PRD
+- **`ontology/`** — schema and migration scripts
+
 ## Inputs
 
 - a clear exploration goal

@@ -6,19 +6,19 @@ param(
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$workspaceRoot = Join-Path $repoRoot "research\tools\openai-research-workspace"
-$relativeAppPath = "research/tools/openai-research-workspace"
+$workspaceRoot = Join-Path $repoRoot "product"
+$relativeAppPath = "product"
 $startupCommand = "node $relativeAppPath/server.js"
 
 if (-not (Test-Path $workspaceRoot)) {
-  throw "Workspace not found at $workspaceRoot"
+  throw "Product app not found at $workspaceRoot"
 }
 
 Push-Location $repoRoot
 try {
-  npm run build -w "@groovegraph-next/openai-research-workspace"
+  npm run build -w "@groovegraph-next/product"
   if ($LASTEXITCODE -ne 0) {
-    throw "next build (standalone) failed for openai-research-workspace."
+    throw "next build (standalone) failed for product."
   }
 }
 finally {
@@ -31,20 +31,19 @@ $zipPath = $null
 $deployRoot = $null
 try {
   $stamp = Get-Date -Format "yyyyMMddHHmmss"
-  $zipPath = Join-Path $env:TEMP "groovegraph-research-workbench-$stamp.zip"
-  # Unique folder per run avoids Windows file locks on cleanup of a previous deploy
-  $deployRoot = Join-Path $env:TEMP "groovegraph-research-workbench-deploy-$stamp"
+  $zipPath = Join-Path $env:TEMP "groovegraph-product-$stamp.zip"
+  $deployRoot = Join-Path $env:TEMP "groovegraph-product-deploy-$stamp"
 
   New-Item -ItemType Directory -Path $deployRoot | Out-Null
   Copy-Item ".next\standalone\*" $deployRoot -Recurse -Force
 
-  $staticTarget = Join-Path $deployRoot "research\tools\openai-research-workspace\.next\static"
+  $staticTarget = Join-Path $deployRoot "product\.next\static"
   New-Item -ItemType Directory -Path $staticTarget -Force | Out-Null
   Copy-Item ".next\static\*" $staticTarget -Recurse -Force
 
   Push-Location $deployRoot
   try {
-    tar -a -cf $zipPath node_modules research
+    tar -a -cf $zipPath node_modules product
     if ($LASTEXITCODE -ne 0) {
       throw "Failed to create deployment archive with tar."
     }
@@ -63,7 +62,7 @@ try {
     throw "Failed to deploy package to App Service."
   }
 
-  Write-Host "Research workbench deployed to https://$WebAppName.azurewebsites.net" -ForegroundColor Green
+  Write-Host "Product (research workbench) deployed to https://$WebAppName.azurewebsites.net" -ForegroundColor Green
   Write-Host "Startup: $startupCommand" -ForegroundColor DarkGray
   $deploySucceeded = $true
 }

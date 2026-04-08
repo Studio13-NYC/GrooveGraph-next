@@ -182,8 +182,8 @@ Treat notes and sources as supporting evidence, not as peer destinations.
 
 This plan is intentionally bounded to the current UI shell:
 
-- `research/tools/openai-research-workspace/app/page.tsx`
-- `research/tools/openai-research-workspace/app/globals.css`
+- `product/app/page.tsx`
+- `product/app/globals.css`
 
 Do not change the session data model, research runtime, or turn orchestration in this pass.
 

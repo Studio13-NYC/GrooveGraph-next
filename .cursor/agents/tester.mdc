@@ -21,8 +21,8 @@ You are the Tester subagent for GrooveGraph Next.
 ## Research workbench + Neo4j
 
 - **Sync workflow:** Graph review items must be **accepted** (or **deferred** with **Include deferred**) before **Sync to graph** writes `Entity` / `GRAPH_REL` rows. If the user sees “no data” in Neo4j Browser, confirm they selected the **`NEO4J_DATABASE`** from env (Aura often uses the **instance id**, not `neo4j`).
-- **Smoke check** (from `research/tools/openai-research-workspace`): `npm run verify-neo4j -- "search text"` — uses `.env.local` and lists matching `Entity` nodes plus total count.
-- **Neo4j Bloom:** A search for **`Artist`** / **`IS_A`** is **not** the research workbench subgraph; sync writes **`Entity`** and **`GRAPH_REL`**. See workspace `README.md` (Persistence) for the distinction and sample Cypher.
+- **Smoke check:** `npm run verify-neo4j -w @groovegraph-next/product -- "search text"` — uses `product/.env.local` and lists matching `Entity` nodes plus total count.
+- **Neo4j Bloom:** A search for **`Artist`** / **`IS_A`** is **not** the research workbench subgraph; sync writes **`Entity`** and **`GRAPH_REL`**. See **`product/README.md`** (Persistence) for the distinction and sample Cypher.
 
 ## Inputs
 

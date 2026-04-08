@@ -14,8 +14,8 @@ The repo starts as a seed monorepo with:
 - `docs/`
 - `framework/`
 - `product/`
-- `prototypes/`
-- `research/`
+- `prototypes/` *(removed 2026-04-08 — see D012)*
+- `research/` *(removed 2026-04-08 — see D012)*
 
 ### D003 - Model hierarchy
 
@@ -59,4 +59,10 @@ Discovery-first product definition is now a first-class lane rather than an impl
 
 ### D011 - Research workbench Neo4j persistence (Phase 2)
 
-The OpenAI research workbench (`research/tools/openai-research-workspace`) persists accepted (and optionally deferred) graph candidates to **Neo4j Aura** on explicit **Sync to graph**, using labels **`Entity`**, **`ResearchSession`**, and relationship types **`GRAPH_REL`**, **`SESSION_INCLUDES_ENTITY`**. Entity upsert matches by session candidate key, overlapping external IDs, then normalized name + kind, and **enriches** existing nodes. Operators must use the Aura **`NEO4J_DATABASE`** (often the instance id) in Browser/Bloom; **Bloom** perspectives on **`Artist`** / **`IS_A`** are a **separate** subgraph from workbench **`Entity`** data until a normalization step links them.
+The OpenAI research workbench (`product/`) persists accepted (and optionally deferred) graph candidates to **Neo4j Aura** on explicit **Sync to graph**, using labels **`Entity`**, **`ResearchSession`**, and relationship types **`GRAPH_REL`**, **`SESSION_INCLUDES_ENTITY`**. Entity upsert matches by session candidate key, overlapping external IDs, then normalized name + kind, and **enriches** existing nodes. Operators must use the Aura **`NEO4J_DATABASE`** (often the instance id) in Browser/Bloom; **Bloom** perspectives on **`Artist`** / **`IS_A`** are a **separate** subgraph from workbench **`Entity`** data until a normalization step links them.
+
+## 2026-04-08
+
+### D012 - Consolidated monorepo: single app in `product/`
+
+`prototypes/` and `research/` were **removed** from the working tree. The discovery-first **research workbench** is the **only** Next.js app package: **`product/`** (`@groovegraph-next/product`). Workbench validation evidence lives in **`docs/research-workbench-validation.md`**. Headcount, hygiene logs, and reboot briefs that previously lived under `research/` are **git history** only unless copied into `docs/`.

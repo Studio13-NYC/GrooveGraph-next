@@ -41,4 +41,4 @@ Use **`@refs/INDEX.md`** when you want one place that maps short names to canoni
 ## Related
 
 - Full doc map: `docs/INDEX.mdc`
-- Research evidence (headcount, hygiene, tool validation): `research/headcount/`, `research/hygiene/`, `research/openai-research-workspace-validation.md`
+- Workbench validation record: `docs/research-workbench-validation.md` (older headcount / hygiene narratives lived under `research/` before repo consolidation — retrieve from git history if needed)

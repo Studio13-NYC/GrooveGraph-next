@@ -2,6 +2,10 @@
 
 Use these routing rules for all GrooveGraph Next work.
 
+## Repo layout
+
+- **Shipped app:** `product/` (research workbench). **Shared library:** `framework/`. There is no `research/` or `prototypes/` workspace—do not route work there.
+
 ## Core rule
 
 - Specialist subagent first, always.

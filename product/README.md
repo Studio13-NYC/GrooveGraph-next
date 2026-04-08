@@ -1,10 +1,35 @@
-# Product
+# GrooveGraph product (research workbench)
 
-This package holds the **GrooveGraph Next smoke surface** and static **design/styleguide** assets served from `public/`.
+This package is the **canonical GrooveGraph Next.js app**: the text-first investigation / graph-review workbench served at **`/`** in development and on App Service in production ([groovegraph.s13.nyc](https://groovegraph.s13.nyc/)).
 
-- **Next.js app** (`app/`): CZA smoke homepage + `/api/smoke` for App Service validation.
-- **Static SWA sibling** (`swa-smoke/`): parity smoke page for Azure Static Web Apps deploys (includes its own `cza-map.svg` copy for self-contained hosting).
+## Environment
 
-GSAP demos in `public/*styleguide*.html` load GSAP from a CDN; the Next app does not depend on GSAP npm packages.
+Copy `.env.example` → `.env.local` and set:
 
-Heavier product implementation stays gated on framework and routing stability; this tree stays intentionally small until that work ships.
+- `OPENAI_API_KEY` (required for investigation turns)
+- optional model vars per `.env.example`
+- **Graph sync:** `GRAPH_PERSISTENCE_BACKEND=neo4j` or `typedb`, plus `NEO4J_*` or `TYPEDB_*` as documented in `.env.example`
+
+## Run
+
+From the **repository root**:
+
+```powershell
+npm install
+npm run dev
+```
+
+Open **http://localhost:3000**. Production build: `npm run build -w @groovegraph-next/product`.
+
+## Persistence
+
+Session JSON lives under **`product/.data/`** (gitignored). Graph sync uses the configured backend; see repo **`ontology/README.md`** for TypeDB / ontology alignment.
+
+## Validation history
+
+Consolidated evidence: **`docs/research-workbench-validation.md`**.
+
+## Deploy
+
+App Service (standalone): from repo root, **`scripts/deploy-appservice-product.ps1`**. See **`docs/AZURE_BASELINE.mdc`**.
+

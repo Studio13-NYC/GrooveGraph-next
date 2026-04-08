@@ -25,7 +25,7 @@ No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same
 
 | Area | Location | Notes |
 |------|----------|--------|
-| Research workbench (Next regime) | `research/tools/openai-research-workspace/src/components/` | `WorkbenchNextView`, `ResearchWorkbench`, `research-workbench-widgets` |
+| Research workbench (Next regime) | `product/src/components/` | `WorkbenchNextView`, `ResearchWorkbench`, `research-workbench-widgets` |
 | Framework UI | `framework/` | Shared tokens; app-specific plates live in workspace |
 
 **Architecture:** React function components; scoped CSS under `.gg-next-root` for `/` (`app/workbench.css`). No Storybook in this package by default.
@@ -34,8 +34,8 @@ No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same
 
 ## 3. Frameworks and libraries
 
-- **UI:** React 19, Next.js App Router (`research/tools/openai-research-workspace`).
-- **Styling:** Global CSS + scoped workbench sheet; tokens from framework package (not Tailwind in the research workspace package by default).
+- **UI:** React 19, Next.js App Router (`product`).
+- **Styling:** Global CSS + scoped workbench sheet; tokens from framework package (not Tailwind in `product` by default).
 - **Build:** Next.js (Turbopack in dev per project config).
 
 ---
@@ -44,13 +44,13 @@ No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same
 
 - NYCTA / Vignelli references: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`.
 - Posts / static: `assets/` as applicable.
-- No dedicated CDN config in the research workspace package.
+- No dedicated CDN config in `product`.
 
 ---
 
 ## 5. Icons
 
-- No central icon font in the research workbench; prefer **text labels** and **plate bands** per manual vocabulary. Lucide/shadcn may appear in other apps in the monorepo — follow each package’s `package.json`.
+- No central icon font in the research workbench; prefer **text labels** and **plate bands** per manual vocabulary. Lucide/shadcn may appear in shared UI; follow **`product/package.json`**.
 
 ---
 
@@ -62,10 +62,10 @@ No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same
 
 ---
 
-## 7. Project structure (research workspace)
+## 7. Project structure (`product/`)
 
 ```
-research/tools/openai-research-workspace/
+product/
   app/
     page.tsx              # `/` — research workbench
     layout.tsx
@@ -80,8 +80,8 @@ research/tools/openai-research-workspace/
 
 ## 8. Visual import board (Figma)
 
-**URL (dev):** `http://localhost:3011/design-system-board.html`  
-**File:** `research/tools/openai-research-workspace/public/design-system-board.html`
+**URL (dev):** `http://localhost:3000/design-system-board.html`  
+**File:** `product/public/design-system-board.html`
 
 Use **`mcp_figma_generate_figma_design`** (existing GrooveGraph file or new team file) to import this page after `npm run dev` in the workspace, or open the HTML file locally and use your html-to-design workflow.
 

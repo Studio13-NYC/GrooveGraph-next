@@ -24,7 +24,7 @@ The blueprint criterion used here: *"the whole system can be copied to another p
 | One orchestrator owns decomposition and completion | Aligned | `docs/AGENT_ORCHESTRATION.mdc`, `.cursor/agents/orchestrator.mdc` |
 | Bounded delegation with explicit packets | Aligned | `docs/CONTEXT_PACKETS.mdc`, packet template and example |
 | One source of truth per concern | Aligned | `docs/INDEX.mdc`, precedence order in canonical docs |
-| Evidence over vibes | Aligned | `research/`, `docs/WORKFLOW_VALIDATION.mdc`, headcount runs |
+| Evidence over vibes | Aligned | `docs/research-workbench-validation.md`, `docs/WORKFLOW_VALIDATION.mdc`, headcount runs (historical serial markdown: git history) |
 | Proposal-first cleanup | Aligned | `docs/HYGIENE.mdc`, hygienist lane, `cleanup:check` script |
 | Traceability without log spam | Aligned | `docs/OBSERVABILITY.mdc`, `.telemetry/` design |
 
@@ -39,8 +39,8 @@ The blueprint criterion used here: *"the whole system can be copied to another p
 | `docs/` | Present | Canonical policy docs per INDEX |
 | `framework/` | Present | `@groovegraph-next/framework` |
 | `product/` | Present | `@groovegraph-next/product` |
-| `prototypes/` | Present | With README |
-| `research/` | Present | headcount, hygiene artifacts |
+| `prototypes/` | Removed | Consolidated away (2026-04-08); not part of fork template |
+| `research/` | Removed | Evidence moved to `docs/` or git history |
 
 ### 1.3 Hygiene workflow
 
@@ -75,10 +75,9 @@ These are correct for this repo and should remain. When forking, they are the pr
 | `product/package.json` | `@groovegraph-next/product` | Replace with fork package scope |
 | `docs/AZURE_BASELINE.mdc` | `rg-groovegraph`, `swa-groovegraph`, `as-groovegraph-api`, `appi-groovegraph`, etc. | Replace with fork Azure resource names |
 | `scripts/deploy-*.ps1` | Hardcoded `rg-groovegraph`, `as-groovegraph-api`, `swa-groovegraph` | Replace with fork resource names |
-| `product/swa-smoke/index.html` | Fetch from `as-groovegraph-api.azurewebsites.net` | Replace with fork API URL |
-| `product/app/layout.tsx` | "GrooveGraph Next Smoke Test" | Replace with fork title |
+| `product/app/layout.tsx` | Default document title for the workbench | Replace with fork title |
 | `docs/OBSERVABILITY.mdc` | `appi-groovegraph`, GrooveGraph domains | Replace with fork telemetry resource |
-| `research/headcount/*.md` | References to GrooveGraph Azure resources | Historical; fork produces new evidence |
+| Pre-consolidation `research/headcount/*.md` | References to GrooveGraph Azure resources | Historical (git history); fork produces new evidence |
 
 ### 2.2 Framework surfaces with product branding
 
@@ -114,16 +113,16 @@ Per a portable blueprint, the framework layer should avoid product-domain specif
 
 ## 4. Highest-Value Next Cleanup Slice
 
-**Proposed slice:** Keep fork-readiness traceable: run `npm run cleanup:check` and record hygiene outcomes in `research/hygiene/HYGIENE_LOG.md` when doing generalization or extraction work.
+**Proposed slice:** Keep fork-readiness traceable: run `npm run cleanup:check` and record hygiene outcomes in **this file §3** and/or **`docs/DECISION_LOG.mdc`** when doing generalization or extraction work.
 
 **Rationale:**
 
 - **`docs/INDEX.mdc`** is the canonical doc map; **`AGENTS.mdc`** is the project-specific operating contract. This audit (`docs/GENERALIZATION_AUDIT.mdc`) summarizes reusable vs product-specific surfaces for forks.
-- Appending hygiene evidence to `research/` keeps the audit traceable alongside the evidence contract in `docs/HYGIENE.mdc`.
+- Hygiene evidence now stays under **`docs/`** (or append-only governance logs), aligned with `docs/HYGIENE.mdc`.
 
 **Scope:**
 
-- Add a dated section to `research/hygiene/HYGIENE_LOG.md` when running a new generalization pass (log consolidated 2026-03-21 for historical runs).
+- Add a dated row to **§3 (Hygiene evidence)** below when running a new generalization pass. Pre-2026-03-21 detailed hygiene narratives lived under `research/hygiene/` (git history).
 
 ---
 

@@ -31,7 +31,7 @@
 
 **Research workbench (OpenAI workspace, NYCTA tokens in `globals.css`):**
 
-- Local: `http://localhost:3011/` — research workbench package: `research/tools/openai-research-workspace`, `npm run dev:research-workspace` from repo root. Production: `https://groovegraph.s13.nyc/`.
+- Local: `http://localhost:3000/` — GrooveGraph app in `product/`, `npm run dev` from repo root. Production: `https://groovegraph.s13.nyc/`.
 
 **External print reference (purchase / library):**
 

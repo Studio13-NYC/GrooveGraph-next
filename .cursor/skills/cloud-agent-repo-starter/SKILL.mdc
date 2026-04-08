@@ -5,8 +5,8 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 ## Global setup (all areas)
 
 - **Prereqs:** Node.js + npm (workspace uses Next 16 / React 19; use a current LTS Node).
-- **Install once from repo root:** `npm install` (workspaces: `framework`, `product`, `research/tools/openai-research-workspace`).
-- **No monorepo “login”:** local apps do not use user auth. **Secrets** = API keys in **gitignored** env files only (`research/tools/openai-research-workspace/.env.local`). Never commit keys.
+- **Install once from repo root:** `npm install` (workspaces: `framework`, `product`).
+- **No monorepo “login”:** local apps do not use user auth. **Secrets** = API keys in **gitignored** env files only (`product/.env.local`). Never commit keys.
 - **Feature flags:** there is **no** shared feature-flag SDK in this repo today. If you add flags later, document env var names here and in the owning package README.
 
 ## Commands by codebase area
@@ -25,23 +25,16 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 ### `framework/` (TypeScript library, no dev server)
 
 - **Validate:** `npm run validate:framework` (from root) or `npm run validate:framework -w framework`.
-- **Test workflow:** after edits, run **product** or **research-workspace** `build` so TypeScript consumers compile.
+- **Test workflow:** after edits, run **`npm run build:product`** so TypeScript consumers compile.
 - **Design linkage:** canonical tokens live in `framework/src/visual-system/` (`nycta-*-tokens.css`, `tokens.ts`); npm import path matches the `exports` field in `framework/package.json` (CSS entry for tokens).
 
-### `product/` (Next.js smoke app, port **3000** default)
+### `product/` (Next.js GrooveGraph app, port **3000** default)
 
-- **Dev:** `npm run dev:product` from root (not the default `npm run dev`; that starts the research workbench on **3011**).
-- **Production build:** `npm run build:product` then `npm run start:product` (smoke: app serves).
-- **API smoke (no browser):** with dev or start running, `curl -sS http://localhost:3000/api/smoke` → JSON with `banner` / `status` / `body`.
-- **Static styleguides:** open `http://localhost:3000/design-system-styleguide.html`, `.../animation-styleguide.html`, `.../new-regime-styleguide.html` (files under `product/public/`).
-- **SWA sibling:** `product/swa-smoke/` is a **static** parity surface for Azure Static Web Apps — open `index.html` in a browser or deploy per `docs/AZURE_BASELINE.mdc` / deployment scripts when applicable.
-
-### `research/tools/openai-research-workspace/` (Next.js, port **3011**)
-
-- **Configure:** copy `.env.example` → `.env.local`. Set at least `OPENAI_API_KEY`. Optional: `OPENAI_RESEARCH_MODEL`, `OPENAI_RESEARCH_EXTRACTION_MODEL`. For graph sync: `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, `NEO4J_DATABASE`.
-- **Dev:** `npm run dev` from repo root **or** `npm run dev:research-workspace` → `http://localhost:3011/` (same app family as production `https://groovegraph.s13.nyc/`).
-- **Build:** `npm run build:research-workspace` (catches TS errors without calling OpenAI).
-- **Neo4j verification:** from `research/tools/openai-research-workspace`, `npm run verify-neo4j -- "search text"` (uses `.env.local`). See package `README.md`: Browser must use the same DB name as `NEO4J_DATABASE` (hosted clusters often use a non-default name).
+- **Role:** investigation / graph-review **research workbench** at **`/`** (same surface as production `https://groovegraph.s13.nyc/`).
+- **Configure:** copy `product/.env.example` → `product/.env.local`. Set at least `OPENAI_API_KEY`. Optional: `OPENAI_RESEARCH_MODEL`, `OPENAI_RESEARCH_EXTRACTION_MODEL`. For graph sync: `GRAPH_PERSISTENCE_BACKEND`, `NEO4J_*` and/or `TYPEDB_*` per `.env.example`.
+- **Dev:** `npm run dev` from repo root → `http://localhost:3000/`.
+- **Build / start:** `npm run build:product` then `npm run start:product` (catches TS errors without calling OpenAI).
+- **Neo4j verification:** from repo root, `npm run verify-neo4j -w @groovegraph-next/product -- "search text"` (uses `product/.env.local`). Browser must use the same DB name as `NEO4J_DATABASE` when inspecting Aura.
 - **Mocking / offline:** there is no stub mode documented; **build** is the reliable offline gate. For runtime UI without spend, use a fake key only if you accept failing API routes — prefer **build + static UI** checks instead.
 
 ### `docs/` + `.cursor/rules/` (policy, not executed)
@@ -54,17 +47,17 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 - **No build.** Use for **visual QA** against `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc`.
 - **Quick references:** `MTA-Graphic_Deisgn_Standards/CANONICAL.md` (what is authoritative vs superseded), `vignelli-subway-map-19721.jpg` (diagram grammar), `mta_style_guide_extracted_v3.md` (manual-derived rules), `SOFTWARE_WAYFINDING_FOUNDATION.md` (software translation).
 
-### `research/` (evidence, notes, validation narratives)
+### Historical validation narratives
 
-- **Read:** `research/README.md`, `research/openai-research-workspace-validation.md`, `research/headcount/*` for **what was already proven**; do not treat as live test scripts unless a doc gives explicit commands.
+- **Workbench validation record:** `docs/research-workbench-validation.md` (bootstrap + first end-to-end session evidence).
 - **Headcount concept:** orchestration test definitions live in `docs/HEADCOUNT.mdc` (agent chain scenarios, not a single npm test).
 
 ## Cross-cutting QA checklist (functionality + design)
 
 1. **Run the narrowest command** for the touched area (validate → build → dev).
 2. **Product / workbench UI:** compare to **tokens** (see `framework/src/visual-system/` and `docs/VISUAL_STYLE_GUIDE.mdc`) and **FOUNDATION.mdc** (application UI vs map-shaped grammar split; workbench copy per `WORKBENCH_VOCAB.mdc`).
-3. **Research workbench:** stacked Evidence/Sources behavior and height bands per `AGENTS.mdc` + PRD cross-links in workspace README.
-4. **Secrets / hygiene:** no new committed secrets; session data under `research/tools/openai-research-workspace/.data/` stays gitignored.
+3. **Research workbench:** stacked Evidence/Sources behavior and height bands per `AGENTS.mdc` + PRD cross-links in `product/README.md`.
+4. **Secrets / hygiene:** no new committed secrets; session data under `product/.data/` stays gitignored.
 
 ## Maintaining this skill
 

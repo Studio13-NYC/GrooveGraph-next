@@ -8,7 +8,7 @@ Until this week, the idea was clear enough on paper. We wanted a text-first inve
 
 Now that loop is real.
 
-The new workspace under `research/tools/openai-research-workspace/` can start a session, persist the OpenAI conversation, collect cited sources, record evidence snippets, extract claims, propose entities and relationships, and let the operator accept, defer, or reject the resulting graph candidates. The first end-to-end artist-seed run used `Prince` as the seed and pulled official discography material into a local research session that stayed inspectable the whole way through.
+The new workspace under `product/` can start a session, persist the OpenAI conversation, collect cited sources, record evidence snippets, extract claims, propose entities and relationships, and let the operator accept, defer, or reject the resulting graph candidates. The first end-to-end artist-seed run used `Prince` as the seed and pulled official discography material into a local research session that stayed inspectable the whole way through.
 
 That matters for a more interesting reason than mere feature completion.
 
@@ -22,6 +22,6 @@ That is exactly the kind of correction this repo should be generating right now.
 
 Not grand ontology debates. Not decorative product language. Concrete evidence about where a discovery workflow bends, where it breaks, and what shape of structure survives contact with real sessions.
 
-So the research loop has left the lab in the most useful sense. It still lives in `research/`, because it is still an experiment. But it is no longer hypothetical. The repo now contains a working surface where an investigation can start with a question, travel through web-backed evidence gathering, and come back as a set of reviewable graph candidates with traceable provenance.
+So the research loop has left the lab in the most useful sense. It now ships as the canonical Next.js app under **`product/`** (still discovery-first, not a “finished” product veneer). The repo contains a working surface where an investigation can start with a question, travel through web-backed evidence gathering, and come back as a set of reviewable graph candidates with traceable provenance.
 
 That is a better beginning for the next GrooveGraph than pretending we already know the final schema.

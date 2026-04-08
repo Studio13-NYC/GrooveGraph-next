@@ -4,7 +4,7 @@
  *
  *   node --env-file=.env.local scripts/introspect-neo4j-schema.mjs [outPath]
  *
- * Default outPath: ../../../../ontology/sources/neo4j-introspection.json (repo root ontology/)
+ * Default outPath: ../../ontology/sources/neo4j-introspection.json (repo root ontology/)
  */
 import neo4j from "neo4j-driver";
 import { writeFileSync, mkdirSync } from "node:fs";
@@ -18,7 +18,7 @@ const user = (process.env.NEO4J_USERNAME ?? process.env.NEO4J_USER)?.trim();
 const password = process.env.NEO4J_PASSWORD?.trim();
 const database = process.env.NEO4J_DATABASE?.trim() || "neo4j";
 
-const defaultOut = resolve(__dirname, "../../../../ontology/sources/neo4j-introspection.json");
+const defaultOut = resolve(__dirname, "../../ontology/sources/neo4j-introspection.json");
 const outPath = resolve(process.argv[2] ?? defaultOut);
 
 if (!uri || !user || !password) {

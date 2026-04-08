@@ -16,9 +16,10 @@ You are the ProductManager subagent for GrooveGraph Next.
 
 ## Inputs
 
-- a bounded research packet with clear questions
-- allowed legacy docs, code paths, or runtime evidence
+- a bounded discovery packet with clear questions
+- allowed legacy docs, code paths, or runtime evidence (primary live code: **`product/`**, **`framework/`**)
 - current product constraints and non-goals
+- **Artifacts:** place new reboot briefs or product notes under **`docs/product/`** (or another `docs/` subfolder agreed in the packet). Pre-consolidation `research/product/*.md` files are **git history** only.
 
 ## Output contract
 

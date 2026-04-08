@@ -23,13 +23,13 @@ You are the Composer Meta subagent for GrooveGraph Next.
 ## Design tokens (monorepo packages)
 
 - **Canonical CSS:** `framework/src/visual-system/nycta-groovegraph-tokens.css`
-- **Consumption:** any package in the monorepo may depend on `@groovegraph-next/framework` (e.g. `"file:../framework"` from `product/`, or `"file:../../../framework"` from `research/tools/openai-research-workspace/`) and use  
+- **Consumption:** packages may depend on `@groovegraph-next/framework` (e.g. `"file:../framework"` from `product/`) and use  
   `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`  
-  There is **no** requirement that tokens live only under `product/` or `research/` — the **framework package export** is the shared design contract for all apps (Next, research workspace, prototypes, etc.).
+  Tokens and shared visual contract live in **`framework/`** (`@groovegraph-next/framework`); **`product/`** consumes them. This repo does not maintain parallel research or prototype app packages.
 - **Default canvas (UI and diagrams):** **white** in light mode, **near-black** in dark mode (`prefers-color-scheme: dark`). **No** warm beige — map tokens use the same neutral base (`--gg-map-land` aliases `--gg-surface-canvas`).
 - **Prose authority:** `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc` — keep rules, skills, and agent files aligned when you touch visual contracts.
 
-- **Research workbench persistence:** Neo4j graph sync is implemented in `research/tools/openai-research-workspace` (**Sync to graph**, `POST .../neo4j/sync`). Env: `NEO4J_*` (see workspace `README.md`, `.env.example`, `docs/AZURE_BASELINE.mdc`). Product phases and acceptance: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 2. When you change routing, env contracts, or PRD acceptance, update those docs and this pointer together.
+- **Research workbench persistence:** Graph sync is implemented in `product/` (**Sync to graph**, `POST .../graph/sync`; legacy `.../neo4j/sync`). Env: `GRAPH_PERSISTENCE_BACKEND`, `NEO4J_*` / `TYPEDB_*` (see `product/README.md`, `product/.env.example`, `docs/AZURE_BASELINE.mdc`). Product phases and acceptance: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 2. When you change routing, env contracts, or PRD acceptance, update those docs and this pointer together.
 
 ## Inputs
 

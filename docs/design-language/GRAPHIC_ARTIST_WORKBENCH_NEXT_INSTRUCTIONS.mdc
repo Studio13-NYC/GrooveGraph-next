@@ -1,6 +1,6 @@
 # Instructions for `graphic-artist` — Research Workbench
 
-Use this brief when designing or implementing the research workbench at **`/`** in `research/tools/openai-research-workspace`. **Visual reference:** the shipped **manual / plate** shell (`.gg-next-root`); preserve **functional requirements** (same APIs, session lifecycle, decisions, edits).
+Use this brief when designing or implementing the research workbench at **`/`** in `product`. **Visual reference:** the shipped **manual / plate** shell (`.gg-next-root`); preserve **functional requirements** (same APIs, session lifecycle, decisions, edits).
 
 **Vocabulary:** [`WORKBENCH_VOCAB.mdc`](WORKBENCH_VOCAB.mdc). **Figma:** [`FIGMA_MCP.mdc`](FIGMA_MCP.mdc). **Design system file:** [`groovegraph-design-system.fig`](groovegraph-design-system.fig) — work in this document; baseline type **Helvetica Neue** (see `--gg-font-sans`). **Hosted:** [GrooveGraph](https://www.figma.com/design/0qV7zjnUZ6kAHBzI0wxFEt) (`fileKey` `0qV7zjnUZ6kAHBzI0wxFEt`) — use `get_design_context` with **`node-id`** from the URL (e.g. `5-2` → `5:2`).
 

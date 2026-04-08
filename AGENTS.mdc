@@ -26,8 +26,9 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - Default to concise packets, prompts, and outputs unless the user or the risk profile requires depth.
 - Expensive orchestration should shrink as specialist coverage improves.
 - Keep one active writable surface per task.
-- Prefer framework-first changes over product speculation.
-- Preserve clean boundaries between `framework/`, `product/`, `prototypes/`, and `research/`.
+- Prefer shared `framework/` changes when multiple surfaces would benefit; the **only** shipped Next.js app in this repo is **`product/`** (research workbench at `/`).
+- There is **no** parallel `research/` or `prototypes/` tree—those folders were removed; historical artifacts live in **git history** where noted in `docs/`.
+- Preserve clean boundaries between `framework/` (library + tokens) and `product/` (runnable app).
 - Treat visual communication as part of the product of thinking, not decoration.
 - Be forthright, opinionated, and comfortable disagreeing when a better path exists.
 
@@ -60,6 +61,6 @@ This repository is the writable framework surface for the next GrooveGraph era.
 
 Use the NYCTA-inspired transit/signage system for authoritative "new regime" graphics. Use the whiteboard/cartoon style only for retrospective critique of legacy behavior.
 
-## Research workbench (`research/tools/openai-research-workspace`)
+## Research workbench (`product/`)
 
 - **Research workbench (`/`) Evidence:** **Field notes** and **Sources** are **stacked** collapsible sections (Field notes open, Sources closed by default); each body scrolls independently; **Evidence** and **Claims** plates share the same fixed height band (`--gg-workbench-module-max-h`). Locked spec: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 1 (requirements 6–7) and `docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` §5.

@@ -20,7 +20,7 @@ You are the Graphic Artist subagent for GrooveGraph Next.
 
 ## Research workbench (Next regime)
 
-When designing or implementing the research workbench at **`/`** in `research/tools/openai-research-workspace`, treat **`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`** and **`docs/design-language/WORKBENCH_VOCAB.mdc`** as the **binding brief**: **manual-page** layout (plates, index, split), scoped CSS (`.gg-next-root`). **Product roadmap** for phased work (triplet UX → Neo4j → graph viz): **`docs/product/RESEARCH_WORKBENCH_PRD.mdc`** — you **own** design/Figma work for that PRD; collaboration workflow: **`docs/design-language/FIGMA_MCP.mdc`**.
+When designing or implementing the research workbench at **`/`** in `product/`, treat **`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`** and **`docs/design-language/WORKBENCH_VOCAB.mdc`** as the **binding brief**: **manual-page** layout (plates, index, split), scoped CSS (`.gg-next-root`). **Product roadmap** for phased work (triplet UX → Neo4j → graph viz): **`docs/product/RESEARCH_WORKBENCH_PRD.mdc`** — you **own** design/Figma work for that PRD; collaboration workflow: **`docs/design-language/FIGMA_MCP.mdc`**.
 
 **Before pixel-level UI changes:** Prefer **`mcp_figma_get_design_context`** when a Figma **`fileKey` + `nodeId`** exists for the target surface (see **`docs/design-language/FIGMA_MCP.mdc`**).
 

@@ -30,7 +30,7 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 
 ### `product/` (Next.js smoke app, port **3000** default)
 
-- **Dev:** `npm run dev` or `npm run dev:product` from root (`next dev` in package).
+- **Dev:** `npm run dev:product` from root (not the default `npm run dev`; that starts the research workbench on **3011**).
 - **Production build:** `npm run build:product` then `npm run start:product` (smoke: app serves).
 - **API smoke (no browser):** with dev or start running, `curl -sS http://localhost:3000/api/smoke` → JSON with `banner` / `status` / `body`.
 - **Static styleguides:** open `http://localhost:3000/design-system-styleguide.html`, `.../animation-styleguide.html`, `.../new-regime-styleguide.html` (files under `product/public/`).
@@ -39,7 +39,7 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 ### `research/tools/openai-research-workspace/` (Next.js, port **3011**)
 
 - **Configure:** copy `.env.example` → `.env.local`. Set at least `OPENAI_API_KEY`. Optional: `OPENAI_RESEARCH_MODEL`, `OPENAI_RESEARCH_EXTRACTION_MODEL`. For graph sync: `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, `NEO4J_DATABASE`.
-- **Dev:** `npm run dev:research-workspace` from root → `http://localhost:3011/`.
+- **Dev:** `npm run dev` from repo root **or** `npm run dev:research-workspace` → `http://localhost:3011/` (same app family as production `https://groovegraph.s13.nyc/`).
 - **Build:** `npm run build:research-workspace` (catches TS errors without calling OpenAI).
 - **Neo4j verification:** from `research/tools/openai-research-workspace`, `npm run verify-neo4j -- "search text"` (uses `.env.local`). See package `README.md`: Browser must use the same DB name as `NEO4J_DATABASE` (hosted clusters often use a non-default name).
 - **Mocking / offline:** there is no stub mode documented; **build** is the reliable offline gate. For runtime UI without spend, use a fake key only if you accept failing API routes — prefer **build + static UI** checks instead.

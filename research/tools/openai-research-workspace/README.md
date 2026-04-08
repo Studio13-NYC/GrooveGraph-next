@@ -25,15 +25,17 @@ Copy `.env.example` to `.env.local` and set:
 - `OPENAI_API_KEY`
 - optionally `OPENAI_RESEARCH_MODEL`
 - optionally `OPENAI_RESEARCH_EXTRACTION_MODEL`
-- for Neo4j persistence: `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, and optionally `NEO4J_DATABASE` (defaults to `neo4j`)
+- for graph sync (Neo4j or TypeDB): see **Persistence** below
 
 ## Run
 
-From the repo root:
+From the repo root (default `npm run dev` at the monorepo root now starts this app):
 
 ```powershell
-npm run dev:research-workspace
+npm run dev
 ```
+
+Equivalent: `npm run dev:research-workspace`.
 
 The workspace runs on `http://localhost:3011`.
 
@@ -49,7 +51,14 @@ Production: [groovegraph.s13.nyc](https://groovegraph.s13.nyc/) serves this app 
 
 Session artifacts are stored locally under `.data/` and are ignored by git.
 
-**Neo4j (optional):** With Aura credentials in `.env.local`, use **Sync to graph** in the Graph review panel. The server upserts **accepted** entities and relationships only (and optionally **deferred** if **Include deferred** is checked). Items still **proposed** are not written — accept them in Graph review first, then sync. After sync, the UI shows how many nodes/edges were written and session acceptance counts.
+**Graph backend:** Set `GRAPH_PERSISTENCE_BACKEND` to `neo4j` (default) or `typedb` in `.env.local`. The UI calls **`POST /api/sessions/:id/graph/sync`** (legacy **`.../neo4j/sync`** still works and hits the same handler).
+
+- **Neo4j:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` (defaults to `neo4j`).
+- **TypeDB:** `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` (or `TYPEDB_HOST`, include `https://`), `TYPEDB_DATABASE`, or `TYPEDB_CONNECTION_STRING` as in `.env.example`. Canonical types align with `ontology/groovegraph-schema.tql` (see repo `ontology/README.md`).
+
+**Sync behavior:** Use **Sync to graph** in the Graph review panel. The server upserts **accepted** entities and relationships only (and optionally **deferred** if **Include deferred** is checked). Items still **proposed** are not written — accept them in Graph review first, then sync. After sync, the UI shows backend label (`[Neo4j]` or `[TypeDB]`), counts, and session acceptance stats.
+
+**Neo4j (optional):** With Aura credentials in `.env.local` and `GRAPH_PERSISTENCE_BACKEND=neo4j` (or omitted), sync uses Cypher as below.
 
 **Finding data in Neo4j Browser:** Aura often sets **`NEO4J_DATABASE`** to your **instance id** (not `neo4j`). Pick that database in the Browser sidebar (or `:use <name>`) before `MATCH` queries; otherwise you will see an empty graph. Entities use the **`Entity`** label; `displayName` / `nameNorm` hold searchable text (e.g. Paul Weller → `nameNorm` `paul weller`).
 

@@ -1,117 +1,34 @@
 import neo4j, { type ManagedTransaction } from "neo4j-driver";
 import { getNeo4jConfig } from "@/src/lib/server/config";
 import { getNeo4jDriver } from "@/src/lib/server/neo4j-driver";
+import {
+  buildNeo4jSyncHint,
+  buildSessionSnapshot,
+  candidateKey,
+  mergeAttributes,
+  mergeStringLists,
+  normalizeName,
+  shouldSyncReviewStatus,
+  uniqueStrings,
+} from "@/src/lib/server/graph-persistence/helpers";
+import type {
+  GraphPersistence,
+  GraphSyncResult,
+  GraphSyncSessionSnapshot,
+  GraphSyncSkippedRelationship,
+} from "@/src/lib/server/graph-persistence/types";
 import type {
   EntityCandidate,
   RelationshipCandidate,
   ResearchSession,
 } from "@/src/types/research-session";
 
-export type Neo4jSyncSkippedRelationship = {
-  relationshipId: string;
-  reason: string;
-};
-
-export type Neo4jSyncSessionSnapshot = {
-  entityCandidates: number;
-  relationshipCandidates: number;
-  entitiesAccepted: number;
-  entitiesDeferred: number;
-  entitiesProposed: number;
-  entitiesRejected: number;
-  relationshipsAccepted: number;
-  relationshipsDeferred: number;
-  relationshipsProposed: number;
-  relationshipsRejected: number;
-};
-
-export type Neo4jSyncResult = {
-  sessionId: string;
-  database: string;
-  entitiesUpserted: number;
-  relationshipsUpserted: number;
-  skippedRelationships: Neo4jSyncSkippedRelationship[];
-  includeDeferred: boolean;
-  sessionSnapshot: Neo4jSyncSessionSnapshot;
-  /** Non-empty when nothing was written but the session has candidates, or to suggest Browser queries */
-  hint?: string;
-};
-
-function normalizeName(displayName: string): string {
-  return displayName.trim().toLowerCase();
-}
-
-function uniqueStrings(values: string[]): string[] {
-  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
-}
-
-function mergeStringLists(existing: unknown, incoming: string[]): string[] {
-  const base = Array.isArray(existing) ? existing.filter((item): item is string => typeof item === "string") : [];
-  return uniqueStrings([...base, ...incoming]);
-}
-
-function mergeAttributes(
-  existingJson: unknown,
-  incoming: Record<string, string>,
-): Record<string, string> {
-  let base: Record<string, string> = {};
-  if (typeof existingJson === "string" && existingJson.trim()) {
-    try {
-      const parsed = JSON.parse(existingJson) as unknown;
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        for (const [key, value] of Object.entries(parsed as Record<string, unknown>)) {
-          if (typeof key === "string" && typeof value === "string") {
-            base[key] = value;
-          }
-        }
-      }
-    } catch {
-      // ignore invalid JSON; incoming wins for keys
-    }
-  }
-
-  return { ...base, ...incoming };
-}
-
-function candidateKey(sessionId: string, candidateId: string): string {
-  return `${sessionId}:${candidateId}`;
-}
-
-function countByStatus<T extends { status: string }>(
-  items: T[],
-  status: string,
-): number {
-  return items.filter((item) => item.status === status).length;
-}
-
-function buildSyncHint(
-  session: ResearchSession,
-  includeDeferred: boolean,
-  entitiesUpserted: number,
-  relationshipsUpserted: number,
-  database: string,
-): string | undefined {
-  const hasCandidates =
-    session.entityCandidates.length > 0 || session.relationshipCandidates.length > 0;
-  if (!hasCandidates) {
-    return "This session has no graph candidates yet. Run an investigation turn first.";
-  }
-
-  if (entitiesUpserted === 0 && relationshipsUpserted === 0) {
-    const acceptedN =
-      countByStatus(session.entityCandidates, "accepted") +
-      countByStatus(session.relationshipCandidates, "accepted");
-    const deferredN =
-      countByStatus(session.entityCandidates, "deferred") +
-      countByStatus(session.relationshipCandidates, "deferred");
-    if (!includeDeferred && acceptedN === 0 && deferredN > 0) {
-      return "Nothing was written: only accepted items sync by default. Accept graph rows in Graph review, or turn on \"Include deferred\" and sync again.";
-    }
-    return 'Nothing was written: only candidates with status "accepted" (or "deferred" when Include deferred is on) are persisted. Accept the rows you want, then sync again.';
-  }
-
-  return `In Neo4j Browser, select database "${database}" (Aura often uses the instance id, not neo4j), then run: MATCH (e:Entity) WHERE toLower(e.displayName) CONTAINS 'fragment' RETURN e LIMIT 25`;
-}
+/** @deprecated Prefer GraphSyncSkippedRelationship from graph-persistence/types */
+export type Neo4jSyncSkippedRelationship = GraphSyncSkippedRelationship;
+/** @deprecated Prefer GraphSyncSessionSnapshot from graph-persistence/types */
+export type Neo4jSyncSessionSnapshot = GraphSyncSessionSnapshot;
+/** @deprecated Prefer GraphSyncResult from graph-persistence/types */
+export type Neo4jSyncResult = GraphSyncResult;
 
 async function findExistingEntity(
   tx: ManagedTransaction,
@@ -308,10 +225,10 @@ async function mergeGraphRelationship(
   );
 }
 
-export async function persistResearchSessionToNeo4j(
+async function persistResearchSessionToNeo4jImpl(
   session: ResearchSession,
   options: { includeDeferred?: boolean } = {},
-): Promise<Neo4jSyncResult> {
+): Promise<GraphSyncResult> {
   const config = getNeo4jConfig();
   const driver = getNeo4jDriver();
   if (!config || !driver) {
@@ -322,22 +239,15 @@ export async function persistResearchSessionToNeo4j(
 
   const includeDeferred = Boolean(options.includeDeferred);
 
-  function shouldSyncReviewStatus(status: string): boolean {
-    if (status === "accepted") {
-      return true;
-    }
-    return includeDeferred && status === "deferred";
-  }
-
-  const entityFilter = (entity: EntityCandidate) => shouldSyncReviewStatus(entity.status);
+  const entityFilter = (entity: EntityCandidate) => shouldSyncReviewStatus(entity.status, includeDeferred);
   const relationshipFilter = (relationship: RelationshipCandidate) =>
-    shouldSyncReviewStatus(relationship.status);
+    shouldSyncReviewStatus(relationship.status, includeDeferred);
 
   const entitiesToWrite = session.entityCandidates.filter(entityFilter);
   const relationshipsToWrite = session.relationshipCandidates.filter(relationshipFilter);
 
   const neoSession = driver.session({ database: config.database });
-  const skippedRelationships: Neo4jSyncSkippedRelationship[] = [];
+  const skippedRelationships: GraphSyncSkippedRelationship[] = [];
 
   try {
     const summary = await neoSession.executeWrite(async (tx) => {
@@ -395,20 +305,9 @@ export async function persistResearchSessionToNeo4j(
       };
     });
 
-    const sessionSnapshot: Neo4jSyncSessionSnapshot = {
-      entityCandidates: session.entityCandidates.length,
-      relationshipCandidates: session.relationshipCandidates.length,
-      entitiesAccepted: countByStatus(session.entityCandidates, "accepted"),
-      entitiesDeferred: countByStatus(session.entityCandidates, "deferred"),
-      entitiesProposed: countByStatus(session.entityCandidates, "proposed"),
-      entitiesRejected: countByStatus(session.entityCandidates, "rejected"),
-      relationshipsAccepted: countByStatus(session.relationshipCandidates, "accepted"),
-      relationshipsDeferred: countByStatus(session.relationshipCandidates, "deferred"),
-      relationshipsProposed: countByStatus(session.relationshipCandidates, "proposed"),
-      relationshipsRejected: countByStatus(session.relationshipCandidates, "rejected"),
-    };
+    const sessionSnapshot = buildSessionSnapshot(session);
 
-    const hint = buildSyncHint(
+    const hint = buildNeo4jSyncHint(
       session,
       includeDeferred,
       summary.entitiesUpserted,
@@ -418,6 +317,7 @@ export async function persistResearchSessionToNeo4j(
 
     return {
       sessionId: session.id,
+      backend: "neo4j",
       database: config.database,
       entitiesUpserted: summary.entitiesUpserted,
       relationshipsUpserted: summary.relationshipsUpserted,
@@ -429,4 +329,19 @@ export async function persistResearchSessionToNeo4j(
   } finally {
     await neoSession.close();
   }
+}
+
+const neo4jGraphPersistence: GraphPersistence = {
+  persistResearchSession: (session, opts) => persistResearchSessionToNeo4jImpl(session, opts ?? {}),
+};
+
+export function createNeo4jGraphPersistence(): GraphPersistence {
+  return neo4jGraphPersistence;
+}
+
+export async function persistResearchSessionToNeo4j(
+  session: ResearchSession,
+  options: { includeDeferred?: boolean } = {},
+): Promise<GraphSyncResult> {
+  return persistResearchSessionToNeo4jImpl(session, options);
 }

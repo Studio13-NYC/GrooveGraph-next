@@ -18,6 +18,11 @@
 - `prototypes/`: experiments and disposable spikes
 - `research/`: validation evidence, experimental tools, and distilled findings
 
+## Local development
+
+- **`npm run dev`** — Research workbench ([`research/tools/openai-research-workspace`](research/tools/openai-research-workspace)), **http://localhost:3011** (same app family as the deployed workbench).
+- **`npm run dev:product`** — Product smoke app on **http://localhost:3000** (homepage + styleguides only).
+
 ## Default operating stance
 
 - `GPT-5.4` is the top-level orchestrator

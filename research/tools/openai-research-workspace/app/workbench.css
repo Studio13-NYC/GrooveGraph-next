@@ -72,6 +72,8 @@
   border-color: color-mix(in srgb, var(--gg-route-blue) 45%, var(--ink));
   background: color-mix(in srgb, var(--gg-route-blue) 12%, var(--paper));
   color: var(--ink);
+  white-space: pre-wrap;
+  font-weight: 600;
 }
 
 .gg-next-alert {
@@ -114,6 +116,12 @@
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+}
+
+/* Let session index fill grid row so Past sessions list can flex and scroll */
+.gg-next-rail:not(.gg-next-rail--collapsed) {
+  min-height: 0;
+  align-self: stretch;
 }
 
 .gg-next-rail-tools {
@@ -411,27 +419,19 @@
   overflow: hidden;
 }
 
-.gg-next-index-past-summary {
+.gg-next-index-past-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   padding: 10px 12px;
-  cursor: pointer;
+  flex-shrink: 0;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  list-style: none;
   color: var(--ink);
   user-select: none;
-}
-
-.gg-next-index-past-summary::-webkit-details-marker {
-  display: none;
-}
-
-.gg-next-index-past[open] .gg-next-index-past-summary {
   border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
 }
 

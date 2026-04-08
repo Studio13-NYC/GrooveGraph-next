@@ -8,7 +8,7 @@
     "research/tools/openai-research-workspace"
   ],
   "scripts": {
-    "dev": "npm run dev -w @groovegraph-next/product",
+    "dev": "npm run dev -w @groovegraph-next/openai-research-workspace",
     "validate:repo": "node -e \"console.log('groovegraph-next repo scaffold ready')\"",
     "validate:docs": "node -e \"const fs=require('fs'); ['README.md','AGENTS.mdc','docs/AGENT_ORCHESTRATION.mdc','docs/MODEL_ROUTING.mdc','docs/CONTEXT_PACKETS.mdc','docs/USAGE_ACCOUNTING.mdc','docs/HYGIENE.mdc','docs/OBSERVABILITY.mdc','docs/VISUAL_STYLE_GUIDE.mdc','docs/design-language/FOUNDATION.mdc','docs/design-language/README.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('docs present')\"",
     "validate:visual-system": "node -e \"const fs=require('fs'); ['framework/src/visual-system/tokens.ts','assets/examples/new-regime-governance-map.svg','assets/examples/old-regime-satire-panel.svg','assets/examples/graphic-brief-template.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system assets present')\"",
@@ -19,9 +19,15 @@
     "start:product": "npm run start -w @groovegraph-next/product",
     "dev:research-workspace": "npm run dev -w @groovegraph-next/openai-research-workspace",
     "build:research-workspace": "npm run build -w @groovegraph-next/openai-research-workspace",
-    "start:research-workspace": "npm run start -w @groovegraph-next/openai-research-workspace"
+    "start:research-workspace": "npm run start -w @groovegraph-next/openai-research-workspace",
+    "ontology:introspect": "npm run introspect-neo4j -w @groovegraph-next/openai-research-workspace",
+    "ontology:generate": "node ontology/scripts/generate-typeql-from-introspection.mjs",
+    "ontology:typedb3-schema": "node ontology/scripts/generate-typedb3-schema-lines.mjs",
+    "ontology:migrate": "node ontology/scripts/neo4j-to-typedb-migrate.mjs"
   },
   "devDependencies": {
-    "knip": "^5.88.0"
+    "@typedb/driver-http": "^3.8.2-rc0",
+    "knip": "^5.88.0",
+    "neo4j-driver": "^6.0.1"
   }
 }

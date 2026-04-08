@@ -119,6 +119,18 @@ export function ResearchWorkbench() {
   }, [selectedSessionId]);
 
   useEffect(() => {
+    if (!tripletEditDraft?.relationshipId || !selectedSession) {
+      return;
+    }
+    const relationship = selectedSession.relationshipCandidates.find(
+      (r) => r.id === tripletEditDraft.relationshipId,
+    );
+    if (!relationship || relationship.status !== "proposed") {
+      setTripletEditDraft(null);
+    }
+  }, [selectedSession, tripletEditDraft?.relationshipId]);
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia("(max-width: 980px)");
     const syncLayoutMode = () => setIsNarrowWorkspaceLayout(mediaQuery.matches);
     syncLayoutMode();
@@ -417,7 +429,7 @@ export function ResearchWorkbench() {
     });
   }
 
-  async function syncSessionToNeo4j(options?: { includeDeferred?: boolean }) {
+  async function syncSessionToGraph(options?: { includeDeferred?: boolean }) {
     if (!selectedSession) {
       return;
     }
@@ -426,7 +438,7 @@ export function ResearchWorkbench() {
     setGraphSyncFeedback(null);
     setIsGraphSyncing(true);
     try {
-      const response = await fetch(`/api/sessions/${selectedSession.id}/neo4j/sync`, {
+      const response = await fetch(`/api/sessions/${selectedSession.id}/graph/sync`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -437,6 +449,7 @@ export function ResearchWorkbench() {
         | {
             ok: true;
             result: {
+              backend: "neo4j" | "typedb";
               database: string;
               entitiesUpserted: number;
               relationshipsUpserted: number;
@@ -455,24 +468,33 @@ export function ResearchWorkbench() {
         | { ok: false; error: string };
 
       if (!response.ok || !data.ok) {
-        throw new Error("error" in data ? data.error : "Neo4j sync failed.");
+        throw new Error("error" in data ? data.error : "Graph sync failed.");
       }
 
       const { result } = data;
       const skipped = result.skippedRelationships.length;
+      const backendLabel = result.backend === "typedb" ? "TypeDB" : "Neo4j";
       const parts = [
-        `Wrote ${result.entitiesUpserted} entities and ${result.relationshipsUpserted} relationships to database "${result.database}".`,
+        `[${backendLabel}] Wrote ${result.entitiesUpserted} entities and ${result.relationshipsUpserted} relationships to database "${result.database}".`,
         `Session: ${result.sessionSnapshot.entitiesAccepted} accepted / ${result.sessionSnapshot.entitiesDeferred} deferred entities; ${result.sessionSnapshot.relationshipsAccepted} accepted / ${result.sessionSnapshot.relationshipsDeferred} deferred relationships among candidates.`,
       ];
       if (skipped > 0) {
-        parts.push(`${skipped} relationship(s) skipped (see server result for reasons).`);
+        const cap = 12;
+        const rows = result.skippedRelationships.slice(0, cap).map((s) => `  • ${s.relationshipId}: ${s.reason}`);
+        const overflow =
+          result.skippedRelationships.length > cap
+            ? `\n  …and ${result.skippedRelationships.length - cap} more`
+            : "";
+        parts.push(
+          `${skipped} relationship(s) skipped — each edge needs both endpoint entities in this sync (accept those entities, or enable Include deferred if they are deferred):\n${rows.join("\n")}${overflow}`,
+        );
       }
       if (result.hint) {
         parts.push(result.hint);
       }
       setGraphSyncFeedback(parts.join(" "));
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Neo4j sync failed.");
+      setError(nextError instanceof Error ? nextError.message : "Graph sync failed.");
     } finally {
       setIsGraphSyncing(false);
     }
@@ -578,7 +600,7 @@ export function ResearchWorkbench() {
     saveTripletEdit,
     isGraphSyncing,
     graphSyncFeedback,
-    syncSessionToNeo4j,
+    syncSessionToGraph,
   };
 
   return <WorkbenchNextView model={model} />;

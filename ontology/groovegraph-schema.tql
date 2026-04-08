@@ -1,0 +1,207 @@
+/**
+ * GrooveGraph — canonical TypeQL ontology (TypeDB PERA model).
+ *
+ * Storage-independent: this schema is the target contract for the knowledge
+ * graph. Neo4j is not definitional; it is only today’s interim adapter (see
+ * ontology/README.md). For a **live Aura-derived** parallel schema (labels, rels,
+ * properties as attribute types), see `groovegraph-neo4j-aura-snapshot.tql` (generated).
+ *
+ * Notes:
+ * - A type cannot own the same attribute type more than once; list-like session
+ *   payloads use distinct string attribute types (often JSON array text) until
+ *   normalized into dedicated relations.
+ * - Validate against your TypeDB / TypeQL version before commit (2.x vs 3.x grammar).
+ */
+
+define
+
+# -----------------------------------------------------------------------------
+# Attributes (each ownership on an entity/relation uses a distinct attribute type)
+# -----------------------------------------------------------------------------
+
+session-id sub attribute, value string;
+review-status sub attribute, value string;
+confidence-level sub attribute, value string;
+message-role sub attribute, value string;
+event-stage sub attribute, value string;
+event-outcome sub attribute, value string;
+route-string sub attribute, value string;
+metadata-json sub attribute, value string;
+item-type sub attribute, value string;
+verb-string sub attribute, value string;
+relationship-candidate-id sub attribute, value string;
+claim-id sub attribute, value string;
+source-id sub attribute, value string;
+snippet-id sub attribute, value string;
+decision-id sub attribute, value string;
+event-id sub attribute, value string;
+message-id sub attribute, value string;
+url-string sub attribute, value string;
+title-string sub attribute, value string;
+note-text sub attribute, value string;
+openai-conversation-id sub attribute, value string;
+openai-response-id sub attribute, value string;
+session-run-status sub attribute, value string;
+seed-query-text sub attribute, value string;
+display-name sub attribute, value string;
+normalized-name sub attribute, value string;
+provisional-entity-kind sub attribute, value string;
+citation-text sub attribute, value string;
+
+session-created-at sub attribute, value string;
+session-updated-at sub attribute, value string;
+message-content sub attribute, value string;
+message-created-at sub attribute, value string;
+event-message-text sub attribute, value string;
+event-created-at sub attribute, value string;
+source-created-at sub attribute, value string;
+snippet-text sub attribute, value string;
+snippet-created-at sub attribute, value string;
+claim-text sub attribute, value string;
+claim-created-at sub attribute, value string;
+decision-item-id sub attribute, value string;
+decision-created-at sub attribute, value string;
+entity-created-at sub attribute, value string;
+entity-updated-at sub attribute, value string;
+entity-last-session-id sub attribute, value string;
+entity-aliases-json sub attribute, value string;
+entity-external-ids-json sub attribute, value string;
+entity-attributes-json sub attribute, value string;
+entity-evidence-snippet-ids-json sub attribute, value string;
+entity-candidate-keys-json sub attribute, value string;
+claim-evidence-snippet-ids-json sub attribute, value string;
+rel-session-id sub attribute, value string;
+rel-relationship-id sub attribute, value string;
+rel-verb sub attribute, value string;
+rel-confidence sub attribute, value string;
+rel-review-status sub attribute, value string;
+rel-evidence-snippet-ids-json sub attribute, value string;
+rel-updated-at sub attribute, value string;
+inclusion-candidate-key sub attribute, value string;
+inclusion-updated-at sub attribute, value string;
+
+# -----------------------------------------------------------------------------
+# Investigation session (canonical graph entity)
+# -----------------------------------------------------------------------------
+
+research-session sub entity,
+  owns session-id @key,
+  owns title-string,
+  owns seed-query-text,
+  owns session-run-status,
+  owns openai-conversation-id,
+  owns openai-response-id,
+  owns session-created-at,
+  owns session-updated-at;
+
+# -----------------------------------------------------------------------------
+# Session transcript and audit
+# -----------------------------------------------------------------------------
+
+session-message sub entity,
+  owns message-id @key,
+  owns session-id,
+  owns message-role,
+  owns message-content,
+  owns openai-response-id,
+  owns message-created-at;
+
+session-event sub entity,
+  owns event-id @key,
+  owns session-id,
+  owns event-stage,
+  owns event-outcome,
+  owns route-string,
+  owns event-message-text,
+  owns metadata-json,
+  owns event-created-at;
+
+# -----------------------------------------------------------------------------
+# Sources, evidence, claims (full model; optional in Neo4j adapter today)
+# -----------------------------------------------------------------------------
+
+source-document sub entity,
+  owns source-id @key,
+  owns session-id,
+  owns url-string,
+  owns title-string,
+  owns citation-text,
+  owns source-created-at;
+
+evidence-snippet sub entity,
+  owns snippet-id @key,
+  owns session-id,
+  owns source-id,
+  owns snippet-text,
+  owns confidence-level,
+  owns snippet-created-at;
+
+claim sub entity,
+  owns claim-id @key,
+  owns session-id,
+  owns claim-text,
+  owns confidence-level,
+  owns review-status,
+  owns claim-evidence-snippet-ids-json,
+  owns claim-created-at;
+
+review-decision sub entity,
+  owns decision-id @key,
+  owns session-id,
+  owns item-type,
+  owns decision-item-id,
+  owns review-status,
+  owns note-text,
+  owns decision-created-at;
+
+# -----------------------------------------------------------------------------
+# Reviewed graph: entities and relationships (canonical persisted graph)
+# -----------------------------------------------------------------------------
+
+graph-entity sub entity,
+  owns display-name,
+  owns normalized-name,
+  owns provisional-entity-kind,
+  owns review-status,
+  owns entity-aliases-json,
+  owns entity-external-ids-json,
+  owns entity-attributes-json,
+  owns entity-evidence-snippet-ids-json,
+  owns entity-candidate-keys-json,
+  owns entity-created-at,
+  owns entity-updated-at,
+  owns entity-last-session-id;
+
+graph-relationship sub relation,
+  relates source-entity,
+  relates target-entity,
+  owns rel-session-id,
+  owns rel-relationship-id,
+  owns rel-verb,
+  owns rel-confidence,
+  owns rel-review-status,
+  owns rel-evidence-snippet-ids-json,
+  owns rel-updated-at;
+
+graph-entity plays graph-relationship:source-entity;
+graph-entity plays graph-relationship:target-entity;
+
+session-includes-entity sub relation,
+  relates container-session,
+  relates member-entity,
+  owns inclusion-candidate-key,
+  owns inclusion-updated-at;
+
+research-session plays session-includes-entity:container-session;
+graph-entity plays session-includes-entity:member-entity;
+
+# -----------------------------------------------------------------------------
+# Optional: canonical music-domain kinds (product brief; future normalization)
+# -----------------------------------------------------------------------------
+
+artist-entity sub graph-entity;
+recording-entity sub graph-entity;
+release-entity sub graph-entity;
+person-entity sub graph-entity;
+label-entity sub graph-entity;
+studio-or-place-entity sub graph-entity;

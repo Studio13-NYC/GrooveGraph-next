@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type ReactNode, type Ref } from "react";
+import { useEffect, useMemo, useState, type ReactNode, type Ref } from "react";
 import type { ResearchWorkbenchModel } from "./research-workbench-model";
 import { formatTimestamp } from "./research-workbench-utils";
 import {
@@ -18,7 +18,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
   const [indexNavCollapsed, setIndexNavCollapsed] = useState(false);
   const [indexNavHydrated, setIndexNavHydrated] = useState(false);
   const [evidenceFieldNotesOpen, setEvidenceFieldNotesOpen] = useState(true);
-  const [evidenceSourcesOpen, setEvidenceSourcesOpen] = useState(false);
+  const [evidenceSourcesOpen, setEvidenceSourcesOpen] = useState(true);
   const [includeDeferredInGraphSync, setIncludeDeferredInGraphSync] = useState(false);
 
   const {
@@ -55,8 +55,18 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     saveTripletEdit,
     isGraphSyncing,
     graphSyncFeedback,
-    syncSessionToNeo4j,
+    syncSessionToGraph,
   } = model;
+
+  const pendingTripletReview = useMemo(
+    () => tripletCandidates.filter(({ relationship }) => relationship.status === "proposed"),
+    [tripletCandidates],
+  );
+
+  const pendingClaims = useMemo(
+    () => selectedSession?.claims.filter((claim) => claim.status === "proposed") ?? [],
+    [selectedSession?.claims],
+  );
 
   useEffect(() => {
     try {
@@ -211,11 +221,17 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                 </button>
               </div>
             </div>
-            <details className="gg-next-index-past">
-              <summary className="gg-next-index-past-summary">
+            <div className="gg-next-index-past">
+              <div
+                className="gg-next-index-past-header"
+                role="group"
+                aria-label={`Past sessions, ${sessions.length} total`}
+              >
                 <span className="gg-next-index-past-label">Past sessions</span>
-                <span className="gg-next-badge">{sessions.length}</span>
-              </summary>
+                <span className="gg-next-badge" aria-hidden>
+                  {sessions.length}
+                </span>
+              </div>
               <ul className="gg-next-index-list" aria-label="Past sessions">
                 {sessions.length === 0 ? (
                   <li className="gg-next-index-empty">
@@ -242,7 +258,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                   })
                 )}
               </ul>
-            </details>
+            </div>
           </aside>
         )}
 
@@ -426,7 +442,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                       className="gg-next-cta gg-next-cta--secondary"
                       disabled={isGraphSyncing || isBusy}
                       onClick={() =>
-                        void syncSessionToNeo4j({ includeDeferred: includeDeferredInGraphSync })
+                        void syncSessionToGraph({ includeDeferred: includeDeferredInGraphSync })
                       }
                     >
                       {isGraphSyncing ? "Syncing…" : "Sync to graph"}
@@ -436,8 +452,8 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               </div>
               {selectedSession ? (
                 <div className="gg-next-review-stack">
-                  {tripletCandidates.length ? (
-                    tripletCandidates.map(({ relationship, sourceEntity, targetEntity }) => {
+                  {pendingTripletReview.length ? (
+                    pendingTripletReview.map(({ relationship, sourceEntity, targetEntity }) => {
                       const isEditingTriplet = tripletEditDraft?.relationshipId === relationship.id;
                       const isSavingTriplet = savingTripletId === relationship.id;
                       const sourceDisplay = sourceEntity
@@ -564,6 +580,11 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                         </article>
                       );
                     })
+                  ) : tripletCandidates.length ? (
+                    <EmptyState
+                      className="gg-next-empty"
+                      text="All relationship candidates have been reviewed (accepted, deferred, or rejected). Use Sync to graph when ready."
+                    />
                   ) : (
                     <EmptyState className="gg-next-empty" text="No relationship triplets yet." />
                   )}
@@ -588,9 +609,9 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                 <p className="gg-next-plate-kicker">Supporting review</p>
                 <h2 className="gg-next-plate-title">Claims</h2>
               </div>
-              {selectedSession?.claims.length ? (
+              {pendingClaims.length ? (
                 <div className="claims-review-list">
-                  {selectedSession.claims.map((claim) => (
+                  {pendingClaims.map((claim) => (
                     <article key={claim.id} className="claim-review-card">
                       <strong>{claim.text}</strong>
                       <StatusBar status={claim.status} detail={`confidence: ${claim.confidence}`} />
@@ -606,6 +627,11 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                     </article>
                   ))}
                 </div>
+              ) : selectedSession?.claims.length ? (
+                <EmptyState
+                  className="gg-next-empty"
+                  text="All claims have been reviewed (accepted, deferred, or rejected)."
+                />
               ) : (
                 <EmptyState
                   className="gg-next-empty"

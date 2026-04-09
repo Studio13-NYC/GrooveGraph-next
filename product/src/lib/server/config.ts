@@ -27,17 +27,19 @@ export type TypeDbConnectionConfig = {
  * Next.js loads .env.local into process.env).
  */
 export function getTypeDbConfig(): TypeDbConnectionConfig | null {
-  const username = process.env.TYPEDB_USERNAME?.trim();
-  const password = process.env.TYPEDB_PASSWORD?.trim();
-  const rawAddress = (process.env.TYPEDB_ADDRESS ?? process.env.TYPEDB_HOST)?.trim();
-  const database = process.env.TYPEDB_DATABASE?.trim();
+  // Bracket access so Azure/hosting env vars are read at runtime (Next must not inline these).
+  const env = process.env;
+  const username = env["TYPEDB_USERNAME"]?.trim();
+  const password = env["TYPEDB_PASSWORD"]?.trim();
+  const rawAddress = (env["TYPEDB_ADDRESS"] ?? env["TYPEDB_HOST"])?.trim();
+  const database = env["TYPEDB_DATABASE"]?.trim();
 
   if (username && password && rawAddress && database) {
     const addr = rawAddress.includes("://") ? rawAddress : `https://${rawAddress}`;
     return { username, password, addresses: [addr], database };
   }
 
-  const cs = process.env.TYPEDB_CONNECTION_STRING?.trim();
+  const cs = env["TYPEDB_CONNECTION_STRING"]?.trim();
   if (cs) {
     const parsed = parseTypeDbConnectionString(cs);
     if (parsed) {

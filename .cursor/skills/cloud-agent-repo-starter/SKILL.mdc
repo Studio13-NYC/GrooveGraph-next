@@ -31,7 +31,7 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 ### `product/` (Next.js GrooveGraph app, port **3000** default)
 
 - **Role:** investigation / graph-review **research workbench** at **`/`** (same surface as production `https://groovegraph.s13.nyc/`).
-- **Configure:** copy `product/.env.example` → `product/.env.local`. Set at least `OPENAI_API_KEY`. Optional: `OPENAI_RESEARCH_MODEL`, `OPENAI_RESEARCH_EXTRACTION_MODEL`. For graph sync: `GRAPH_PERSISTENCE_BACKEND`, `NEO4J_*` and/or `TYPEDB_*` per `.env.example`.
+- **Configure:** copy `product/.env.example` → `product/.env.local`. Set at least `OPENAI_API_KEY`. Optional: `OPENAI_RESEARCH_MODEL`, `OPENAI_RESEARCH_EXTRACTION_MODEL`. For graph sync: `TYPEDB_*` per `.env.example`.
 - **Dev:** `npm run dev` from repo root → `http://localhost:3000/`.
 - **Build / start:** `npm run build:product` then `npm run start:product` (catches TS errors without calling OpenAI).
 - **Neo4j verification:** from repo root, `npm run verify-neo4j -w @groovegraph-next/product -- "search text"` (uses `product/.env.local`). Browser must use the same DB name as `NEO4J_DATABASE` when inspecting Aura.

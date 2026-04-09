@@ -7,9 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test src/lib/server/graph-persistence/helpers.test.ts",
-    "verify-neo4j": "node --env-file=.env.local scripts/verify-neo4j-entities.mjs",
-    "introspect-neo4j": "node --env-file=.env.local scripts/introspect-neo4j-schema.mjs"
+    "test": "tsx --test src/lib/server/graph-persistence/helpers.test.ts"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
@@ -21,7 +19,6 @@
   "dependencies": {
     "@groovegraph-next/framework": "file:../framework",
     "@typedb/driver-http": "^3.8.2-rc0",
-    "neo4j-driver": "^5.28.1",
     "next": "^16.2.0",
     "openai": "^6.32.0",
     "react": "^19.2.4",

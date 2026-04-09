@@ -48,6 +48,21 @@ function unwrapApi<T>(res: ApiResponse<T>, context: string): T {
   return (r as { ok: T }).ok;
 }
 
+/** True if this IID is a direct workbench `graph-entity` (`isa!`), avoiding accidental subtype matches. */
+async function iidIsWorkbenchGraphEntity(
+  driver: TypeDBHttpDriver,
+  txId: string,
+  iid: string,
+): Promise<boolean> {
+  const q = `
+match
+$e iid ${iid};
+$e isa! graph-entity;
+`.trim();
+  const r = await runInTx(driver, txId, q, "verifyWorkbenchGraphEntity");
+  return firstEntityIid(r) !== null;
+}
+
 function firstEntityIid(response: QueryResponse): string | null {
   if (response.answerType !== "conceptRows" || !response.answers?.length) {
     return null;
@@ -155,7 +170,7 @@ async function findGraphEntityIid(
   const keyLit = escapeTypeqlString(key);
   const qKey = `
 match
-$e isa graph-entity,
+$e isa! graph-entity,
   has entity-candidate-keys-json $jk;
 $jk contains "${keyLit}";
 `.trim();
@@ -172,7 +187,7 @@ $jk contains "${keyLit}";
     }
     const qExt = `
 match
-$e isa graph-entity,
+$e isa! graph-entity,
   has entity-external-ids-json $je;
 $je contains "${extLit}";
 `.trim();
@@ -187,7 +202,7 @@ $je contains "${extLit}";
   const kind = escapeTypeqlString(entity.provisionalKind);
   const qName = `
 match
-$e isa graph-entity,
+$e isa! graph-entity,
   has normalized-name $nn,
   has provisional-entity-kind $pk;
 $nn == "${nn}";
@@ -221,7 +236,7 @@ async function readEntityJsonFieldsByCandidateKey(
   const keyLit = escapeTypeqlString(candidateKey(sessionId, entityId));
   const q = `
 match
-$e isa graph-entity,
+$e isa! graph-entity,
   has entity-candidate-keys-json $jk;
 $jk contains "${keyLit}";
 $e has entity-aliases-json $aliases;
@@ -258,6 +273,7 @@ async function readEntityJsonFieldsByIid(
   const q = `
 match
 $e iid ${iid};
+$e isa! graph-entity;
 $e has entity-aliases-json $aliases;
 $e has entity-external-ids-json $ext;
 $e has entity-attributes-json $attrs;
@@ -289,13 +305,13 @@ async function mergeResearchSession(
   const updated = escapeTypeqlString(new Date().toISOString());
 
   const matchExisting = `
-match $s isa research-session, has session-id $sid;
+match $s isa! research-session, has session-id $sid;
 $sid == "${sid}";
 `.trim();
   const existing = await runInTx(driver, txId, matchExisting, "matchResearchSession");
   if (firstEntityIid(existing)) {
     const upd = `
-match $s isa research-session, has session-id $sid;
+match $s isa! research-session, has session-id $sid;
 $sid == "${sid}";
 update
 $s has title-string "${title}",
@@ -326,7 +342,10 @@ async function upsertGraphEntity(
 ): Promise<void> {
   const key = candidateKey(sessionId, entity.id);
   const keyLit = escapeTypeqlString(key);
-  const existingIid = await findGraphEntityIid(driver, txId, sessionId, entity, nameNorm);
+  let existingIid = await findGraphEntityIid(driver, txId, sessionId, entity, nameNorm);
+  if (existingIid && !(await iidIsWorkbenchGraphEntity(driver, txId, existingIid))) {
+    existingIid = null;
+  }
 
   const display = escapeTypeqlString(entity.displayName);
   const nn = escapeTypeqlString(nameNorm);
@@ -414,11 +433,11 @@ async function mergeSessionIncludes(
 
   const matchLink = `
 match
-$s isa research-session, has session-id $sid;
+$s isa! research-session, has session-id $sid;
 $sid == "${sid}";
-$e isa graph-entity, has entity-candidate-keys-json $jk;
+$e isa! graph-entity, has entity-candidate-keys-json $jk;
 $jk contains "${keyLit}";
-$l isa session-includes-entity,
+$l isa! session-includes-entity,
   links (container-session: $s, member-entity: $e),
   has inclusion-candidate-key $ick;
 $ick == "${ck}";
@@ -427,7 +446,7 @@ $ick == "${ck}";
   if (rowHasRelation(found, "l")) {
     const upd = `
 match
-$l isa session-includes-entity, has inclusion-candidate-key $ick;
+$l isa! session-includes-entity, has inclusion-candidate-key $ick;
 $ick == "${ck}";
 update $l has inclusion-updated-at "${updated}";
 `.trim();
@@ -437,9 +456,9 @@ update $l has inclusion-updated-at "${updated}";
 
   const ins = `
 match
-$s isa research-session, has session-id $sid;
+$s isa! research-session, has session-id $sid;
 $sid == "${sid}";
-$e isa graph-entity, has entity-candidate-keys-json $jk;
+$e isa! graph-entity, has entity-candidate-keys-json $jk;
 $jk contains "${keyLit}";
 insert
 $l isa session-includes-entity,
@@ -474,7 +493,7 @@ async function mergeGraphRelationship(
   const updated = escapeTypeqlString(new Date().toISOString());
 
   const matchR = `
-match $r isa graph-relationship, has graph-rel-edge-key $gk;
+match $r isa! graph-relationship, has graph-rel-edge-key $gk;
 $gk == "${edgeKey}";
 `.trim();
   const existing = await runInTx(driver, txId, matchR, "matchGraphRel");
@@ -482,7 +501,7 @@ $gk == "${edgeKey}";
 
   if (hasRel) {
     const upd = `
-match $r isa graph-relationship, has graph-rel-edge-key $gk;
+match $r isa! graph-relationship, has graph-rel-edge-key $gk;
 $gk == "${edgeKey}";
 update
 $r has rel-session-id "${rsid}",
@@ -499,9 +518,9 @@ $r has rel-session-id "${rsid}",
 
   const ins = `
 match
-$src isa graph-entity, has entity-candidate-keys-json $jsk;
+$src isa! graph-entity, has entity-candidate-keys-json $jsk;
 $jsk contains "${sk}";
-$tgt isa graph-entity, has entity-candidate-keys-json $jtk;
+$tgt isa! graph-entity, has entity-candidate-keys-json $jtk;
 $jtk contains "${tk}";
 insert
 $r isa graph-relationship,

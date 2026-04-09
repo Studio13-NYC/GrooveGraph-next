@@ -2,7 +2,7 @@
 
 **Status:** Draft  
 **Scope:** `product` (route `/`)  
-**Delivery order (locked):** **1) Triplet UX** → **2) Neo4j persistence** → **3) Session graph visualization**  
+**Delivery order (locked):** **1) Triplet UX** → **2) TypeDB persistence** → **3) Session graph visualization**  
 **Sources:** UX interview (thread), [`docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc`](../ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc), design briefs in [`docs/design-language/`](../design-language/)
 
 **Design owner (start here):** [`.cursor/agents/graphic-artist.mdc`](../../.cursor/agents/graphic-artist.mdc) — this lane **owns** Figma-informed layout, token fidelity, and manual-first chrome for Phases 1 and 3. **Collaboration contract:** [`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc) (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, Code Connect when available).
@@ -29,7 +29,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 - **Behavior:** Switches sessions **several times per day**; wants **new session** as the default path; **past sessions** should appear only after an explicit control (not the default list).
 - **Layout:** On large screens, default split favors **Review** (~60–70% of width); **no** reliance on small screens for core work.
 - **Claims:** Secondary to triplets; **contextual capture** is enough — **not** required as first-class graph entities.
-- **Success:** Session data can be **persisted to Neo4j**, then **visualized** as a graph for that session.
+- **Success:** Session data can be **persisted to TypeDB**, then **visualized** as a graph for that session.
 
 ---
 
@@ -38,7 +38,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 | ID | Goal |
 |----|------|
 | G1 | Triplet rows read as **subject \| relationship \| object** with **clear, scannable** hierarchy and metadata. |
-| G2 | Accepted (and optionally deferred) graph candidates **persist to Neo4j** with a defined mapping from session artifacts. |
+| G2 | Accepted (and optionally deferred) graph candidates **persist to TypeDB** with a defined mapping from session artifacts. |
 | G3 | User can open a **graph visualization** of the **current session’s** persisted data (or equivalent scope). |
 | G4 | **Composer / draft** survives errors and retry paths (no silent loss of typed content). |
 
@@ -49,7 +49,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 | Role | Responsibility for this PRD |
 |------|-------------------------------|
 | **`graphic-artist`** ([`.cursor/agents/graphic-artist.mdc`](../../.cursor/agents/graphic-artist.mdc)) | **Leads Phase 1 and Phase 3 visual work:** triplet row layout, index/split/index disclosure, removal of the module legend, graph viz presentation. Uses **Figma MCP** per [`FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc): baseline frames in [`groovegraph-design-system.fig`](../design-language/groovegraph-design-system.fig) / hosted GrooveGraph file, **`get_design_context`** before large UI edits, html-to-design capture when refreshing screenshots. |
-| **`implementer`** | Implements React/CSS/API changes against PRD acceptance criteria and Figma handoff; wires persistence (Phase 2) and Neo4j. |
+| **`implementer`** | Implements React/CSS/API changes against PRD acceptance criteria and Figma handoff; wires persistence (Phase 2) and TypeDB. |
 | **`product-manager`** | Optional: scope cuts, open questions (§10). |
 
 **Surface for collaboration:** All Figma ↔ repo expectations (tool order, `fileKey` / `nodeId`, tokens-win rule, Code Connect ownership) live in **[`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc)**. The PRD does not duplicate that workflow; it **references** it.
@@ -60,7 +60,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 - Replacing the **manual-first** visual system with transit metaphors (see [`docs/design-language/FOUNDATION.mdc`](../design-language/FOUNDATION.mdc)).
 - **Mobile-first** parity (desktop-first is acceptable).
-- **Claims** as mandatory nodes in Neo4j (unless a later product decision explicitly expands scope).
+- **Claims** as mandatory nodes in the graph store (unless a later product decision explicitly expands scope).
 
 ---
 
@@ -96,29 +96,28 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ---
 
-### Phase 2 — Neo4j persistence
+### Phase 2 — TypeDB persistence
 
-**Objective:** Session decisions and entities can be written to **Neo4j** in a repeatable way.
+**Objective:** Session decisions and entities can be written to **TypeDB** in a repeatable way.
 
 **Requirements**
 
-1. **Data model** (document in this repo or `framework/`): mapping from **session entities / relationships / decisions** (and optional **claims** as properties or separate nodes — product decision) to **Neo4j** labels, relationship types, and properties.
+1. **Data model** (document in this repo or `framework/`): mapping from **session entities / relationships / decisions** (and optional **claims** as properties or separate nodes — product decision) to **TypeQL** entity types, relation types, and attributes (`ontology/groovegraph-schema.tql`).
 2. **Operations:** At minimum: **upsert** accepted entities and relationships; **idempotent** or clearly versioned writes to avoid duplicate edges on retry.
-3. **Configuration:** Connection via **environment** (URI, auth, database); failures surface **clear messages**; **do not** clear user drafts.
+3. **Configuration:** Connection via **environment** (TypeDB HTTP driver); failures surface **clear messages**; **do not** clear user drafts.
 4. **Scope:** Persistence runs **after** explicit user action — **implemented** as **Sync to graph** in Graph review (optional **Include deferred**).
 
 **Implementation (current)**
 
 - **UI:** Graph review → **Sync to graph**; optional checkbox **Include deferred** (default: accepted items only).
-- **API:** `POST /api/sessions/[sessionId]/neo4j/sync` with body `{ "includeDeferred"?: boolean }`.
-- **Server:** `product/src/lib/server/neo4j-graph-persistence.ts` — entities matched in order: `candidateKeys` (`sessionId:candidateId`), overlapping `externalIds`, then `nameNorm` + `provisionalKind`; existing nodes are **enriched** (merged lists and attributes). Labels: `ResearchSession`, `Entity`; relationship types: `SESSION_INCLUDES_ENTITY`, `GRAPH_REL`.
-- **Env:** `NEO4J_URI`, `NEO4J_USERNAME` (or `NEO4J_USER`), `NEO4J_PASSWORD`, optional `NEO4J_DATABASE` — see [`product/README.md`](../../product/README.md) and [`docs/AZURE_BASELINE.mdc`](../AZURE_BASELINE.mdc) for App Service.
-- **Hosting:** Production uses **Neo4j Aura** (credentials in App Service application settings, not in source control).
-- **Bloom / other labels:** The workbench persists **`Entity`** / **`GRAPH_REL`** only. Neo4j Bloom perspectives that target **`Artist`**, **`IS_A`**, **`EntityType`**, etc. show a **separate** subgraph (ontology or other pipelines). Operators must query **`Entity`** (or add a Bloom perspective for `Entity` + `GRAPH_REL`) to see synced session data; unifying with `Artist` is a **normalization** follow-on.
+- **API:** `POST /api/sessions/[sessionId]/graph/sync` with body `{ "includeDeferred"?: boolean }`.
+- **Server:** `product/src/lib/server/typedb-graph-persistence.ts` — entities matched in order: `candidateKeys` (`sessionId:candidateId`), overlapping `externalIds`, then `nameNorm` + `provisionalKind`; existing entities are **enriched** (merged lists and attributes). Types: `research-session`, `graph-entity`, `graph-relationship`, `session-includes-entity` (see ontology).
+- **Env:** `TYPEDB_*` — see [`product/README.md`](../../product/README.md) and [`docs/AZURE_BASELINE.mdc`](../AZURE_BASELINE.mdc) for App Service.
+- **Hosting:** Production uses **TypeDB** (credentials in App Service application settings, not in source control).
 
 **Acceptance**
 
-- [x] Accepted triplets (and agreed scope of entities) appear in Neo4j **as specified** (sync path above).
+- [x] Accepted triplets (and agreed scope of entities) appear in TypeDB **as specified** (sync path above).
 - [x] Failed writes are **recoverable**; **composer** and in-progress edits **preserved** (aligns with G4) — sync does not mutate session JSON; errors surface in the workbench alert.
 
 ---
@@ -131,7 +130,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 **Requirements**
 
-1. **Input:** Reads from Neo4j (or same API that exposes persisted session data).
+1. **Input:** Reads from TypeDB (or same API that exposes persisted session data).
 2. **Scope:** Minimum — **nodes and edges** corresponding to the session’s persisted graph; **labels** readable; **filters** optional (nice-to-have).
 3. **Integration:** Entry point from the workbench (e.g. “View graph”) — **desktop-only** acceptable.
 4. **Visual language:** Follow [`docs/design-language/FOUNDATION.mdc`](../design-language/FOUNDATION.mdc) and [`graph-data-viz-system`](../../.cursor/skills/graph-data-viz-system/SKILL.mdc) for investigative clarity.
@@ -148,7 +147,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 | Area | Requirement |
 |------|-------------|
 | Errors | **Retry** must not lose **typed message** / composer draft (Q8). |
-| Claims | **Contextual** capture; **not** required in Neo4j graph core unless Phase 2 spec expands. |
+| Claims | **Contextual** capture; **not** required in the graph core unless Phase 2 spec expands. |
 | Design | **Owner:** `graphic-artist`. **Figma / MCP:** [`docs/design-language/FIGMA_MCP.mdc`](../design-language/FIGMA_MCP.mdc). **Copy / IA:** [`docs/design-language/WORKBENCH_VOCAB.mdc`](../design-language/WORKBENCH_VOCAB.mdc). |
 
 ---
@@ -158,7 +157,7 @@ The research workbench is the discovery-first surface for artist-seed investigat
 | Metric | Target |
 |--------|--------|
 | Triplet review time | Qualitative: “reads like a sentence” in internal pilot |
-| Persistence | 100% of **accepted** items in test sessions appear in Neo4j |
+| Persistence | 100% of **accepted** items in test sessions appear in TypeDB |
 | Graph viz | Session graph loads in **&lt; X s** on reference hardware (set X in implementation) |
 | Reliability | Zero **lost drafts** on simulated API failure in manual QA |
 
@@ -166,9 +165,9 @@ The research workbench is the discovery-first surface for artist-seed investigat
 
 ## 10. Open questions
 
-1. **Neo4j hosting:** **Aura** in production; local/dev uses the same env vars against Aura or a local instance — see README and `docs/AZURE_BASELINE.mdc`.
+1. **TypeDB hosting:** Production and local/dev use `TYPEDB_*` — see README and `docs/AZURE_BASELINE.mdc`.
 2. **Persistence trigger:** **Resolved:** explicit **Sync to graph** (batch); automatic-on-decision remains optional for a later iteration.
-3. **Claims in Neo4j:** Properties on session node, text nodes, or omit entirely.
+3. **Claims in graph:** Properties on session node, text nodes, or omit entirely.
 4. **Graph library:** Cytoscape.js, D3, other — align with existing product patterns.
 
 ---

@@ -4,11 +4,14 @@ This package is the **canonical GrooveGraph Next.js app**: the text-first invest
 
 ## Environment
 
-Copy `.env.example` → `.env.local` and set:
+Copy `.env.example` → `.env.local` in **`product/`** (Next only loads this folder’s env).
 
 - `OPENAI_API_KEY` (required for investigation turns)
 - optional model vars per `.env.example`
-- **Graph sync:** `GRAPH_PERSISTENCE_BACKEND=neo4j` or `typedb`, plus `NEO4J_*` or `TYPEDB_*` as documented in `.env.example`
+- **Graph sync (TypeDB):** set `TYPEDB_*` (or `TYPEDB_CONNECTION_STRING`) per `.env.example`.
+- After changing `.env.local`, **restart** `npm run dev`.
+
+Optional ontology smoke scripts read **`product/.env.local` first**, then repo-root `.env.local` (see `ontology/README.md`).
 
 ## Run
 

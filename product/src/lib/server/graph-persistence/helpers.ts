@@ -75,36 +75,6 @@ function browserHintNeedle(session: ResearchSession): string {
   return safe.length >= 2 ? safe : "entity";
 }
 
-export function buildNeo4jSyncHint(
-  session: ResearchSession,
-  includeDeferred: boolean,
-  entitiesUpserted: number,
-  relationshipsUpserted: number,
-  database: string,
-): string | undefined {
-  const hasCandidates =
-    session.entityCandidates.length > 0 || session.relationshipCandidates.length > 0;
-  if (!hasCandidates) {
-    return "This session has no graph candidates yet. Run an investigation turn first.";
-  }
-
-  if (entitiesUpserted === 0 && relationshipsUpserted === 0) {
-    const acceptedN =
-      countByStatus(session.entityCandidates, "accepted") +
-      countByStatus(session.relationshipCandidates, "accepted");
-    const deferredN =
-      countByStatus(session.entityCandidates, "deferred") +
-      countByStatus(session.relationshipCandidates, "deferred");
-    if (!includeDeferred && acceptedN === 0 && deferredN > 0) {
-      return "Nothing was written: only accepted items sync by default. Accept graph rows in Graph review, or turn on \"Include deferred\" and sync again.";
-    }
-    return 'Nothing was written: only candidates with status "accepted" (or "deferred" when Include deferred is on) are persisted. Accept the rows you want, then sync again.';
-  }
-
-  const needle = browserHintNeedle(session);
-  return `In Neo4j Browser, select database "${database}" (Aura often uses the instance id, not neo4j), then run: MATCH (e:Entity) WHERE toLower(e.displayName) CONTAINS '${needle}' RETURN e LIMIT 25`;
-}
-
 export function buildTypeDbSyncHint(
   session: ResearchSession,
   includeDeferred: boolean,

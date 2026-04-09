@@ -7,7 +7,7 @@
  * Prerequisites:
  *   node ontology/scripts/generate-typedb3-schema-lines.mjs
  *
- * Usage (repo root, with .env.local containing Neo4j + TypeDB):
+ * Usage (repo root, with product/.env.local or .env.local containing Neo4j + TypeDB):
  *   node ontology/scripts/neo4j-to-typedb-migrate.mjs [--database=name] [--node-batch=80] [--rel-batch=50]
  *   [--limit-nodes=100] [--limit-rels=100]   # smoke test
  *   [--rel-offset=19800] [--rels-only] [--skip-schema]   # resume relationship phase only
@@ -23,10 +23,15 @@ import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import neo4j from "neo4j-driver";
 import { TypeDBHttpDriver, isApiErrorResponse } from "@typedb/driver-http";
-import { applyTypeDbEnvFromDotenvText, getTypeDbConfig } from "./lib/typedb-env.mjs";
+import {
+  applyTypeDbEnvFromDotenvText,
+  getTypeDbConfig,
+  readFirstExistingEnvLocal,
+} from "../../../../ontology/scripts/lib/typedb-env.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(__dirname, "../..");
+/** Repository root (this file lives under archive/neo4j-branch-only/ontology/scripts/). */
+const repoRoot = resolve(__dirname, "../../../..");
 
 function argInt(name, def) {
   const a = process.argv.find((x) => x.startsWith(`--${name}=`));
@@ -49,8 +54,12 @@ const REL_OFFSET = argOptInt("rel-offset") ?? 0;
 const RELS_ONLY = process.argv.includes("--rels-only");
 const SKIP_SCHEMA = process.argv.includes("--skip-schema");
 
-const envPath = resolve(repoRoot, ".env.local");
-const envText = readFileSync(envPath, "utf8");
+const foundEnv = readFirstExistingEnvLocal(repoRoot);
+if (!foundEnv) {
+  console.error("Missing product/.env.local or .env.local");
+  process.exit(1);
+}
+const envText = foundEnv.text;
 applyTypeDbEnvFromDotenvText(envText);
 
 const typedbCfg = getTypeDbConfig(envText);
@@ -72,7 +81,7 @@ if (!neo4jUri || !neo4jUser || !neo4jPassword) {
   process.exit(1);
 }
 
-const schemaPath = resolve(repoRoot, "ontology/sources/typedb3-schema-lines.json");
+const schemaPath = resolve(__dirname, "../sources/typedb3-schema-lines.json");
 const { meta, schemaLines } = JSON.parse(readFileSync(schemaPath, "utf8"));
 
 function toKebab(key) {

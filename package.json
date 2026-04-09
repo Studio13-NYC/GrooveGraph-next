@@ -11,15 +11,10 @@
     "validate:framework": "npm run validate:framework -w @groovegraph-next/framework",
     "cleanup:check": "npm prune && npx knip",
     "build:product": "npm run build -w @groovegraph-next/product",
-    "start:product": "npm run start -w @groovegraph-next/product",
-    "ontology:introspect": "npm run introspect-neo4j -w @groovegraph-next/product",
-    "ontology:generate": "node ontology/scripts/generate-typeql-from-introspection.mjs",
-    "ontology:typedb3-schema": "node ontology/scripts/generate-typedb3-schema-lines.mjs",
-    "ontology:migrate": "node ontology/scripts/neo4j-to-typedb-migrate.mjs"
+    "start:product": "npm run start -w @groovegraph-next/product"
   },
   "devDependencies": {
     "@typedb/driver-http": "^3.8.2-rc0",
-    "knip": "^5.88.0",
-    "neo4j-driver": "^6.0.1"
+    "knip": "^5.88.0"
   }
 }

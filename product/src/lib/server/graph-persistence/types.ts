@@ -1,7 +1,5 @@
 import type { ResearchSession } from "@/src/types/research-session";
 
-export type GraphPersistenceBackendId = "neo4j" | "typedb";
-
 export type GraphSyncSkippedRelationship = {
   relationshipId: string;
   reason: string;
@@ -20,10 +18,10 @@ export type GraphSyncSessionSnapshot = {
   relationshipsRejected: number;
 };
 
-/** Neutral result for API/UI; `database` is the target graph database name (Neo4j DB or TypeDB database). */
+/** Neutral result for API/UI; `database` is the TypeDB database name. */
 export type GraphSyncResult = {
   sessionId: string;
-  backend: GraphPersistenceBackendId;
+  backend: "typedb";
   database: string;
   entitiesUpserted: number;
   relationshipsUpserted: number;

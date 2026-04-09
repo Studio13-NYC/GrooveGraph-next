@@ -56,6 +56,9 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     isGraphSyncing,
     graphSyncFeedback,
     syncSessionToGraph,
+    graphBackendStatus,
+    graphBackendStatusLoading,
+    refreshGraphBackendStatus,
   } = model;
 
   const pendingTripletReview = useMemo(
@@ -104,6 +107,60 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
             <p className="gg-next-regime">Research workbench</p>
           </div>
           <p className="gg-next-directional">{directionalLine}</p>
+          <div
+            className="gg-next-graph-backend"
+            role="status"
+            aria-live="polite"
+            title={
+              graphBackendStatus && !graphBackendStatusLoading ? graphBackendStatus.message : undefined
+            }
+          >
+            {graphBackendStatusLoading ? (
+              <p className="gg-next-graph-backend-text">Graph connection: checking…</p>
+            ) : graphBackendStatus ? (
+              <p className="gg-next-graph-backend-text">
+                <span className="gg-next-graph-backend-label">Graph</span>
+                {graphBackendStatus.database ? (
+                  <>
+                    <span className="gg-next-graph-backend-sep" aria-hidden>
+                      {" · "}
+                    </span>
+                    <span className="gg-next-graph-backend-db">DB “{graphBackendStatus.database}”</span>
+                  </>
+                ) : null}
+                <span className="gg-next-graph-backend-sep" aria-hidden>
+                  {" · "}
+                </span>
+                <span
+                  className={
+                    graphBackendStatus.reachable
+                      ? "gg-next-graph-backend-state gg-next-graph-backend-state--ok"
+                      : graphBackendStatus.configured
+                        ? "gg-next-graph-backend-state gg-next-graph-backend-state--warn"
+                        : "gg-next-graph-backend-state gg-next-graph-backend-state--warn"
+                  }
+                >
+                  {graphBackendStatus.reachable
+                    ? "Connected"
+                    : graphBackendStatus.configured
+                      ? "Unreachable"
+                      : "Not configured"}
+                </span>
+                <button
+                  type="button"
+                  className="gg-next-graph-backend-refresh"
+                  onClick={() => void refreshGraphBackendStatus()}
+                  title="Recheck graph connection"
+                >
+                  Recheck
+                </button>
+              </p>
+            ) : (
+              <p className="gg-next-graph-backend-text gg-next-graph-backend-state--warn">
+                Graph connection: status unavailable.
+              </p>
+            )}
+          </div>
         </div>
       </header>
 

@@ -9,6 +9,7 @@ import type {
   UpdateGraphCandidateRequest,
 } from "@/src/types/research-session";
 import type {
+  GraphBackendStatusPayload,
   ResearchWorkbenchModel,
   TripletEditDraft,
   WorkspaceResponse,
@@ -39,6 +40,8 @@ export function ResearchWorkbench() {
   const [splitFractionHydrated, setSplitFractionHydrated] = useState(false);
   const [isMainGridResizing, setIsMainGridResizing] = useState(false);
   const [isNarrowWorkspaceLayout, setIsNarrowWorkspaceLayout] = useState(false);
+  const [graphBackendStatus, setGraphBackendStatus] = useState<GraphBackendStatusPayload | null>(null);
+  const [graphBackendStatusLoading, setGraphBackendStatusLoading] = useState(true);
   const latestAssistantMessageRef = useRef<HTMLElement | null>(null);
   const mainGridRef = useRef<HTMLElement | null>(null);
   const splitDragStateRef = useRef<{
@@ -89,6 +92,24 @@ export function ResearchWorkbench() {
   useEffect(() => {
     void refreshSessions();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function refreshGraphBackendStatus() {
+    setGraphBackendStatusLoading(true);
+    try {
+      const data = await fetchJson<GraphBackendStatusPayload>("/api/graph-backend-status");
+      setGraphBackendStatus(data);
+    } catch {
+      setGraphBackendStatus(null);
+    } finally {
+      setGraphBackendStatusLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    void refreshGraphBackendStatus();
+    const intervalId = window.setInterval(() => void refreshGraphBackendStatus(), 45_000);
+    return () => window.clearInterval(intervalId);
   }, []);
 
   useEffect(() => {
@@ -449,7 +470,7 @@ export function ResearchWorkbench() {
         | {
             ok: true;
             result: {
-              backend: "neo4j" | "typedb";
+              backend: "typedb";
               database: string;
               entitiesUpserted: number;
               relationshipsUpserted: number;
@@ -473,9 +494,8 @@ export function ResearchWorkbench() {
 
       const { result } = data;
       const skipped = result.skippedRelationships.length;
-      const backendLabel = result.backend === "typedb" ? "TypeDB" : "Neo4j";
       const parts = [
-        `[${backendLabel}] Wrote ${result.entitiesUpserted} entities and ${result.relationshipsUpserted} relationships to database "${result.database}".`,
+        `Wrote ${result.entitiesUpserted} entities and ${result.relationshipsUpserted} relationships to TypeDB database "${result.database}".`,
         `Session: ${result.sessionSnapshot.entitiesAccepted} accepted / ${result.sessionSnapshot.entitiesDeferred} deferred entities; ${result.sessionSnapshot.relationshipsAccepted} accepted / ${result.sessionSnapshot.relationshipsDeferred} deferred relationships among candidates.`,
       ];
       if (skipped > 0) {
@@ -493,6 +513,7 @@ export function ResearchWorkbench() {
         parts.push(result.hint);
       }
       setGraphSyncFeedback(parts.join(" "));
+      void refreshGraphBackendStatus();
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Graph sync failed.");
     } finally {
@@ -601,6 +622,9 @@ export function ResearchWorkbench() {
     isGraphSyncing,
     graphSyncFeedback,
     syncSessionToGraph,
+    graphBackendStatus,
+    graphBackendStatusLoading,
+    refreshGraphBackendStatus,
   };
 
   return <WorkbenchNextView model={model} />;

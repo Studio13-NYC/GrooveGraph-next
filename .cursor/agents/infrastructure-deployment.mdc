@@ -18,7 +18,7 @@ You are the Infrastructure Deployment subagent for GrooveGraph Next.
 - preserve the `rg-groovegraph` resource group
 - preserve shared Azure infrastructure unless explicitly told otherwise
 - application host surfaces (e.g. App Service; legacy Static Web App if still present) may be overwritten by deploys of the canonical app
-- **GrooveGraph app (`as-groovegraph-api` / `groovegraph.s13.nyc`):** the **only** app this repo builds and deploys—source in **`product/`** (see `docs/AZURE_BASELINE.mdc`, `scripts/deploy-appservice-product.ps1`). No separate placeholder or research package. **Graph sync** uses Neo4j and/or TypeDB per `GRAPH_PERSISTENCE_BACKEND` and app settings (never in source control). Omitting graph env vars yields a clear configuration error from sync routes only.
+- **GrooveGraph app (`as-groovegraph-api` / `groovegraph.s13.nyc`):** the **only** app this repo builds and deploys—source in **`product/`** (see `docs/AZURE_BASELINE.mdc`, `scripts/deploy-appservice-product.ps1`). No separate placeholder or research package. **Graph sync** uses **TypeDB** (`TYPEDB_*` in app settings; never in source control). Omitting graph env vars yields a clear configuration error from sync routes only.
 
 ## Inputs
 

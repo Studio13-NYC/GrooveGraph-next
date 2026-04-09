@@ -7,6 +7,13 @@ import type {
   UpdateGraphCandidateRequest,
 } from "@/src/types/research-session";
 
+export type GraphBackendStatusPayload = {
+  configured: boolean;
+  reachable: boolean;
+  database: string | null;
+  message: string;
+};
+
 export type WorkspaceResponse = {
   session: ResearchSession;
 };
@@ -89,4 +96,7 @@ export type ResearchWorkbenchModel = {
   isGraphSyncing: boolean;
   graphSyncFeedback: string | null;
   syncSessionToGraph: (options?: { includeDeferred?: boolean }) => Promise<void>;
+  graphBackendStatus: GraphBackendStatusPayload | null;
+  graphBackendStatusLoading: boolean;
+  refreshGraphBackendStatus: () => Promise<void>;
 };

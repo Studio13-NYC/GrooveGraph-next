@@ -29,7 +29,7 @@ You are the Composer Meta subagent for GrooveGraph Next.
 - **Default canvas (UI and diagrams):** **white** in light mode, **near-black** in dark mode (`prefers-color-scheme: dark`). **No** warm beige — map tokens use the same neutral base (`--gg-map-land` aliases `--gg-surface-canvas`).
 - **Prose authority:** `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc` — keep rules, skills, and agent files aligned when you touch visual contracts.
 
-- **Research workbench persistence:** Graph sync is implemented in `product/` (**Sync to graph**, `POST .../graph/sync`; legacy `.../neo4j/sync`). Env: `GRAPH_PERSISTENCE_BACKEND`, `NEO4J_*` / `TYPEDB_*` (see `product/README.md`, `product/.env.example`, `docs/AZURE_BASELINE.mdc`). Product phases and acceptance: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 2. When you change routing, env contracts, or PRD acceptance, update those docs and this pointer together.
+- **Research workbench persistence:** Graph sync is implemented in `product/` (**Sync to graph**, `POST .../graph/sync` → TypeDB). Env: `TYPEDB_*` (see `product/README.md`, `product/.env.example`, `docs/AZURE_BASELINE.mdc`). Product phases and acceptance: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 2. When you change routing, env contracts, or PRD acceptance, update those docs and this pointer together.
 
 ## Inputs
 

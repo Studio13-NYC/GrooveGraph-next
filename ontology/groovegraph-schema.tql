@@ -2,9 +2,8 @@
  * GrooveGraph — canonical TypeQL ontology (TypeDB PERA model).
  *
  * Storage-independent: this schema is the target contract for the knowledge
- * graph. Neo4j is not definitional; it is only today’s interim adapter (see
- * ontology/README.md). For a **live Aura-derived** parallel schema (labels, rels,
- * properties as attribute types), see `groovegraph-neo4j-aura-snapshot.tql` (generated).
+ * graph. Legacy Neo4j/Aura migration artifacts (if needed) live under
+ * `archive/neo4j-branch-only/` (see ontology/README.md).
  *
  * Notes:
  * - A type cannot own the same attribute type more than once; list-like session

@@ -1,15 +1,21 @@
-import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { TypeDBHttpDriver, isApiErrorResponse } from "@typedb/driver-http";
-import { applyTypeDbEnvFromDotenvText, getTypeDbConfig } from "./lib/typedb-env.mjs";
+import {
+  applyTypeDbEnvFromDotenvText,
+  getTypeDbConfig,
+  readFirstExistingEnvLocal,
+} from "./lib/typedb-env.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(__dirname, "../..");
-const envPath = resolve(repoRoot, ".env.local");
-
-const envText = readFileSync(envPath, "utf8");
-applyTypeDbEnvFromDotenvText(envText);
+const found = readFirstExistingEnvLocal(repoRoot);
+if (!found) {
+  console.error("Missing product/.env.local or .env.local");
+  process.exit(1);
+}
+applyTypeDbEnvFromDotenvText(found.text);
+const envText = found.text;
 
 const cfg = getTypeDbConfig(envText);
 if (!cfg) {

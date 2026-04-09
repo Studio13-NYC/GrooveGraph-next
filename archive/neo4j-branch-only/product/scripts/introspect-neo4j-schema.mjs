@@ -12,13 +12,18 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+/** GrooveGraph repo root (this script lives under archive/neo4j-branch-only/product/scripts/). */
+const repoRoot = resolve(__dirname, "../../../..");
 
 const uri = process.env.NEO4J_URI?.trim();
 const user = (process.env.NEO4J_USERNAME ?? process.env.NEO4J_USER)?.trim();
 const password = process.env.NEO4J_PASSWORD?.trim();
 const database = process.env.NEO4J_DATABASE?.trim() || "neo4j";
 
-const defaultOut = resolve(__dirname, "../../ontology/sources/neo4j-introspection.json");
+const defaultOut = resolve(
+  repoRoot,
+  "archive/neo4j-branch-only/ontology/sources/neo4j-introspection.json",
+);
 const outPath = resolve(process.argv[2] ?? defaultOut);
 
 if (!uri || !user || !password) {

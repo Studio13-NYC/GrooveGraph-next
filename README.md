@@ -15,7 +15,7 @@
 - `docs/`: canonical framework documentation
 - `framework/`: orchestration utilities and reusable support code
 - `product/`: **GrooveGraph Next.js app** — investigation / graph-review workbench (same surface as [groovegraph.s13.nyc](https://groovegraph.s13.nyc/))
-- `ontology/`: canonical TypeQL model and Neo4j → TypeDB migration helpers
+- `ontology/`: canonical TypeQL model for TypeDB; legacy Neo4j migration artifacts under `archive/neo4j-branch-only/`
 
 ## Local development
 

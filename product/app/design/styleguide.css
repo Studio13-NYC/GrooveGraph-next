@@ -1,0 +1,1010 @@
+/**
+ * GrooveGraph Next — design / token styleguide (scoped)
+ *
+ * Import beside globals (tokens already on :root via globals.css):
+ *   @import "./design/styleguide.css";
+ *
+ * All colors resolve through nycta-groovegraph-tokens.css custom properties only.
+ * Layout utilities are prefixed gg-sg- (styleguide) to avoid collisions.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Section: Page shell — reading column, section rhythm, hairline borders     */
+/* UI hook: wrap long-form demos in .gg-sg-shell > .gg-sg-page               */
+/* -------------------------------------------------------------------------- */
+
+.gg-sg-shell {
+  font-family: var(--gg-font-sans);
+  color: var(--gg-ink);
+  background: var(--gg-surface-canvas);
+}
+
+.gg-sg-page {
+  max-width: min(72ch, 100%);
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4vw, 2rem);
+  padding-block: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.gg-sg-page--wide {
+  max-width: min(120ch, 100%);
+}
+
+.gg-sg-section {
+  margin-block-end: clamp(2rem, 5vw, 3.5rem);
+}
+
+.gg-sg-section:last-child {
+  margin-block-end: 0;
+}
+
+.gg-sg-section-title {
+  font-size: var(--gg-type-grid-2);
+  font-weight: 600;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  line-height: var(--gg-leading-tight);
+  margin-block: 0 1rem;
+  padding-block-end: 0.5rem;
+  border-block-end: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 14%, transparent);
+}
+
+.gg-sg-divider {
+  border: 0;
+  margin-block: 1.5rem;
+  border-block-start: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-slate) 22%, transparent);
+}
+
+.gg-sg-card {
+  padding: 1rem 1.25rem;
+  border-radius: var(--gg-radius-r2);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+  background: var(--gg-sign-panel);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Section: Swatch grid — token groups (surface, ink, routes, sign, viz)     */
+/* UI hook: .gg-sg-swatch-grid > .gg-sg-swatch-item > .gg-sg-swatch + caption */
+/* -------------------------------------------------------------------------- */
+
+.gg-sg-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 1rem;
+}
+
+.gg-sg-swatch-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.gg-sg-swatch {
+  aspect-ratio: 1;
+  border-radius: var(--gg-radius-r1);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 16%, transparent);
+  box-sizing: border-box;
+}
+
+/* Swatch silhouettes — use for viz / legend discrimination (not only circles). */
+.gg-sg-swatch--shape-circle {
+  border-radius: 50%;
+}
+
+.gg-sg-swatch--shape-diamond {
+  border-radius: 0;
+  clip-path: polygon(50% 4%, 96% 50%, 50% 96%, 4% 50%);
+  /* Border would sit outside clip; use inset edge */
+  border: none;
+  box-shadow: inset 0 0 0 var(--gg-route-stroke-hairline)
+    color-mix(in srgb, var(--gg-ink) 22%, transparent);
+}
+
+.gg-sg-swatch-grid--viz-bright {
+  grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr));
+}
+
+.gg-sg-viz-priority-note {
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-slate);
+  margin-block: 0 0.5rem;
+  font-weight: 600;
+}
+
+.gg-sg-viz-priority-note--secondary {
+  margin-block-start: 1.25rem;
+  opacity: 0.92;
+}
+
+.gg-sg-swatch-caption {
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  line-height: var(--gg-leading-tight);
+  color: var(--gg-slate);
+  word-break: break-word;
+}
+
+/* Surface & diagram ground */
+.gg-sg-swatch--surface-canvas {
+  background: var(--gg-surface-canvas);
+}
+.gg-sg-swatch--surface-canvas-ink {
+  background: var(--gg-surface-canvas-ink);
+}
+.gg-sg-swatch--map-land {
+  background: var(--gg-map-land);
+}
+.gg-sg-swatch--map-water {
+  background: var(--gg-map-water);
+}
+.gg-sg-swatch--map-park {
+  background: var(--gg-map-park);
+}
+
+/* Ink & slate */
+.gg-sg-swatch--ink {
+  background: var(--gg-ink);
+}
+.gg-sg-swatch--slate {
+  background: var(--gg-slate);
+}
+
+/* Route families */
+.gg-sg-swatch--route-red {
+  background: var(--gg-route-red);
+}
+.gg-sg-swatch--route-green {
+  background: var(--gg-route-green);
+}
+.gg-sg-swatch--route-blue {
+  background: var(--gg-route-blue);
+}
+.gg-sg-swatch--route-orange {
+  background: var(--gg-route-orange);
+}
+.gg-sg-swatch--route-yellow {
+  background: var(--gg-route-yellow);
+}
+.gg-sg-swatch--route-brown {
+  background: var(--gg-route-brown);
+}
+.gg-sg-swatch--route-gray {
+  background: var(--gg-route-gray);
+}
+.gg-sg-swatch--route-purple {
+  background: var(--gg-route-purple);
+}
+.gg-sg-swatch--route-lime {
+  background: var(--gg-route-lime);
+}
+
+/* Sign system */
+.gg-sg-swatch--sign-panel {
+  background: var(--gg-sign-panel);
+}
+.gg-sg-swatch--sign-band {
+  background: var(--gg-sign-band);
+}
+.gg-sg-swatch--sign-exit-bg {
+  background: var(--gg-sign-exit-bg);
+}
+.gg-sg-swatch--sign-exit-fg {
+  background: var(--gg-sign-exit-fg);
+}
+.gg-sg-swatch--sign-transfer-bg {
+  background: var(--gg-sign-transfer-bg);
+}
+.gg-sg-swatch--sign-transfer-fg {
+  background: var(--gg-sign-transfer-fg);
+}
+
+/* Software accent = directional orange */
+.gg-sg-swatch--accent-directional {
+  background: var(--gg-accent-directional);
+}
+
+/* Viz family cluster fills (schema-aligned) */
+.gg-sg-swatch--viz-people {
+  background: var(--gg-viz-family-people);
+}
+.gg-sg-swatch--viz-recordings {
+  background: var(--gg-viz-family-recordings);
+}
+.gg-sg-swatch--viz-studios {
+  background: var(--gg-viz-family-studios);
+}
+.gg-sg-swatch--viz-labels {
+  background: var(--gg-viz-family-labels);
+}
+.gg-sg-swatch--viz-genres {
+  background: var(--gg-viz-family-genres);
+}
+.gg-sg-swatch--viz-gear {
+  background: var(--gg-viz-family-gear);
+}
+.gg-sg-swatch--viz-other {
+  background: var(--gg-viz-family-other);
+}
+
+/* On-dark sample (token text on saturated fills) */
+.gg-sg-swatch--on-dark-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gg-sign-band);
+  color: var(--gg-on-dark-fg);
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  line-height: var(--gg-leading-tight);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Section: Typography — grid 1/2/3, tracking, leading                         */
+/* -------------------------------------------------------------------------- */
+
+.gg-sg-type-grid-1 {
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  line-height: var(--gg-leading-tight);
+  font-weight: 600;
+}
+
+.gg-sg-type-grid-2 {
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  font-weight: 500;
+}
+
+.gg-sg-type-grid-3 {
+  font-size: var(--gg-type-grid-3);
+  line-height: var(--gg-leading-tight);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.gg-sg-type-body {
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+  max-width: 65ch;
+}
+
+.gg-sg-type-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Typography — semantic roles (all sizes from tokens; no ad hoc px) */
+.gg-sg-type-h1 {
+  margin: 0;
+  font-family: var(--gg-font-sans);
+  font-size: var(--gg-type-grid-3);
+  font-weight: 700;
+  line-height: var(--gg-leading-tight);
+  letter-spacing: -0.02em;
+  color: var(--gg-ink);
+}
+
+.gg-sg-type-h2 {
+  margin: 0;
+  font-family: var(--gg-font-sans);
+  font-size: var(--gg-type-grid-2);
+  font-weight: 600;
+  line-height: var(--gg-leading-tight);
+  color: var(--gg-ink);
+}
+
+.gg-sg-type-h3 {
+  margin: 0;
+  font-family: var(--gg-font-sans);
+  font-size: var(--gg-type-grid-2);
+  font-weight: 500;
+  line-height: var(--gg-leading-body);
+  color: var(--gg-ink);
+}
+
+.gg-sg-type-h4 {
+  margin: 0;
+  font-family: var(--gg-font-sans);
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  line-height: var(--gg-leading-tight);
+  color: var(--gg-slate);
+}
+
+.gg-sg-type-spec {
+  margin: 0.35rem 0 0;
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+  font-family: ui-monospace, "Cascadia Code", monospace;
+}
+
+.gg-sg-type-token-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+}
+
+.gg-sg-type-token-table th,
+.gg-sg-type-token-table td {
+  text-align: left;
+  padding: 0.5rem 0.65rem;
+  border-block-end: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 10%, transparent);
+  vertical-align: top;
+}
+
+.gg-sg-type-token-table th {
+  font-weight: 600;
+  color: var(--gg-ink);
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  font-size: var(--gg-type-grid-1);
+}
+
+.gg-sg-type-token-table td code {
+  font-size: 0.8em;
+  color: var(--gg-route-blue);
+}
+
+.gg-sg-type-compose {
+  padding: 1.25rem 1.35rem;
+  border-radius: var(--gg-radius-r2);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+  background: var(--gg-sign-panel);
+  max-width: 42rem;
+}
+
+.gg-sg-type-compose__kicker {
+  margin: 0 0 0.5rem;
+}
+
+.gg-sg-type-compose__lead {
+  margin: 0.75rem 0 0;
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  font-weight: 500;
+  color: var(--gg-ink);
+}
+
+.gg-sg-type-compose__body {
+  margin: 0.65rem 0 0;
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+}
+
+.gg-sg-type-compose__link {
+  color: var(--gg-route-blue);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: var(--gg-route-stroke-hairline);
+}
+
+.gg-sg-type-compose__link:focus-visible {
+  outline: var(--gg-route-stroke-hairline) solid var(--gg-accent-directional);
+  outline-offset: 2px;
+}
+
+.gg-sg-type-compose__callout {
+  margin: 1rem 0 0;
+  padding: 0.65rem 0.85rem;
+  border-inline-start: var(--gg-route-stroke-ui) solid var(--gg-route-lime);
+  background: color-mix(in srgb, var(--gg-route-lime) 8%, var(--gg-sign-panel));
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-ink);
+}
+
+/* Typography — visual ramp + specimen cards */
+.gg-sg-type-hero-specimen {
+  margin-block: 0 1.5rem;
+  padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 3vw, 2rem);
+  border-radius: var(--gg-radius-r3);
+  background: color-mix(in srgb, var(--gg-ink) 4%, var(--gg-sign-panel));
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+}
+
+.gg-sg-type-hero-specimen__label {
+  margin: 0 0 0.35rem;
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gg-slate);
+}
+
+.gg-sg-type-hero-specimen__sample {
+  margin: 0;
+  font-size: var(--gg-type-grid-3);
+  font-weight: 800;
+  line-height: var(--gg-leading-tight);
+  letter-spacing: -0.03em;
+  color: var(--gg-ink);
+}
+
+.gg-sg-type-hero-specimen__latin {
+  margin: 0.75rem 0 0;
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  font-weight: 500;
+  color: color-mix(in srgb, var(--gg-ink) 82%, var(--gg-slate));
+  max-width: 36ch;
+}
+
+.gg-sg-type-ramp {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-block: 0 1.5rem;
+  padding: 1rem 1.15rem;
+  border-radius: var(--gg-radius-r2);
+  background: var(--gg-sign-panel);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 10%, transparent);
+}
+
+.gg-sg-type-ramp-title {
+  margin: 0 0 0.35rem;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.gg-sg-type-ramp-row {
+  display: grid;
+  grid-template-columns: minmax(5.5rem, 7rem) 1fr auto;
+  gap: 0.65rem 1rem;
+  align-items: center;
+}
+
+.gg-sg-type-ramp-bar-wrap {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gg-ink) 6%, transparent);
+  overflow: hidden;
+}
+
+.gg-sg-type-ramp-bar {
+  height: 100%;
+  border-radius: inherit;
+  background: color-mix(in srgb, var(--gg-ink) 42%, transparent);
+}
+
+.gg-sg-type-ramp-bar--1 {
+  width: 28%;
+}
+.gg-sg-type-ramp-bar--2 {
+  width: 52%;
+}
+.gg-sg-type-ramp-bar--3 {
+  width: 100%;
+}
+
+.gg-sg-type-ramp-meta {
+  font-size: var(--gg-type-grid-1);
+  color: var(--gg-slate);
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.gg-sg-type-specimen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr));
+  gap: 1rem;
+  margin-block: 1rem 1.5rem;
+}
+
+.gg-sg-type-specimen {
+  padding: 1rem 1rem 1.1rem 1.15rem;
+  border-radius: var(--gg-radius-r2);
+  background: var(--gg-sign-panel);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+  border-inline-start-width: var(--gg-route-stroke-ui);
+}
+
+.gg-sg-type-specimen--label {
+  border-inline-start-color: var(--gg-route-lime);
+}
+
+.gg-sg-type-specimen--body {
+  border-inline-start-color: var(--gg-route-blue);
+}
+
+.gg-sg-type-specimen--display {
+  border-inline-start-color: var(--gg-accent-directional);
+}
+
+.gg-sg-type-specimen__tag {
+  margin: 0 0 0.5rem;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.gg-sg-type-specimen__sample {
+  margin: 0;
+}
+
+.gg-sg-type-specimen__code {
+  margin: 0.65rem 0 0;
+  padding-top: 0.65rem;
+  border-top: var(--gg-route-stroke-hairline) dashed
+    color-mix(in srgb, var(--gg-ink) 14%, transparent);
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+  font-family: ui-monospace, "Cascadia Code", monospace;
+}
+
+.gg-sg-type-ladder-board {
+  margin-block: 1rem 0;
+  padding: 1rem 1.15rem;
+  border-radius: var(--gg-radius-r2);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 10%, transparent);
+  background: var(--gg-sign-panel);
+}
+
+.gg-sg-type-ladder-row {
+  display: grid;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.75rem 1rem;
+  align-items: baseline;
+  padding: 0.65rem 0;
+  border-bottom: var(--gg-route-stroke-hairline) dotted
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+}
+
+.gg-sg-type-ladder-row:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.gg-sg-type-ladder-tag {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-route-blue);
+}
+
+/* Iconography — chrome samples (no icon font dependency in product) */
+.gg-sg-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 1rem;
+  margin-block: 1rem 0;
+}
+
+.gg-sg-icon-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 5.5rem;
+  padding: 0.85rem;
+  border-radius: var(--gg-radius-r2);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+  background: var(--gg-sign-panel);
+  text-align: center;
+}
+
+.gg-sg-icon-tile__glyph {
+  font-size: 1.35rem;
+  line-height: 1;
+  font-weight: 700;
+  color: var(--gg-ink);
+  letter-spacing: 0.02em;
+}
+
+.gg-sg-icon-tile__svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gg-ink);
+}
+
+.gg-sg-icon-tile__label {
+  margin: 0;
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+}
+
+.gg-sg-icon-tile__hint {
+  margin: 0;
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-tight);
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-ink);
+}
+
+.gg-sg-split-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 12px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+
+.gg-sg-split-demo__cap {
+  flex: 0 0 20px;
+  width: 1px;
+  background: color-mix(in srgb, var(--gg-ink) 35%, transparent);
+}
+
+.gg-sg-split-demo__ring {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid var(--gg-ink);
+  background: var(--gg-sign-panel);
+  box-shadow: inset 0 0 0 2px var(--gg-route-orange);
+}
+
+.gg-sg-history-disc-demo {
+  width: 14px;
+  height: 14px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 2px solid var(--gg-route-orange);
+  background: var(--gg-sign-panel);
+  box-shadow: 0 0 0 2px var(--gg-sign-panel), 0 0 0 4px var(--gg-route-orange);
+}
+
+/* Collapsible pattern demo (native details) */
+.gg-sg-details-demo {
+  margin-block: 1rem 0;
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 14%, transparent);
+  border-radius: var(--gg-radius-r2);
+  background: var(--gg-sign-panel);
+  overflow: hidden;
+}
+
+.gg-sg-details-demo > summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-ink);
+  border-bottom: 1px solid color-mix(in srgb, var(--gg-ink) 12%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.gg-sg-details-demo > summary::-webkit-details-marker {
+  display: none;
+}
+
+.gg-sg-details-demo > summary::after {
+  content: "▾";
+  font-size: 0.9rem;
+  color: var(--gg-slate);
+  transition: transform 0.15s ease;
+}
+
+.gg-sg-details-demo[open] > summary::after {
+  transform: rotate(-180deg);
+}
+
+.gg-sg-details-demo__body {
+  padding: 0.85rem 1rem 1rem;
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+}
+
+.gg-sg-pattern-table code {
+  font-size: 0.88em;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Section: Lines & rules — sign band, strokes, parallel gap, radius ladder  */
+/* -------------------------------------------------------------------------- */
+
+.gg-sg-lines-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1.25rem;
+}
+
+.gg-sg-sign-band-strip {
+  width: min(100%, 12rem);
+  height: var(--gg-sign-band-height);
+  background: var(--gg-sign-band);
+  border-radius: 1px;
+}
+
+.gg-sg-stroke-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 6rem;
+}
+
+/* Rounded caps (pill), not square rectangular strokes */
+.gg-sg-stroke-line {
+  display: block;
+  width: 100%;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--gg-ink) 38%, transparent);
+}
+
+.gg-sg-stroke-line--hairline {
+  height: var(--gg-route-stroke-hairline);
+}
+
+.gg-sg-stroke-line--ui {
+  height: var(--gg-route-stroke-ui);
+}
+
+.gg-sg-stroke-line--ui-bold {
+  height: var(--gg-route-stroke-ui-bold);
+}
+
+.gg-sg-parallel-tracks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gg-route-parallel-gap);
+  width: min(100%, 10rem);
+}
+
+.gg-sg-parallel-tracks span {
+  display: block;
+  height: var(--gg-route-stroke-ui);
+  background: var(--gg-route-lime);
+  border-radius: 999px;
+}
+
+.gg-sg-radius-ladder {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+}
+
+/* Pair box + token name: .gg-sg-radius-ladder-item > .gg-sg-radius-box--rN + .gg-sg-radius-label */
+.gg-sg-radius-ladder-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.gg-sg-radius-box {
+  width: 3.5rem;
+  height: 3.5rem;
+  border: var(--gg-route-stroke-hairline) solid var(--gg-route-orange);
+  background: color-mix(in srgb, var(--gg-route-orange) 12%, transparent);
+  box-sizing: border-box;
+}
+
+.gg-sg-radius-box--r1 {
+  border-radius: var(--gg-radius-r1);
+}
+.gg-sg-radius-box--r2 {
+  border-radius: var(--gg-radius-r2);
+}
+.gg-sg-radius-box--r3 {
+  border-radius: var(--gg-radius-r3);
+}
+.gg-sg-radius-box--r4 {
+  border-radius: var(--gg-radius-r4);
+}
+.gg-sg-radius-box--r5 {
+  border-radius: var(--gg-radius-r5);
+}
+
+.gg-sg-radius-label {
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  color: var(--gg-slate);
+  margin-block-start: 0.25rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Section: Map grammar mini-demo — orthogonal + 45° (SVG, token strokes)      */
+/* UI hook: .gg-sg-map-demo > svg.gg-sg-map-svg with classes on paths        */
+/*
+  Example markup (viewBox coordinates are illustrative; adjust to taste):
+
+  <svg class="gg-sg-map-svg" viewBox="0 0 120 120" aria-hidden="true">
+    <path class="gg-sg-map-path gg-sg-map-path--trunk" d="M 16 60 H 72 V 28" />
+    <path class="gg-sg-map-path gg-sg-map-path--branch" d="M 72 60 L 100 88" />
+    <path class="gg-sg-map-path gg-sg-map-path--bundle-a" d="M 16 92 H 96" />
+    <path class="gg-sg-map-path gg-sg-map-path--bundle-b" d="M 16 100 H 96" />
+  </svg>
+
+  Paths use stroke-linecap/linejoin round. Do not fake routes with un-capped div
+  rectangles — that reads as wrong grammar next to SVG.
+
+  Parallel vertical offset between bundle-a/b should visually match
+  var(--gg-route-parallel-gap) at the chosen viewBox scale.
+*/
+/* -------------------------------------------------------------------------- */
+
+.gg-sg-map-demo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+
+.gg-sg-map-svg {
+  width: min(100%, 14rem);
+  height: auto;
+  background: var(--gg-map-land);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 10%, transparent);
+  border-radius: var(--gg-radius-r2);
+}
+
+.gg-sg-map-path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Primary trunk: uniform UI stroke */
+.gg-sg-map-path--trunk {
+  stroke: var(--gg-route-blue);
+  stroke-width: var(--gg-route-stroke-ui);
+}
+
+/* Orthogonal + diagonal grammar: same weight family */
+.gg-sg-map-path--branch {
+  stroke: var(--gg-route-orange);
+  stroke-width: var(--gg-route-stroke-ui);
+}
+
+.gg-sg-map-path--guide {
+  stroke: var(--gg-slate);
+  stroke-width: var(--gg-route-stroke-hairline);
+  opacity: 0.85;
+}
+
+/* Bundled parallel paths in SVG (two trunks, gutter = token; lime + orange — no route-green) */
+.gg-sg-map-path--bundle-a {
+  stroke: var(--gg-route-lime);
+  stroke-width: var(--gg-route-stroke-ui);
+}
+
+.gg-sg-map-path--bundle-b {
+  stroke: var(--gg-route-orange);
+  stroke-width: var(--gg-route-stroke-ui);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Section: Plate / panel composition (modular panel + top band)               */
+/* UI hook: .gg-sg-plate > .gg-sg-plate__band + .gg-sg-plate__body            */
+/* Copy: use neutral labels (Primary label, Secondary, Panel), not metaphors */
+/* -------------------------------------------------------------------------- */
+
+.gg-sg-plate {
+  background: var(--gg-sign-panel);
+  color: var(--gg-ink);
+  border-radius: var(--gg-radius-r2);
+  border: var(--gg-route-stroke-hairline) solid
+    color-mix(in srgb, var(--gg-ink) 12%, transparent);
+  overflow: hidden;
+  max-width: 28rem;
+}
+
+.gg-sg-plate__band {
+  height: var(--gg-sign-band-height);
+  background: var(--gg-sign-band);
+}
+
+.gg-sg-plate__body {
+  padding: 1rem 1.15rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gg-sg-plate__label {
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  line-height: var(--gg-leading-tight);
+  color: var(--gg-slate);
+}
+
+.gg-sg-plate__title {
+  font-size: var(--gg-type-grid-2);
+  font-weight: 600;
+  line-height: var(--gg-leading-tight);
+  margin: 0;
+}
+
+.gg-sg-plate__text {
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+  margin: 0;
+}
+
+.gg-sg-plate-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* Directional accent strip (software accent token) */
+.gg-sg-plate--accent-bar {
+  border-inline-start: var(--gg-route-stroke-ui) solid var(--gg-accent-directional);
+}
+
+/* Disc scale reference (token diameters) */
+.gg-sg-disc-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gg-sg-disc {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--gg-route-red);
+  color: var(--gg-on-dark-fg);
+  font-weight: 700;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.gg-sg-disc--sm {
+  width: var(--gg-disc-sm);
+  height: var(--gg-disc-sm);
+  font-size: calc(var(--gg-type-grid-1) * 0.95);
+}
+
+.gg-sg-disc--md {
+  width: var(--gg-disc-md);
+  height: var(--gg-disc-md);
+  font-size: var(--gg-type-grid-2);
+}
+
+.gg-sg-disc--lg {
+  width: var(--gg-disc-lg);
+  height: var(--gg-disc-lg);
+  font-size: var(--gg-type-grid-3);
+}

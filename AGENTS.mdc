@@ -1,66 +1,75 @@
 # GrooveGraph Next Operating Contract
 
-This repository is the writable framework surface for the next GrooveGraph era.
+This repository uses the **cursor agent package** under **`.cursor/`** (ten domain agents, `rules/global` + `rules/engineering`, `skills/**/SKILL.md`): ten domain agents, shared **rules** (`global/` + `engineering/`), and **skills** (`SKILL.md` modules). This file adds **GrooveGraph-specific** boundaries and telemetry expectations.
+
+## Agent package (canonical routing)
+
+1. **`orchestrator`** receives or frames the task and routes specialists.
+2. **`architecture`** is consulted when structure, contracts, module boundaries, data flow, or tradeoffs change.
+3. **Specialists:** **`ui`**, **`design`**, **`api`**, **`graph`**, **`llm`**, **`qa`**, **`devops`** own their domains.
+4. **`development`** is the generalist for cross-cutting code and integration glue; it does not override specialist ownership.
+5. **`qa`** validates before completion when behavior, contracts, or UX change.
+6. **Graph visualization (interactive canvas, e.g. [Sigma.js](https://www.sigmajs.org/)):** **Joint ownership — `graph` + `ui`.** **`graph`** owns TypeDB (or API) queries, subgraph scope, and **result mapping** into a stable, visualization-friendly graph contract. **`ui`** owns Sigma.js / Graphology integration in **`product/`** (canvas lifecycle, interaction, performance, accessibility) and applies **NYCTA tokens** to nodes, edges, and labels per **`rules/engineering/mta-design-foundation.mdc`**. **`design`** contributes when graph styling changes the systematic design language beyond token use. When changing what is drawn *or* what data feeds the canvas, include **both `graph` and `ui`** in the agent list unless the edit is narrowly confined to one side.
+
+Prefer the specialist when the task clearly fits one domain; escalate to **`architecture`** before cross-cutting contract changes; escalate to **`orchestrator`** when routing is unclear or multi-domain.
+
+**Cursor metadata:** agent `.mdc` files use frontmatter (`name`, `description`, `model`, `readonly`, `is_background`). Default specialist **`model`** is **`inherit`** unless pinned. See **`docs/AGENT_REGISTRY.mdc`** for the lane matrix.
 
 ## Repo boundary
 
 - **This repository** is the sole writable source of truth for GrooveGraph Next work.
-- Canonical policy, skills, agents, docs, and code live here—not in a sibling or external codebase.
-
-## Hierarchy
-
-- `GPT-5.4`: user-facing orchestrator and final decision-maker
-- `Composer 1.5`: Cursor-native meta lane for rules, skills, prompts, and tool contracts
-- `GPT-5.4-mini`: default specialist lane for exploration, review, test analysis, and visual direction
-- `GPT-5.4-nano`: routing, summarization, triage, packet compression, and hygiene analysis
-- `GPT-5.3-codex`: bounded implementation and repair work
+- **`cursor-agent-baseline`** is **out of scope for writes** in this workspace: read-only reference if present; do not edit it or treat it as the delivery target. Baseline content has already been applied here.
+- Canonical policy, agents, rules, skills, docs, and code live here—not in a sibling or external codebase.
+- The **only** shipped Next.js app is **`product/`** (research workbench at `/`).
+- There is **no** parallel `research/` or `prototypes/` tree; historical artifacts live in **git history** where noted in `docs/`.
+- Preserve boundaries between **`.cursor/`** + **`docs/`**, **`product/src/visual-system/`** (tokens), and **`product/`** (runnable app).
 
 ## Required behavior
 
-- Specialist subagent first, always.
-- Use explicit context packets when delegating.
-- The orchestrator is a router and synthesizer, not the default worker.
-- The orchestrator may retain work only with an explicit override that names the skipped specialist and explains why direct orchestration is safer.
-- If no fitting specialist exists, stop and create one rather than stretching the orchestrator role.
-- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is explicitly justified.
-- Default to concise packets, prompts, and outputs unless the user or the risk profile requires depth.
-- Expensive orchestration should shrink as specialist coverage improves.
-- Keep one active writable surface per task.
-- The **only** shipped Next.js app in this repo is **`product/`** (research workbench at `/`).
-- There is **no** parallel `research/` or `prototypes/` tree—those folders were removed; historical artifacts live in **git history** where noted in `docs/`.
-- Preserve clean boundaries between **`.cursor/agents/`** + **`docs/`** (agent contracts), **`product/src/visual-system/`** (tokens), and **`product/`** (runnable app).
-- Treat visual communication as part of the product of thinking, not decoration.
-- Be forthright, opinionated, and comfortable disagreeing when a better path exists.
-
-## Routing defaults
-
-- `orchestrator`: decomposition, override judgment, and final synthesis
-- `composer-meta`: rules, skills, prompts, and tool contracts
-- `product-manager`: discovery-first product framing and reboot briefs
-- `hygienist`: cleanup analysis and removal proposals
-- `animator`: GSAP timelines, scroll choreography, and React/Next motion implementation
-- `infrastructure-deployment`: Azure baseline, deployment flow, and preservation rules
-- See `docs/AGENT_REGISTRY.mdc` for the current lane matrix and default models.
+- **Default stance:** Assume **orchestrator** (packet + delegation per **`.cursor/rules/global/strict-packet-before-code.mdc`**) without the user naming the role; follow a single-specialist-only path only when the user **explicitly** scopes that way.
+- **Strict routing (default):** Before any code change, produce an **agent list** (with rationale), a full **context packet** per **`docs/CONTEXT_PACKETS.mdc`**, and cite applicable **rules** (`.cursor/rules/`) and **skills** (`.cursor/skills/**/SKILL.md`). That output is **necessary but not sufficient**: **delegated implementation** means a **separate run** that applies patches—in Cursor, the **`Task` tool** only (appropriate `subagent_type`, or **`explore`** for read-only discovery)—not the orchestrator substituting inline `Write` / `StrReplace` after only emitting the packet, unless an exception in that rule file applies.
+- Prefer **specialist-first** routing per the package model; the **orchestrator** coordinates and synthesizes, not default execution for specialist-sized work.
+- Use **explicit context** for handoffs; see **`docs/CONTEXT_PACKETS.mdc`** and **`skills/llm/context-packet/SKILL.md`**.
+- Default to **concise** outputs unless depth is required; see **`rules/global/concise-output.mdc`**.
+- Be **forthright** when a simpler, safer, or cheaper path exists; see **`rules/global/change-safety.mdc`**.
+- Treat visual communication as part of the product of thinking, not decoration (**`rules/engineering/mta-design-foundation.mdc`**).
 
 ## Usage accounting
 
-- Rough slice-level cost reference is a first-class framework concern.
-- Prefer a lightweight `cost_summary` returned with each agent result.
-- Prefer `exact` usage when the provider or platform exposes it.
-- Label local token/cost calculations as `estimated` or `unknown`, never as official accounting.
-- Persist slice summaries locally as append-only JSONL in `.telemetry/slice-costs.jsonl` when the runtime supports it.
+- Prefer a lightweight **`cost_summary`** with agent results when the runtime supports it.
+- Prefer **`exact`** usage when the provider exposes it; label local estimates as **`estimated`** or **`unknown`**.
+- Persist slice summaries as append-only JSONL in **`.telemetry/slice-costs.jsonl`** when supported.
 
 ## Observability
 
-- Full traceability requires more than local slice-cost logging.
-- Use structured identifiers such as `session_id`, `slice_id`, `chunk_id`, `agent`, and `model` across orchestrated work.
-- Use the existing Azure Application Insights resource as the default runtime telemetry sink when product/runtime observability is added.
-- Prefer sampled traces, requests, exceptions, and selected custom events over indiscriminate high-volume logs.
+- Use structured identifiers (`session_id`, `slice_id`, `agent`, `model`, etc.) across orchestrated work.
+- Use the existing Azure Application Insights resource as the default runtime telemetry sink when product observability is extended.
+- Prefer sampled traces and high-signal events over indiscriminate log volume. See **`docs/OBSERVABILITY.mdc`**.
 
 ## Visual default
 
-Use the NYCTA-inspired transit/signage system for authoritative "new regime" graphics. Use the whiteboard/cartoon style only for retrospective critique of legacy behavior.
+Use the **NYCTA-inspired** transit/signage system for authoritative “new regime” graphics. Use whiteboard/cartoon idiom only for retrospective critique of legacy behavior.
 
 ## Research workbench (`product/`)
 
-- **Research workbench (`/`) Evidence:** **Field notes** and **Sources** are **stacked** collapsible sections (Field notes open, Sources closed by default); each body scrolls independently; **Evidence** and **Claims** plates share the same fixed height band (`--gg-workbench-module-max-h`). Locked spec: `docs/product/RESEARCH_WORKBENCH_PRD.mdc` Phase 1 (requirements 6–7) and `docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` §5.
+- **Evidence UX:** Field notes and Sources as stacked collapsibles; Evidence and Claims plates share a fixed height band (`--gg-workbench-module-max-h`). Binding brief: **`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`** §5; validation notes: **`docs/research-workbench-validation.md`**; app runbook: **`product/README.md`**.
+- **Graph persistence:** TypeDB via **`product/`** sync; schema snapshot **`docs/DB-Schema-Export.typeql`**; env **`TYPEDB_*`** per **`product/.env.example`** and **`docs/AZURE_BASELINE.mdc`**. **Graph viz** in the workbench is **`graph` + `ui`** (Sigma.js); see **Agent package** §6 and TypeDB graph-viz guidance ([TypeDB docs — graph visualization](https://typedb.com/docs/guides/integrations/graph-viz/)).
+
+## Learned User Preferences
+
+- Use documented `TYPEDB_*` keys in **`product/.env.local`** (`KEY=value` without spaces around `=`); do not rely on alternate names such as `connectionString` or informal `username =` lines.
+- When capturing repeatable debugging lessons, prefer adding or updating **`docs/SESSION_PATTERNS_AND_ANTIPATTERNS.md`** (or similar in-repo docs) instead of relying only on chat history.
+- Prefer **`--gg-route-lime`** over **`--gg-route-green`** for visualization greens so the hue stays distinct on screen.
+- For graph color and legend design, prioritize saturated route hues first; treat brown, greys, slate, and ink as lower-salience or structural neutrals; pair shape (rounded tile, circle, diamond) with color when it improves discrimination.
+
+## Learned Workspace Facts
+
+- **`/api/graph-backend-status`:** `configured: false` means **`getTypeDbConfig()`** returned null (missing or unusable env), not necessarily that the TypeDB cluster is down; `reachable` reflects the health check once config exists.
+- An empty value for **`TYPEDB_CONNECTION_STRING`** (key present, nothing after `=`) is treated as connection-string empty; use a full one-line URL or all four **`TYPEDB_USERNAME` / `TYPEDB_PASSWORD` / `TYPEDB_ADDRESS` / `TYPEDB_DATABASE`** fields per **`product/.env.example`**.
+- Server-side TypeDB settings merge **`product/.env.local`** (and monorepo path fallbacks) with **`process.env`**; **`loadEnvConfig`** in **`next.config`** should target the **`product/`** app root; connection-string parsing uses delimiter-style splits (e.g. at `@https://`) so passwords may contain `@` or `:`.
+- Moving to a new database name via export/import copies schema and data as-is; stripping legacy **`aura-`** prefixes in exported TypeQL is a separate step (e.g. **`scripts/strip-typeql-aura-prefix.mjs`**, with collision-aware **`migrated-*`** names when needed).
+- **`scripts/lib/`** (e.g. **`typedb-database-copy.mjs`**) aligns env line parsing with **`product/src/lib/server/config.ts`** for TypeDB tooling.
+- Sigma/workbench graph errors about an unknown **node program** (e.g. **`circle`**) usually indicate **client-side** Sigma configuration, not TypeDB connectivity.
+- The live design-system reference (tokens, typography, components, map-grammar demos) is the App Router route **`/design`** under **`product/app/design/`**; **`docs/VISUAL_STYLE_GUIDE.mdc`** should point there rather than legacy static HTML under **`product/public/`**.
+- Map-style route strokes in UI should use **SVG or canvas** paths with **round line caps and joins**; avoid faking routes with axis-aligned **`div`** bars that read as square-ended geometry.
+- Workbench graph (Sigma) interaction target: **single-click** shows node metadata; **double-click** sets **focus** (larger node, camera centers or nears center); edges use **directional arrows with verb labels**; fills follow **MTA route-family tokens**; **status** is encoded on the **node outline**, except **accepted** where the outline matches the fill.

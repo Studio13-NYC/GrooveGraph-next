@@ -8,9 +8,9 @@
 
 - `AGENTS.mdc`: operating contract for the repo
 - `docs/AGENT_REGISTRY.mdc`: compact operator matrix and default model map
-- `.cursor/agents/`: specialist agent definitions
-- `.cursor/rules/`: durable Cursor rules for routing, context, boundaries, and visual style
-- `.cursor/skills/`: reusable skills for orchestration and packet generation
+- `.cursor/agents/`: ten domain agents (`api`, `architecture`, `design`, `development`, `devops`, `graph`, `llm`, `orchestrator`, `qa`, `ui`)
+- `.cursor/rules/global/` + `.cursor/rules/engineering/`: shared constraints and standards (including GrooveGraph repo boundary, MTA foundation, Azure baseline notes)
+- `.cursor/skills/**/SKILL.md`: reusable execution modules by domain (`api`, `design`, `devops`, `graph`, `llm`, `qa`, `ui`, `shared`)
 - `docs/`: canonical framework documentation (`docs/INDEX.mdc` for the full map)
 - `product/`: **GrooveGraph Next.js app** — investigation / graph-review workbench (same surface as [groovegraph.s13.nyc](https://groovegraph.s13.nyc/))
 - `docs/DB-Schema-Export.typeql`: TypeQL snapshot of the live TypeDB schema (regenerate with `npm run dump:typedb-schema`); legacy Neo4j migration artifacts under `archive/neo4j-branch-only/`
@@ -22,11 +22,9 @@
 
 ## Default operating stance
 
-- `GPT-5.4` is the top-level orchestrator
-- `Composer 1.5` owns Cursor-native meta-authoring and tool/rule work
-- `GPT-5.4-mini` handles exploration, product-definition research, review, visual direction, and test analysis
-- `GPT-5.4-nano` handles routing, triage, context compression, and hygiene analysis
-- `GPT-5.3-codex` handles bounded implementation work
+- Agent cards default to **`model: inherit`** so the active Cursor/Composer session picks the model; pin a model on a card only when a lane needs a fixed tier.
+- Use **`orchestrator`** for multi-domain routing; **`architecture`** for contract and structure decisions; **`development`** for cross-cutting implementation; specialists (`api`, `ui`, `design`, `graph`, `llm`, `qa`, `devops`) for domain work.
+- Optional habit (when not using inherit): stronger model for **`orchestrator`** / architecture judgment; efficient models for **`qa`** review passes and repetitive hygiene scripts under **`docs/HYGIENE.mdc`**.
 
 ## First-class accounting
 
@@ -40,19 +38,9 @@ The repo now distinguishes rough local slice-cost telemetry from full observabil
 
 ## Agent registry
 
-See `docs/AGENT_REGISTRY.mdc` for the full matrix. Quick map:
+See `docs/AGENT_REGISTRY.mdc` for the full matrix. Agents (each has `.cursor/agents/<name>.mdc`):
 
-- `orchestrator` -> `GPT-5.4`
-- `composer-meta` -> `Composer 1.5`
-- `explorer` -> `GPT-5.4-mini`
-- `product-manager` -> `GPT-5.4-mini`
-- `implementer` -> `GPT-5.3-codex`
-- `reviewer` -> `GPT-5.4-mini`
-- `tester` -> `GPT-5.4-mini`
-- `hygienist` -> `GPT-5.4-nano`
-- `graphic-artist` -> `GPT-5.4-mini`
-- `animator` -> `GPT-5.4-mini`
-- `infrastructure-deployment` -> `GPT-5.4-mini`
+- `orchestrator`, `architecture`, `development`, `api`, `ui`, `design`, `graph`, `llm`, `qa`, `devops`
 
 ## Visual system
 

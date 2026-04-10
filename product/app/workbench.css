@@ -1,17 +1,29 @@
 /**
- * Research workbench shell (graphic-artist instructions:
- * docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md).
+ * Research workbench shell (design/ui instructions:
+ * docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc).
  * Scoped to .gg-next-root only.
  */
 
 .gg-next-root {
-  /* Shared cap for Investigation + Graph review columns (scroll inside each). */
+  /* Shared cap for Evidence / Claims plates (Investigation uses remaining viewport height). */
   --gg-workbench-module-max-h: min(58vh, 680px);
-  min-height: 100vh;
-  padding: 0 0 48px;
+  /* Sigma.js WebGL tints (resolved to hex/rgb via getComputedStyle). */
+  --gg-sigma-node: var(--gg-accent-directional);
+  --gg-sigma-edge: var(--gg-slate);
+  /* Column shell: masthead + body grid + footer; height from globals body > .gg-next-root when in app. */
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow: visible;
+  padding: 0;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--gg-font-sans);
+}
+
+.gg-next-root > .gg-next-masthead,
+.gg-next-root > .gg-next-alert {
+  flex-shrink: 0;
 }
 
 .gg-next-masthead {
@@ -34,9 +46,15 @@
   margin: 0 auto;
 }
 
+.gg-next-masthead-grid--minimal {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 14px 24px 16px;
+  gap: 8px;
+}
+
 .gg-next-kicker {
   margin: 0 0 6px;
-  font-size: 10px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: var(--gg-tracking-label);
   text-transform: uppercase;
@@ -62,10 +80,11 @@
   margin: 0;
   align-self: center;
   font-size: var(--gg-type-grid-2);
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  line-height: var(--gg-leading-tight);
-  max-width: 42ch;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: var(--gg-leading-body);
+  max-width: 48ch;
+  color: color-mix(in srgb, var(--ink) 88%, var(--gg-slate));
 }
 
 .gg-next-alert--success {
@@ -88,14 +107,159 @@
 }
 
 .gg-next-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: visible;
   max-width: 1680px;
-  margin: 20px auto 0;
-  padding: 0 24px;
-  min-height: 480px;
+  margin: 8px auto 0;
+  padding: 0 24px 12px;
+  width: 100%;
+  grid-template-rows: minmax(0, 1fr);
+  box-sizing: border-box;
 }
 
 .gg-next-body > * {
   min-height: 0;
+}
+
+/* Compact status strip — session, map, selection, graph DB (pinned to bottom of flex column shell). */
+.gg-next-footer {
+  flex-shrink: 0;
+  margin-top: auto;
+  width: 100%;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  background: color-mix(in srgb, var(--paper) 97%, var(--gg-sign-panel));
+}
+
+.gg-next-footer-inner {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 8px 24px 12px;
+}
+
+.gg-next-footer-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 18px;
+  font-size: var(--gg-type-grid-1);
+  line-height: 1.35;
+}
+
+.gg-next-footer-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  min-width: 0;
+  flex: 1 1 120px;
+}
+
+.gg-next-footer-cell--selection {
+  flex: 2 1 200px;
+}
+
+.gg-next-footer-cell--styleguide {
+  flex: 0 0 auto;
+  align-items: center;
+}
+
+.gg-next-footer-styleguide {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-route-blue);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.gg-next-footer-styleguide:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.12em;
+}
+
+.gg-next-footer-styleguide:focus-visible {
+  outline: 2px solid var(--gg-route-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.gg-next-footer-cell--db {
+  flex: 1 1 160px;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
+.gg-next-footer-k {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.gg-next-footer-v {
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.gg-next-footer-db {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gg-next-footer-db-name {
+  font-family: monospace;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+}
+
+.gg-next-footer-db-state--ok {
+  color: var(--gg-route-green);
+}
+
+.gg-next-footer-db-state--warn {
+  color: var(--red-route);
+}
+
+.gg-next-footer-recheck {
+  padding: 2px 8px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: var(--gg-radius-r1);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.gg-next-footer-recheck:hover {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 4%, var(--paper));
+}
+
+.gg-next-footer-clear-focus {
+  padding: 2px 8px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: var(--gg-radius-r1);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.gg-next-footer-clear-focus:hover {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 4%, var(--paper));
 }
 
 /* Session index column */
@@ -116,6 +280,7 @@
   flex-direction: column;
   gap: 16px;
   min-width: 0;
+  align-self: stretch;
 }
 
 /* Let session index fill grid row so Past sessions list can flex and scroll */
@@ -257,15 +422,23 @@
 .gg-next-plate--hero {
   flex: 1;
   min-height: 0;
-  max-height: var(--gg-workbench-module-max-h);
   display: flex;
   flex-direction: column;
+}
+
+.gg-next-plate--investigation {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .gg-next-plate-band {
   height: var(--gg-sign-band-height);
   background: var(--gg-sign-band);
   flex-shrink: 0;
+  /* Inner top radius matches .gg-next-plate (2px border) so bands don’t square-off past rounded corners when a parent uses overflow: visible (e.g. review column). */
+  border-top-left-radius: calc(var(--gg-radius-r2) - 2px);
+  border-top-right-radius: calc(var(--gg-radius-r2) - 2px);
 }
 
 .gg-next-plate-band--module {
@@ -306,7 +479,7 @@
 
 .gg-next-plate-kicker {
   margin: 0;
-  font-size: 10px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: var(--gg-tracking-label);
   text-transform: uppercase;
@@ -321,13 +494,49 @@
   letter-spacing: -0.02em;
 }
 
+/* Graph map: title row + history controls on one line (signage: primary left, actions right). */
+.gg-next-plate-heading--graph-map {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+
+.gg-next-plate-heading-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gg-next-graph-chrome-inline {
+  flex: 0 0 auto;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.gg-next-plate-subtitle {
+  margin: 6px 0 0;
+  font-size: var(--gg-type-grid-2);
+  font-weight: 600;
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+  max-width: 56ch;
+}
+
+/* Graph map kicker: one line in the column; full text via title on the element. */
 .gg-next-field {
   display: grid;
   gap: 6px;
 }
 
 .gg-next-field-label {
-  font-size: 10px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -350,6 +559,12 @@
   line-height: var(--gg-leading-body);
 }
 
+.gg-next-textarea--compose {
+  max-height: min(40vh, 14rem);
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
 .gg-next-input:focus-visible,
 .gg-next-textarea:focus-visible {
   outline: 2px solid var(--gg-route-blue);
@@ -362,7 +577,7 @@
   background: var(--gg-accent-directional);
   color: var(--gg-on-dark-fg);
   font-weight: 800;
-  font-size: 11px;
+  font-size: var(--gg-type-grid-1);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   padding: 10px 16px;
@@ -396,7 +611,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 11px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 700;
   letter-spacing: 0.04em;
   color: var(--gg-slate);
@@ -426,7 +641,7 @@
   gap: 12px;
   padding: 10px 12px;
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -502,32 +717,51 @@
 
 .gg-next-index-title {
   font-weight: 800;
-  font-size: 13px;
-  line-height: 1.2;
+  font-size: var(--gg-type-grid-2);
+  line-height: var(--gg-leading-tight);
 }
 
 .gg-next-index-meta {
-  font-size: 11px;
-  color: var(--gg-slate);
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+  color: color-mix(in srgb, var(--gg-slate) 72%, var(--ink));
 }
 
-/* Corridors */
+/* Corridors — fill grid row height so inner scroll regions get a bounded box. */
 .gg-next-corridor {
   display: flex;
   flex-direction: column;
   gap: 20px;
   min-width: 0;
   min-height: 0;
+  align-self: stretch;
+  height: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
 }
 
-.gg-next-corridor--discovery .gg-next-plate--hero {
-  flex: 0 1 auto;
+.gg-next-corridor--discovery {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gg-next-corridor--discovery .gg-next-plate--hero,
+.gg-next-corridor--discovery .gg-next-plate--investigation {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
 }
 
 .gg-next-stream {
   flex: 1;
-  min-height: 120px;
-  overflow: auto;
+  min-height: 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -545,6 +779,15 @@
   background: color-mix(in srgb, var(--gg-accent-directional) 12%, var(--paper));
 }
 
+.gg-next-bubble-body {
+  min-width: 0;
+}
+
+.gg-next-bubble-body .markdown-message {
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+}
+
 .gg-next-bubble-head {
   display: flex;
   justify-content: space-between;
@@ -553,27 +796,28 @@
 }
 
 .gg-next-bubble-role {
-  font-size: 10px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
 .gg-next-bubble-time {
-  font-size: 11px;
+  font-size: var(--gg-type-grid-1);
   color: var(--gg-slate);
 }
 
 .gg-next-platform {
   display: grid;
   gap: 12px;
+  flex-shrink: 0;
   padding-top: 8px;
   border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
 }
 
 /*
- * Evidence + Claims (locked UX — see docs/product/RESEARCH_WORKBENCH_PRD.md Phase 1,
- * GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.md §5 Evidence):
+ * Evidence + Claims (locked UX — see docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc
+ * §5 Evidence):
  * - Evidence: stacked Field notes + Sources (WorkbenchNextView EvidenceCollapsibleSection).
  * - Same fixed band as each other: height = max-height = --gg-workbench-module-max-h
  *   so nested flex does not collapse; scroll panes use min-height: 0.
@@ -671,7 +915,7 @@
 .gg-next-evidence-section-title {
   flex: 1;
   min-width: 0;
-  font-size: 11px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -690,7 +934,7 @@
   border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
   border-radius: var(--gg-radius-r1);
   text-align: center;
-  font-size: 11px;
+  font-size: var(--gg-type-grid-1);
 }
 
 .gg-next-notes {
@@ -749,7 +993,7 @@
 }
 
 .gg-next-split-tag {
-  font-size: 8px;
+  font-size: var(--gg-type-grid-1);
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -763,31 +1007,921 @@
   gap: 16px;
 }
 
-/* Graph review plate: same max height as Investigation; list scrolls */
-.gg-next-corridor--review > .gg-next-plate:first-of-type {
-  max-height: var(--gg-workbench-module-max-h);
+.gg-next-sigma-host {
+  flex: 1 1 auto;
   min-height: 0;
-  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+}
+
+.gg-next-graph-chrome {
+  flex-shrink: 0;
+  padding: 0 0 4px;
+}
+
+.gg-next-graph-chrome-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 12px;
+}
+
+.gg-next-graph-history-btn {
+  padding: 6px 12px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: var(--gg-radius-r1);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.gg-next-graph-history-btn:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, var(--paper));
+}
+
+.gg-next-graph-history-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.gg-next-graph-chrome-pos {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  color: var(--gg-slate);
+  letter-spacing: 0.04em;
+}
+
+.gg-next-graph-chrome-stale {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  color: var(--gg-slate);
+  letter-spacing: 0.02em;
+}
+
+.gg-next-sigma-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.gg-next-sigma-panel-main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  min-height: 0;
+  /* Graph canvas steals remaining width; rail is fixed. */
+  min-width: 0;
   overflow: hidden;
 }
 
-.gg-next-corridor--review > .gg-next-plate:first-of-type > .gg-next-plate-inner {
-  flex: 1;
+.gg-next-plate--graph-approval .gg-next-sigma-panel-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gg-next-sigma-panel--narrow .gg-next-sigma-panel-main {
+  flex-direction: column;
+}
+
+/* Graph filter rail: dense table / list; can collapse to a narrow strip (session-rail style). */
+.gg-next-graph-filter-rail {
+  flex: 0 0 160px;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
+  max-height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  border-radius: 2px;
+  background: var(--paper);
+  box-sizing: border-box;
+}
+
+.gg-next-graph-filter-rail--collapsed {
+  flex: 0 0 48px;
+  width: 48px;
+  min-width: 48px;
+  max-width: 48px;
+}
+
+.gg-next-graph-filter-rail-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 4px 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  background: var(--paper);
+}
+
+/* Same control as session index rail — double-angle chevrons (» / «). */
+.gg-next-graph-filter-rail-toolbar .gg-next-rail-toggle {
+  flex-shrink: 0;
+}
+
+.gg-next-graph-filter-rail-body {
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
-.gg-next-corridor--review > .gg-next-plate:first-of-type .gg-next-plate-heading {
+.gg-next-graph-filter-rail-inner {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--gg-type-grid-1);
+  line-height: 1.2;
+}
+
+.gg-next-graph-filter-rail-collapsed {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px 10px;
+  scrollbar-gutter: stable;
+}
+
+.gg-next-graph-filter-rail-collapsed-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.gg-next-graph-filter-collapsed-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 28px;
+  min-height: 22px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.gg-next-graph-filter-collapsed-row:has(input:not(:checked)) .gg-next-graph-filter-status-swatch:not(
+    .gg-next-graph-filter-status-swatch--none
+  ),
+.gg-next-graph-filter-collapsed-row:has(input:not(:checked)) .gg-next-graph-filter-kind-swatch {
+  opacity: 0.38;
+}
+
+.gg-next-graph-filter-collapsed-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
+  margin: 0;
+  padding: 2px 0;
+  cursor: pointer;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
+  width: 100%;
+}
+
+.gg-next-graph-filter-collapsed-meta-label {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.gg-next-graph-filter-status-swatch,
+.gg-next-graph-filter-kind-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+/* Accepted: no ring/dot in viz — reserve column width only. */
+.gg-next-graph-filter-status-swatch--none {
+  visibility: hidden;
+  pointer-events: none;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.gg-next-graph-filter-table-meta-icon {
+  width: 14px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: var(--gg-type-grid-1);
+  line-height: 1;
+  color: var(--gg-slate);
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-rail {
+  flex: 0 0 auto;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  max-height: min(26vh, 260px);
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-rail--collapsed {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: stretch;
+  max-height: none;
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-rail--collapsed .gg-next-graph-filter-rail-toolbar {
+  flex: 0 0 40px;
+  width: 40px;
+  border-bottom: none;
+  border-right: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-rail--collapsed .gg-next-graph-filter-rail-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 44px;
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-rail-collapsed {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 4px 8px;
+  padding: 4px 8px;
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-rail-collapsed-group {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.gg-next-sigma-panel--narrow .gg-next-graph-filter-collapsed-meta {
+  display: inline-flex;
+  width: auto;
+  border: none;
+  padding: 0 4px;
+}
+
+.gg-next-graph-filter-table {
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: 1px;
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.gg-next-graph-filter-table--types {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.gg-next-graph-filter-table-cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 6px;
+  margin: 0;
+  background: color-mix(in srgb, var(--gg-slate) 10%, var(--paper));
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.01em;
+}
+
+.gg-next-graph-filter-table-cap--split {
+  padding-right: 4px;
+}
+
+.gg-next-graph-filter-table-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gg-next-graph-filter-table-sort {
+  flex-shrink: 0;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  color: var(--gg-slate);
+  line-height: 1;
+}
+
+.gg-next-graph-filter-table-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+}
+
+.gg-next-graph-filter-actions-sep {
+  color: color-mix(in srgb, var(--ink) 35%, transparent);
+  font-weight: 400;
+}
+
+.gg-next-graph-filter-link {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.gg-next-graph-filter-link:hover {
+  color: var(--gg-route-blue);
+}
+
+.gg-next-graph-filter-table-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 2px 6px 2px 4px;
+  min-height: 20px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  font-size: var(--gg-type-grid-1);
+  font-weight: 400;
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+}
+
+.gg-next-graph-filter-table-row:last-child {
+  border-bottom: none;
+}
+
+.gg-next-graph-filter-table-body--types {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 8.5rem;
+  min-height: 0;
+  scrollbar-gutter: stable;
+}
+
+.gg-next-graph-filter-table-row--meta {
+  background: color-mix(in srgb, var(--paper) 92%, var(--ink));
+}
+
+.gg-next-graph-filter-table-row--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.gg-next-graph-filter-table-row input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+.gg-next-graph-filter-table-cell {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gg-next-sigma-canvas-column {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.gg-next-sigma-canvas-column > .gg-next-sigma-empty {
+  flex: 1 1 auto;
+  min-height: 200px;
+}
+
+.gg-next-sigma-panel--narrow .gg-next-sigma-canvas-column {
+  flex: 1 1 auto;
+  min-height: min(58vh, 560px);
+}
+
+.gg-next-sigma-meta {
+  margin: 0;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.gg-next-sigma-canvas-wrap {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 280px;
+  height: auto;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 2px solid var(--ink);
+  border-radius: var(--gg-radius-r2);
+  background: color-mix(in srgb, var(--paper) 92%, var(--gg-sign-panel));
+}
+
+.gg-next-sigma-canvas-wrap--loading {
+  min-height: 240px;
+}
+
+.gg-next-sigma-headline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.gg-next-sigma-headline .gg-next-sigma-meta {
+  flex: 1 1 auto;
+  min-width: min(100%, 240px);
+}
+
+.gg-next-sigma-border-overlay {
+  display: block;
+}
+
+.gg-next-sigma-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gg-next-sigma-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-slate);
+  cursor: pointer;
+  user-select: none;
+}
+
+.gg-next-sigma-filter-chip input {
+  accent-color: var(--gg-accent-directional);
+  width: 14px;
+  height: 14px;
+}
+
+.gg-next-sigma-clear-focus {
+  margin-left: auto;
+  padding: 4px 10px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 88%, var(--gg-sign-panel));
+  border: 1px solid var(--ink);
+  border-radius: var(--gg-radius-r1);
+  cursor: pointer;
+}
+
+.gg-next-sigma-clear-focus:hover {
+  background: color-mix(in srgb, var(--paper) 78%, var(--gg-accent-directional));
+}
+
+.gg-next-sigma-meta-panel {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: var(--gg-radius-r2);
+  background: color-mix(in srgb, var(--paper) 94%, var(--gg-sign-panel));
+}
+
+.gg-next-sigma-meta-line {
+  margin: 0 0 4px;
+  font-size: var(--gg-type-grid-1);
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.gg-next-sigma-meta-line:last-of-type {
+  margin-bottom: 0;
+}
+
+.gg-next-sigma-meta-kind {
+  color: var(--gg-slate);
+  font-weight: 600;
+}
+
+.gg-next-sigma-meta-status {
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.gg-next-sigma-meta-id {
+  margin-left: 8px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  color: var(--gg-slate);
+}
+
+.gg-next-sigma-meta-hint {
+  margin: 6px 0 0;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  color: var(--gg-slate);
+  letter-spacing: 0.02em;
+}
+
+.gg-next-sigma-empty.gg-next-empty {
+  min-height: 120px;
+  border: 2px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: var(--gg-radius-r2);
+}
+
+/* Review column: like discovery — flex stack in grid cell; graph grows with split; tail scrolls. */
+.gg-next-corridor--review {
+  flex: 1 1 0;
+  min-height: 0;
+  height: auto;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 2px;
+}
+
+.gg-next-review-below-graph {
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 2px;
+}
+
+/* Graph map: shares column height with review tail (Investigation-style flex fill). */
+.gg-next-corridor--review .gg-next-plate--graph-approval {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gg-next-corridor--review .gg-next-plate--graph-approval > .gg-next-plate-inner--grow {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.gg-next-corridor--review .gg-next-plate--graph-approval .gg-next-plate-heading {
   flex-shrink: 0;
 }
 
-.gg-next-corridor--review > .gg-next-plate:first-of-type .gg-next-review-stack {
+.gg-next-corridor--review .gg-next-plate--graph-approval .gg-next-sigma-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.gg-next-corridor--review .gg-next-plate--graph-approval .gg-next-sigma-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gg-next-corridor--review .gg-next-plate--graph-approval .gg-next-sigma-canvas-column {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.gg-next-corridor--review .gg-next-plate--graph-approval .gg-next-sigma-canvas-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Plates below graph: natural height inside scroll tail (no squashed “collapsed” bands). */
+.gg-next-review-below-graph .gg-next-plate--evidence,
+.gg-next-review-below-graph .gg-next-plate--claims {
+  flex: 0 0 auto;
+  height: auto;
+  max-height: none;
+  min-height: 0;
+  overflow: visible;
+}
+
+.gg-next-review-below-graph .gg-next-plate--evidence > .gg-next-plate-inner--grow,
+.gg-next-review-below-graph .gg-next-plate--claims > .gg-next-plate-inner--grow {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.gg-next-review-below-graph .gg-next-evidence-stack {
+  flex: 0 0 auto;
+  overflow: visible;
+  min-height: 0;
+}
+
+.gg-next-review-below-graph .gg-next-plate--evidence.gg-next-plate--approval .gg-next-evidence-panel-scroll {
+  max-height: none;
+}
+
+.gg-next-review-below-graph .gg-next-plate--relationships {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+
+.gg-next-review-below-graph .gg-next-plate--relationships .gg-next-review-stack {
+  max-height: none;
+  overflow: visible;
+  padding-right: 0;
+}
+
+.gg-next-review-below-graph .gg-next-evidence-section--open {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.gg-next-review-below-graph .gg-next-evidence-panel-scroll {
+  flex: 0 0 auto;
+  max-height: none;
+  overflow: visible;
+}
+
+.gg-next-root .gg-next-review-below-graph .gg-next-plate--claims .claims-review-list {
+  flex: 0 0 auto;
+  max-height: none;
+  overflow: visible;
+}
+
+/* Fallback when review rules above are not used (legacy single-view): graph fills space */
+.gg-next-plate--graph-approval {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gg-next-plate--graph-approval > .gg-next-plate-inner {
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.gg-next-plate--graph-approval .gg-next-plate-heading {
+  flex-shrink: 0;
+}
+
+.gg-next-plate--graph-approval .gg-next-sigma-host {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.gg-next-plate--graph-approval .gg-next-sigma-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Sessions rail: new + history in one collapsible */
+.gg-next-sessions-details {
+  border: 2px solid var(--ink);
+  border-radius: var(--gg-radius-r2);
+  background: var(--gg-sign-panel);
+  min-height: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gg-next-sessions-details > .gg-next-sessions-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 12px 14px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.gg-next-sessions-details > .gg-next-sessions-summary::-webkit-details-marker {
+  display: none;
+}
+
+.gg-next-sessions-summary-title {
+  flex: 1;
+  text-align: left;
+}
+
+.gg-next-sessions-panel {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
   overflow: auto;
-  padding-right: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+.gg-next-sessions-panel .gg-next-index-past {
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: var(--gg-radius-r1);
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* Graph filter blade (collapsible) */
+.gg-next-graph-filter-blade {
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: var(--gg-radius-r2);
+  background: color-mix(in srgb, var(--paper) 96%, var(--gg-sign-panel));
+  margin-bottom: 8px;
+}
+
+.gg-next-graph-filter-blade-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  font-weight: 800;
+}
+
+.gg-next-graph-filter-blade-summary::-webkit-details-marker {
+  display: none;
+}
+
+.gg-next-graph-filter-blade-title {
+  font-size: var(--gg-type-grid-1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.gg-next-graph-filter-blade-hint {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  color: var(--gg-slate);
+  text-transform: none;
+  letter-spacing: 0.02em;
+}
+
+.gg-next-graph-filter-blade-body {
+  padding: 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gg-next-graph-filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gg-next-graph-filter-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.gg-next-graph-filter-label {
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.gg-next-graph-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.gg-next-graph-filter-include-deferred {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+  user-select: none;
+}
+
+.gg-next-graph-filter-include-deferred input {
+  accent-color: var(--gg-accent-directional);
+  width: 15px;
+  height: 15px;
+}
+
+.gg-next-graph-filter-bulk {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.gg-next-graph-filter-bulk-btn {
+  padding: 4px 10px;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: var(--gg-radius-r1);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.gg-next-graph-filter-bulk-btn:hover {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, var(--paper));
+}
+
+.gg-next-sigma-filter-chip--disabled {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .gg-next-triplet {

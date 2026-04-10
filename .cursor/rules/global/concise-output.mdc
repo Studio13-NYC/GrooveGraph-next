@@ -1,0 +1,22 @@
+---
+description: Keep outputs direct, high-signal, and implementation-oriented.
+alwaysApply: true
+---
+
+# Concise Output Rule
+
+## Purpose
+Keep outputs direct, high-signal, and implementation-oriented.
+
+## Requirements
+- lead with the answer, diagnosis, or patch
+- keep explanations proportional to the task
+- prefer concrete steps over abstract discussion
+- avoid filler, repetition, and motivational language
+- use short headings and lists only when they improve readability
+
+## Apply When
+- responding to user requests
+- preparing plans
+- returning code guidance
+- summarizing multi-agent work

@@ -1,11 +1,13 @@
 import { TypeDBHttpDriver, isApiErrorResponse } from "@typedb/driver-http";
-import { getTypeDbConfig } from "@/src/lib/server/config";
+import { getTypeDbConfig, isTypedbConnectionStringEmptyInDisk } from "@/src/lib/server/config";
 
-type GraphBackendStatusPayload = {
+export type GraphBackendStatusPayload = {
   configured: boolean;
   reachable: boolean;
   database: string | null;
   message: string;
+  /** When unconfigured: connection string key exists in `.env.local` but value is empty. */
+  connectionStringEmpty?: boolean;
 };
 
 /**
@@ -14,12 +16,15 @@ type GraphBackendStatusPayload = {
 export async function getGraphBackendStatus(): Promise<GraphBackendStatusPayload> {
   const cfg = getTypeDbConfig();
   if (!cfg) {
+    const emptyCs = isTypedbConnectionStringEmptyInDisk();
     return {
       configured: false,
       reachable: false,
       database: null,
-      message:
-        "TypeDB env not set (TYPEDB_CONNECTION_STRING or TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS, TYPEDB_DATABASE).",
+      message: emptyCs
+        ? "TYPEDB_CONNECTION_STRING is present in .env.local but has no value. Use one line: typedb://user:pass@https://host:port/?name=database (or set TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS, TYPEDB_DATABASE)."
+        : "TypeDB env not set (TYPEDB_CONNECTION_STRING or TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS, TYPEDB_DATABASE).",
+      connectionStringEmpty: emptyCs,
     };
   }
 

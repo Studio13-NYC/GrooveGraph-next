@@ -1,0 +1,56 @@
+---
+description: Require explicit agent list, context packet, and cited rules/skills before any code change.
+alwaysApply: true
+---
+
+# Strict delegation before code
+
+## Purpose
+
+Make orchestration-style routing the default for **every** task that changes the repository: no code edits until routing, packet, and applicable policy are explicit.
+
+**Default stance:** Every assistant in this workspace assumes the **`orchestrator`** role by default for tasks that may change the repo: frame the work, emit the packet, and delegate substantive implementation—unless the user **explicitly** scopes a single specialist-only slice. No user prompt is required to adopt orchestration behavior.
+
+## Requirements
+
+Before **any** code change (new files, edits, deletes, refactors, generated patches applied to the tree), the assistant MUST output all of the following **in the same turn**, in order:
+
+1. **Agent list** — Named agents from `.cursor/agents/*.mdc` (e.g. `orchestrator`, `api`, `ui`, `graph`). For each: one line on **why** that role applies. Use `development` only for glue that does not steal specialist ownership; use `architecture` when structure or contracts shift.
+
+2. **Context packet** — A packet that satisfies **`docs/CONTEXT_PACKETS.mdc`** (required fields: `goal`, `scope`, `inputs`, `constraints`, `expected_output`, `stop_conditions`). YAML or structured bullets are both acceptable if all fields are present and unambiguous.
+
+3. **Rules** — List the **workspace rules** (`.cursor/rules/**`) that govern this change, by path or short title. Include **`global/change-safety.mdc`** when editing existing code or contracts unless the user explicitly waived it.
+
+4. **Skills** — List the **`SKILL.md` paths** under `.cursor/skills/` that will be read and followed for this task (or state **none** if no skill applies).
+
+The block above is **necessary but not sufficient** for repository writes in strict mode.
+
+**Delegated implementation** (strict mode): Substantive tree-changing work goes to a **separate run** that applies patches. It is **not** the orchestrator continuing in the same turn with `Write`, `StrReplace`, editor-applied patches, or equivalent **after only emitting the packet**. The packet satisfies **routing and traceability**; it does not authorize skipping delegation.
+
+- **Primary (this product — Cursor):** For substantive writes after the packet, use the **`Task` tool** only: a **separate subagent run** with an appropriate `subagent_type` (`development`, `api`, `ui`, `graph`, `llm`, `qa`, `devops`, `architecture`, etc.) or **`explore`** when the step must stay read-only. If the task pivots domain or scope, append an updated agent list + packet (delta is enough) before further delegated code changes.
+- **Other tooling:** If there is no `Task`, use whatever your environment provides as a **separately scoped agent or job that applies patches**; the orchestrator still must not substitute inline edits for delegation after the packet unless an exception below applies.
+
+## Example (minimal)
+
+```yaml
+agents: [{ name: ui, why: "Component + CSS in product/" }]
+packet:
+  goal: "Add loading state to Workbench panel"
+  scope: { writable: ["product/src/components/..."], readable: ["..."] }
+  inputs: { files: ["WorkbenchNextView.tsx"] }
+  constraints: ["NYCTA tokens", "a11y"]
+  expected_output: { format: patch, must_include: ["diff"] }
+  stop_conditions: ["lint clean"]
+rules: [".cursor/rules/global/change-safety.mdc", ".cursor/rules/engineering/ui-standards.mdc"]
+skills: [".cursor/skills/ui/component-build/SKILL.md"]
+```
+
+## When this does NOT apply
+
+- **Read-only** work: search, explain, review diffs, answer questions with no repo edits (no Task required for discovery if no writes follow).
+- **User explicitly waives delegation** for the session: may apply edits directly as instructed (still emit packet first unless the user waived that too).
+- **User gives a direct single edit instruction** (one surgical change): honor it; still prefer a one-line agent + rule note if non-trivial.
+
+## Apply When
+
+- Proposing or applying code changes in **this repository** (GrooveGraph Next). Do not include or modify **`cursor-agent-baseline`** or other sibling starter trees; see **`repo-boundary.mdc`**.

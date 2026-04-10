@@ -8,21 +8,22 @@ Use this checklist whenever you add, rename, remove, or materially change a suba
 
 - First confirm that no existing specialist fits the work.
 - Missing specialist coverage is a stop condition, not permission for the orchestrator to keep the task.
-- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is explicitly justified.
+- Default **`model`** for a new role card is **`inherit`** unless a stronger lane is explicitly justified.
 
 ## Required update surfaces
 
 1. Add or update the role card in `.cursor/agents/`
 2. Update `docs/AGENT_REGISTRY.mdc`
-3. Update `.cursor/rules/subagent-routing.mdc`
-4. Update `docs/AGENT_ORCHESTRATION.mdc` if authority or handoff behavior changes
-5. Update `docs/MODEL_ROUTING.mdc` if the model lane changes
-6. Update `AGENTS.mdc` if the repo-level operating contract changes
-7. If the lane owns product briefs or PRD-adjacent prose, confirm **`docs/product/`** (or linked canonical doc) stays accurate
-8. Record the change in `docs/DECISION_LOG.mdc` if it affects governance
-9. Update `docs/HYGIENE.mdc` if the lane affects cleanup or removal policy
-10. Update `README.md` only if the top-level operating stance changes
-11. If you are recording formal workflow validation evidence, append to `docs/WORKFLOW_VALIDATION.mdc`
+3. Update **`.cursor/rules/`** when behavior is global (`global/`) or engineering-wide (`engineering/`); add a focused rule file rather than growing unrelated rules
+4. Add or update **`.cursor/skills/<domain>/<skill-name>/SKILL.md`** when reusable execution steps are needed
+5. Update `docs/AGENT_ORCHESTRATION.mdc` if authority or handoff behavior changes
+6. Update `docs/MODEL_ROUTING.mdc` if default model pinning changes
+7. Update `AGENTS.mdc` if the repo-level operating contract changes
+8. If the lane owns product briefs, confirm canonical **`docs/`** + **`product/README.md`** stay accurate
+9. Record the change in `docs/DECISION_LOG.mdc` if it affects governance
+10. Update `docs/HYGIENE.mdc` if the lane affects cleanup or removal policy
+11. Update `README.md` only if the top-level operating stance changes
+12. If you are recording formal workflow validation evidence, append to `docs/research-workbench-validation.md` and/or `docs/DECISION_LOG.mdc`
 
 ## Add-a-subagent checklist
 
@@ -30,7 +31,7 @@ Use this checklist whenever you add, rename, remove, or materially change a suba
 - define inputs
 - define output contract
 - define stop conditions
-- assign the default `GPT-5.4-mini` lane unless there is an explicit reason not to
+- set **`model: inherit`** unless there is an explicit reason to pin a model
 - document any non-default model choice in the role card and `docs/MODEL_ROUTING.mdc`
 - ensure packet usage is still valid
 - note whether the subagent changes the visual or documentation system

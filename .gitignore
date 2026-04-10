@@ -16,3 +16,4 @@ coverage/
 Thumbs.db
 test-output/
 /typedb-cloud-credentials-groove-graph.txt
+.temp/

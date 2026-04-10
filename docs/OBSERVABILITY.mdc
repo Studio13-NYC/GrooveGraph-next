@@ -16,7 +16,7 @@ Today the repo has:
 
 - local slice-cost telemetry in `.telemetry/slice-costs.jsonl`
 - rough `cost_summary` guidance in `docs/USAGE_ACCOUNTING.mdc`
-- validation artifacts in `docs/` (e.g. `docs/research-workbench-validation.md`, `docs/WORKFLOW_VALIDATION.mdc`)
+- validation artifacts in `docs/` (e.g. `docs/research-workbench-validation.md`)
 
 That is useful, but it is not yet a full observability contract.
 
@@ -55,8 +55,8 @@ For runtime request flows, also capture:
 Local framework telemetry remains the first-line evidence surface:
 
 - append rough slice summaries to `.telemetry/slice-costs.jsonl`
-- persist human-readable run artifacts in **`docs/`** (or append to `docs/DECISION_LOG.mdc` / `docs/GENERALIZATION_AUDIT.mdc` when appropriate; pre-consolidation `research/` logs are historical—git history)
-- keep `docs/WORKFLOW_VALIDATION.mdc` aligned with the latest meaningful evidence
+- persist human-readable run artifacts in **`docs/`** (or append to `docs/DECISION_LOG.mdc` when appropriate; pre-consolidation `research/` logs are historical—git history)
+- keep `docs/research-workbench-validation.md` aligned with the latest meaningful evidence when the workbench is the subject
 
 ## Azure runtime telemetry
 

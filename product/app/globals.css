@@ -31,6 +31,31 @@ body {
   min-height: 100%;
 }
 
+/* Workbench + app shell: allow normal page scroll so the footer is reachable. */
+html:has(.gg-next-root),
+html:has(.gg-app),
+body:has(.gg-next-root),
+body:has(.gg-app) {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body:has(.gg-next-root),
+body:has(.gg-app) {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Shell fills remaining body height below any Next.js / script siblings (footer stays at viewport bottom). */
+body:has(.gg-next-root) > .gg-next-root,
+body:has(.gg-app) main.gg-app {
+  flex: 1 1 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);

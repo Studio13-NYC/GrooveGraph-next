@@ -1,0 +1,20 @@
+---
+description: GrooveGraph Next — canonical repo boundary; no external legacy codebase as source of truth.
+alwaysApply: true
+---
+
+# Repository boundary
+
+**This repository** (GrooveGraph Next root) is the sole writable source of truth: docs, `.cursor/`, and the **`product/`** Next.js app (research workbench). There is no parallel in-tree `research/` or `prototypes/` package; historical layouts live in **git history** where docs note it.
+
+## Other folders in the workspace
+
+- **`cursor-agent-baseline`** (or any clone of that starter) is **read-only** here: do **not** edit, sync into, or “mirror” GrooveGraph outputs into it from this project. It is a baseline already applied into GrooveGraph; authoritative policy and code live **only** in this repo.
+
+## Rules
+
+- Prefer in-repo docs and code over informal external notes.
+- Do not treat any sibling or external GrooveGraph-named tree as authoritative for this repo.
+- Writable outputs belong here: policy, agents, rules, skills, `product/`, `docs/`.
+- Read-only external references (vendor docs, TypeDB docs, Figma) are fine; do not copy them in as competing “sources of truth” without review.
+- TypeDB schema as committed: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`** from repo root when the live DB schema changes.

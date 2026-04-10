@@ -1,0 +1,25 @@
+---
+description: UI standards for semantic HTML, accessibility, responsive layout, and component discipline.
+alwaysApply: false
+---
+
+# UI Standards
+
+## Purpose
+Keep front-end code accessible, maintainable, and visually consistent.
+
+## Requirements
+- use semantic HTML first
+- maintain keyboard accessibility and sensible focus behavior
+- support loading, empty, success, and error states
+- keep components focused and reusable
+- separate tokens/styles from component behavior where possible
+- prefer maintainable CSS architecture over ad hoc overrides
+- keep client-side state scoped as tightly as possible
+- ensure responsive behavior for common viewport sizes
+- avoid visual drift from the design system
+
+## Apply When
+- building components
+- debugging layout or interaction issues
+- translating design artifacts into code

@@ -1,0 +1,27 @@
+---
+description: TypeScript coding standards for strict typing, modularity, and boundary validation.
+alwaysApply: false
+---
+
+# TypeScript Standards
+
+## Purpose
+Maintain a strict, readable, and durable TypeScript codebase.
+
+## Requirements
+- use strict typing by default
+- avoid `any` unless there is a clear boundary reason
+- define explicit types for public contracts
+- prefer small focused interfaces and type aliases
+- use discriminated unions for variant states where helpful
+- keep exported functions and classes explicitly typed
+- validate untrusted external input at boundaries
+- keep domain types separate from transport and persistence types
+- prefer composition over inheritance
+- avoid duplicate type definitions across layers
+- keep functions small and intention-revealing
+
+## Apply When
+- writing or editing TypeScript
+- designing module contracts
+- mapping data across layers

@@ -2,195 +2,75 @@
 
 ## Purpose
 
-This document defines how work is delegated, coordinated, and completed in `GrooveGraph Next`.
+How work is delegated, coordinated, and completed in GrooveGraph Next using the **`.cursor/`** agent package: ten domain agents, shared **rules** (`global/` + `engineering/`), and **skills** (`**/SKILL.md`).
 
-The goal is not to maximize agent count. The goal is to create a system with clear authority, clean handoffs, bounded scope, and strong output quality.
+Goals: clear authority, clean handoffs, bounded scope, strong outputs—not maximum agent count.
 
-## Core hierarchy
+## Core roles
 
-### Top orchestrator
+### Orchestrator
 
-`GPT-5.4` is the user-facing orchestrator.
+The **`orchestrator`** agent (`.cursor/agents/orchestrator.mdc`) frames tasks, picks specialists, sequences handoffs, resolves conflicts between outputs, and synthesizes for the user. It defaults to **delegation**, not doing specialist-sized work itself.
 
-It owns:
+In GrooveGraph Next, assistants **default to orchestrator behavior** (frame work, packet, delegate per strict mode) unless the user **narrows scope** to a single specialist-only slice.
 
-- task decomposition
-- acceptance criteria
-- conflict resolution between agent outputs
-- final synthesis for the user
-- escalation decisions when scope or ambiguity grows
+In Cursor, the **parent session model** may be stronger than specialists; specialist cards default to **`model: inherit`** unless pinned.
 
-It should default to specialist delegation, not direct execution.
+### Architecture
 
-### Meta lane
+**`architecture`** reviews structure, contracts, and cross-cutting tradeoffs before UI, API, graph, or LLM boundaries shift.
 
-`Composer 1.5` is the Cursor-native meta lane.
+### Development
 
-It owns:
+**`development`** implements cross-cutting code, glue, and debugging without overriding **`api`**, **`ui`**, **`design`**, **`graph`**, **`llm`**, **`qa`**, or **`devops`** ownership.
 
-- authoring and refining rules
-- skills design
-- prompt design
-- tool-contract design
-- repo-level workflow patterns
+### Specialists
 
-### Specialist lanes
-
-`GPT-5.4-mini` handles:
-
-- exploration
-- product strategy and reboot framing via the `product-manager` subagent
-- code review
-- documentation drafting
-- test interpretation
-- visual strategy via the `Graphic Artist` subagent
-- infrastructure and deployment analysis via the `infrastructure-deployment` subagent
-
-`GPT-5.4-nano` handles:
-
-- context compression
-- routing classification
-- lint and log triage
-- metadata extraction
-- cleanup triage via the `hygienist` subagent
-
-`GPT-5.3-codex` handles:
-
-- bounded implementation
-- refactoring after acceptance criteria are stable
-- test-writing and repair loops
+| Agent | Domain |
+|-------|--------|
+| `api` | Endpoints, validation, typed transport contracts |
+| `ui` | Client UI, components, layout, CSS |
+| `design` | Design system, tokens, Figma/Pencil alignment |
+| `graph` | TypeDB schema, queries, graph persistence |
+| `llm` | Prompts, context packing, structured model I/O |
+| `qa` | Test plans, regression, e2e interpretation |
+| `devops` | Deploy, env, pipelines, cloud operations |
 
 ## Canonical precedence
 
-Use this file as the authority for hierarchy and authority model.
+- **`docs/MODEL_ROUTING.mdc`** — model tier habits when not using `inherit`
+- **`docs/CONTEXT_PACKETS.mdc`** — delegation packet fields
+- **`AGENTS.mdc`** — repo-level contract + GrooveGraph appendix
+- **`.cursor/rules/`** — operational mirrors; keep aligned when routing changes
 
-When related files drift:
+## Strict mode (default)
 
-- `docs/MODEL_ROUTING.mdc` wins for model selection and routing
-- `docs/CONTEXT_PACKETS.mdc` wins for delegation packet fields
-- `AGENTS.mdc` summarizes but does not override these docs
-- `.cursor/rules/` mirrors these decisions operationally and must stay in sync
+Before any code change in this repo, assistants follow **`.cursor/rules/global/strict-packet-before-code.mdc`**: emit an **agent list** (with rationale), a full **context packet**, and cite applicable **rules** and **skills**. That block is **necessary but not sufficient** for writes: **delegated implementation** is a **separate run** that applies patches—in Cursor, the **`Task` tool** only (appropriate `subagent_type`; **`explore`** for read-only discovery)—not the orchestrator applying patches in the same turn after only emitting the packet, except where that rule file’s exceptions apply. Read-only explanation and search are exempt from writes (and from delegation when no tree mutation follows). Writable work targets **this repository only**; sibling starter trees such as **`cursor-agent-baseline`** are not edited from here (see **`rules/global/repo-boundary.mdc`**). **Other tooling:** if there is no `Task`, use a **separately scoped agent or job that applies patches**; do not substitute the orchestrator’s inline edits for that delegation unless an exception in the strict rule applies.
 
 ## Authority model
 
-Only the orchestrator is allowed to combine outputs across domains and declare a task complete.
+Only the **orchestrator** should merge cross-domain outputs and declare multi-step work complete unless the user scoped a single-agent task.
 
-Subagents should:
-
-- stay within their packet scope
-- avoid silent expansion of scope
-- return explicit outputs instead of partial thoughts
-- stop when their stop conditions are reached
-
-The orchestrator should:
-
-- route to a fitting specialist first
-- justify any override explicitly
-- stop and create a new specialist when coverage is missing instead of stretching the orchestrator role
-- keep expensive top-model work focused on judgment and synthesis
-
-## Subagent set
-
-### `orchestrator`
-
-- top-level operating contract
-- references the hierarchy and completion standards
-
-### `composer-meta`
-
-- dedicated to Cursor-native meta-authoring
-- used when repo behavior itself is changing
-
-### `explorer`
-
-- gathers context quickly
-- returns concise, actionable findings
-
-### `product-manager`
-
-- studies legacy product signals without copying them blindly
-- defines discovery-first product loops and hero workflows
-- recommends flexible graph persistence before ontology hardening
-
-### `implementer`
-
-- executes bounded code changes
-- assumes acceptance criteria are fixed before coding starts
-
-### `reviewer`
-
-- finds bugs, regressions, unclear assumptions, and missing tests
-
-### `tester`
-
-- validates workflows and interprets failures
-
-### `hygienist`
-
-- runs cleanup analysis
-- converts tool output into proposal-first hygiene guidance
-- never deletes code or files without explicit human approval
-
-### `graphic-artist`
-
-- turns architecture and strategy into persuasive visual artifacts
-
-### `animator`
-
-- owns GSAP timelines, plugins, scroll-linked choreography, and React/Next motion patterns
-- aligns timing, easing, and interaction with the same Studio13 and NYCTA-derived visual discipline as `graphic-artist`
-
-### `infrastructure-deployment`
-
-- preserves the Azure baseline
-- owns deploy-path documentation and smoke validation
-- distinguishes what must stay from what may be overwritten
-
-## Agent to model map
-
-| Agent | Preferred model | Reason |
-|---|---|---|
-| `orchestrator` | `GPT-5.4` | Top-level judgment, conflict resolution, and final synthesis |
-| `composer-meta` | `Composer 1.5` | Cursor-native rules, skills, prompts, and tool contracts |
-| `explorer` | `GPT-5.4-mini` | Fast bounded exploration with enough reasoning depth |
-| `product-manager` | `GPT-5.4-mini` | Product-definition research, reboot framing, and workflow synthesis at moderate cost |
-| `implementer` | `GPT-5.3-codex` | Best default for bounded coding and refactoring work |
-| `reviewer` | `GPT-5.4-mini` | Strong bug-finding and review quality at lower cost |
-| `tester` | `GPT-5.4-mini` | Good workflow validation and failure interpretation |
-| `hygienist` | `GPT-5.4-nano` | Fast, cheap triage for cleanup tooling and proposal generation |
-| `graphic-artist` | `GPT-5.4-mini` | Best balance of taste, structure, and cost for visual direction |
-| `animator` | `GPT-5.4-mini` | Deep GSAP and motion-system reasoning without frontier-model cost |
-| `infrastructure-deployment` | `GPT-5.4-mini` | Operational reasoning without paying frontier-model cost |
+Subagents stay within packet scope, return explicit outputs, and stop at stated stop conditions. Missing coverage is a **stop**: add or adjust a role card and registry, do not stretch the orchestrator.
 
 ## Delegation workflow
 
-1. The orchestrator defines the desired outcome.
-2. The orchestrator selects the correct lane.
-3. The orchestrator prepares a context packet.
-4. The subagent executes only within packet boundaries.
-5. The subagent returns structured output.
-6. The orchestrator decides whether to:
-   - accept
-   - refine
-   - hand off to another lane
-   - escalate back to the user
+1. Define outcome and acceptance.
+2. Choose **`architecture`** if contracts or structure are in play.
+3. Route to the narrowest specialist (or **`development`** for glue).
+4. Build a packet per **`docs/CONTEXT_PACKETS.mdc`** / **`skills/llm/context-packet/SKILL.md`**.
+5. Execute, return structured results; **`qa`** when behavior or contracts changed.
+6. Orchestrator synthesizes or hands off again.
 
 ## What good orchestration looks like
 
-- fewer, sharper handoffs
-- specialist-first delegation by default
-- explicit ownership
-- explicit rough cost summaries when available
-- stable naming
-- one source of truth per concern
-- visible boundaries between reference, writable implementation, and experiments
+- Fewer, sharper handoffs; specialist-first by default
+- Explicit ownership and rough **`cost_summary`** when available
+- One source of truth per concern; boundaries between policy, implementation, and experiments stay visible
 
 ## What bad orchestration looks like
 
-- delegating vague tasks
-- treating missing specialist coverage as permission to keep the work at the top layer
-- treating the orchestrator as the default executor instead of the default delegator
-- hiding unresolved assumptions inside implementation work
-- mixing policy authoring with product coding
-- letting legacy reference material silently control new work
-- using expensive models where cheap ones are sufficient
+- Vague delegation or orchestrator as default worker
+- Missing specialist treated as permission to absorb the work at the top
+- Policy authoring mixed with product coding without intent
+- Expensive models for mechanical work

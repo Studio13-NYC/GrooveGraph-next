@@ -4,9 +4,11 @@
 
 Keep the framework clean enough that orchestration quality is not masked by stale files, dead exports, or contradictory docs.
 
-## Hygiene lane
+## Who runs hygiene
 
-Use the `hygienist` subagent for:
+There is no separate **`hygienist`** agent file. Use **`development`** to execute the workflow and tooling below; use **`qa`** when you need a second pass on regressions after large removals. Prefer an efficient model tier when the parent session is not already pinned.
+
+Typical steps:
 
 - `npm prune`
 - `npx knip`
@@ -14,8 +16,6 @@ Use the `hygienist` subagent for:
 - `.gitignore` coverage audits for known tool-generated local surfaces
 - interpreting unused-surface results
 - turning tool output into a human-reviewable proposal instead of silent deletion
-
-Preferred model: `GPT-5.4-nano`
 
 ## Required run shape
 
@@ -71,7 +71,7 @@ Root `knip.json` **`ignoreFiles`** lists `archive/**/*.mjs` and **`product/src/v
 
 ## Where to log hygiene evidence (post-consolidation)
 
-- **`research/hygiene/`** no longer exists. For **generalization / fork-prep** runs, append a dated note to **`docs/GENERALIZATION_AUDIT.mdc` §3** and/or **`docs/DECISION_LOG.mdc`**. Older hygiene logs remain in **git history**.
+- **`research/hygiene/`** no longer exists. For **generalization / fork-prep** runs, append a dated note to **`docs/DECISION_LOG.mdc`**. Older hygiene logs remain in **git history**.
 
 ## Current stance
 

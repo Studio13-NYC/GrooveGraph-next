@@ -7,7 +7,8 @@
 | File | Purpose |
 |---|---|
 | `product/README.md` | Run, env, TypeDB, deploy pointers for the canonical Next.js app |
-| `docs/product/RESEARCH_WORKBENCH_PRD.mdc` | PRD: research workbench — triplet UX → TypeDB persistence (Sync to graph; see PRD §7 Phase 2) → session graph visualization |
+| `research-workbench-validation.md` | Workbench validation evidence; **`product/README.md`** for run, TypeDB, deploy |
+| `GRAPH_VIZ_UX_RESEARCH.md` | Sigma / workbench graph visualization UX research (`design` + `ui`); encoding, layouts, phased recommendations |
 
 ## Canonical docs
 
@@ -21,17 +22,14 @@
 | `VISUAL_STYLE_GUIDE.mdc` | Short entry: graphics system, regimes, checklist |
 | `design-language/FOUNDATION.mdc` | Merged NYCTA / Vignelli design authority (map + manual + software) |
 | `design-language/README.md` | Index for the design-language folder |
-| `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` | Execution brief for research workbench chrome (graphic-artist lane) |
+| `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` | Execution brief for research workbench chrome (`design` / `ui` agents) |
 | `DB-Schema-Export.typeql` | TypeQL export of the live TypeDB schema (regenerate: `npm run dump:typedb-schema` from repo root) |
 | `GITHUB_STRATEGY.mdc` | Canonical successor-repo and remote strategy |
 | `AZURE_BASELINE.mdc` | Current Azure environment, preservation rules, and overwrite boundaries |
-| `HYGIENE.mdc` | Canonical cleanup workflow, `hygienist` lane, and proposal-first removal policy |
+| `HYGIENE.mdc` | Canonical cleanup workflow, proposal-first removal policy (`development` + `docs/HYGIENE.mdc`) |
 | `OBSERVABILITY.mdc` | Canonical traceability, logging, and Azure runtime observability guidance |
 | `DECISION_LOG.mdc` | Durable record of governing decisions |
 | `SUBAGENT_MAINTENANCE.mdc` | Checklist for adding or changing subagents |
-| `WORKFLOW_VALIDATION.mdc` | Evidence from representative framework workflow checks |
-| `GENERALIZATION_AUDIT.mdc` | Audit for reuse vs product-specific; fork checklist |
-| `RESEARCH_WORKBENCH_WAYFINDING_PLAN.mdc` | Live-site design critique turned into a `graphic-artist` execution brief and implementation-ready S13/MTA redesign plan for the research workbench |
 
 ## Precedence
 
@@ -46,15 +44,15 @@ When files drift, use this precedence:
 7. `docs/OBSERVABILITY.mdc` for traceability, runtime logging, and Azure telemetry guidance
 8. `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc` for graphics and visual regime decisions
 9. `AGENTS.mdc` as the repo-level operating summary
-10. `.cursor/rules/*.mdc` as executable mirrors that must stay in sync with the docs
+10. `.cursor/rules/global/*.mdc` and `.cursor/rules/engineering/*.mdc` as executable mirrors that must stay in sync with the docs
 
 ## Related surfaces
 
 - `.cursor/agents/` for role cards
 - `.cursor/rules/` for durable Cursor behavior
-- `.cursor/skills/` for reusable operational helpers — orchestration checklist (`agent-orchestrator`), packet template (`context-packet-builder`, canonical schema in `CONTEXT_PACKETS.mdc`), visual/motion helpers (`studio13-wayfinding-system`, `gsap-motion-system`, `graph-data-viz-system`), and **Cloud agent run/test bootstrap** (`cloud-agent-repo-starter`)
+- `.cursor/skills/**/SKILL.md` for reusable execution modules by domain (`api`, `design`, `devops`, `graph`, `llm`, `qa`, `ui`, `shared`); canonical delegation schema remains **`docs/CONTEXT_PACKETS.mdc`**
 - `assets/posts/` for narrative updates and framework blog posts
-- `docs/research-workbench-validation.md` for workbench validation evidence; **`docs/product/`** for PRD and product-manager-style briefs; historical `research/*` paths are **git history** only after repo consolidation
+- `docs/research-workbench-validation.md` for workbench validation evidence; historical `research/*` paths are **git history** only after repo consolidation
 
 ## Posts
 

@@ -1,0 +1,13 @@
+---
+description: NYCTA / Vignelli design foundation for GrooveGraph Next (tokens + FOUNDATION.mdc).
+alwaysApply: true
+---
+
+# MTA design foundation
+
+- **`docs/design-language/FOUNDATION.mdc`** — merged authority for NYCTA / Vignelli–aligned work (map grammar, signage discipline, software wayfinding).
+- **Tokens:** `product/src/visual-system/nycta-groovegraph-tokens.css` — imported from `product/app/globals.css`.
+- **Historical scans / extracts** that lived under removed `graphic-design-agent-assets/` — recover from **git history** if needed.
+- Map grammar: orthogonal + 45°, uniform line weight, parallel gutters, repeatable radii, explicit interchanges.
+- Directional UI accent = `--gg-accent-directional` (NYCTA orange route).
+- Short entry: **`docs/VISUAL_STYLE_GUIDE.mdc`**.

@@ -1,0 +1,25 @@
+---
+description: API design standards for routes, contracts, validation, and error handling.
+alwaysApply: false
+---
+
+# API Design Standards
+
+## Purpose
+Keep APIs typed, predictable, and easy to evolve.
+
+## Requirements
+- define clear endpoint names and responsibilities
+- make request and response shapes explicit
+- validate all incoming external data
+- use a consistent error structure
+- keep controllers thin and service logic separate
+- do not expose storage or query-layer details in public responses
+- keep authentication and authorization checks near the boundary
+- design for predictable pagination, filtering, and failure behavior
+- document contract changes before implementation when they affect other layers
+
+## Apply When
+- creating or changing endpoints
+- defining DTOs and validation
+- adjusting controller/service boundaries

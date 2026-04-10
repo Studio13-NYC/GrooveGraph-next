@@ -1,4 +1,4 @@
-# Instructions for `graphic-artist` — Research Workbench
+# Instructions for `design` / `ui` — Research Workbench
 
 Use this brief when designing or implementing the research workbench at **`/`** in `product`. **Visual reference:** the shipped **manual / plate** shell (`.gg-next-root`); preserve **functional requirements** (same APIs, session lifecycle, decisions, edits).
 
@@ -8,7 +8,7 @@ Use this brief when designing or implementing the research workbench at **`/`** 
 
 ## 1. Role
 
-You are the **graphic-artist** lane (`.cursor/agents/graphic-artist.mdc`). You own **composition, typography hierarchy, token binding**, **manual / plate grammar**, and **motion intent**. Output must be executable in code without orphan hex or decorative SaaS chrome.
+You are the **`design`** or **`ui`** agent (`.cursor/agents/design.mdc`, `.cursor/agents/ui.mdc`). You own **composition, typography hierarchy, token binding**, **manual / plate grammar**, and **motion intent** (UI implements interaction; design owns system and brief). Output must be executable in code without orphan hex or decorative SaaS chrome.
 
 ---
 

@@ -1,7 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode, type Ref } from "react";
-import type { ResearchWorkbenchModel } from "./research-workbench-model";
+import dynamic from "next/dynamic";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type Ref,
+} from "react";
+import { buildVizGraphFromSession } from "@/src/lib/workbench-viz/build-from-session";
+import { useSessionVizHistory } from "@/src/hooks/useSessionVizHistory";
+import type { WorkbenchGraphFooterSlice, WorkbenchVizApiResponse } from "@/src/types/workbench-viz-graph";
+import type { GraphBackendStatusPayload, ResearchWorkbenchModel } from "./research-workbench-model";
 import { formatTimestamp } from "./research-workbench-utils";
 import {
   DecisionRow,
@@ -11,6 +23,19 @@ import {
   StatusBar,
   TripletEntitySummary,
 } from "./research-workbench-widgets";
+import type { WorkbenchSigmaGraphHandle } from "./WorkbenchSigmaGraph";
+
+const WorkbenchSigmaGraph = dynamic(
+  () => import("./WorkbenchSigmaGraph").then((m) => m.WorkbenchSigmaGraph),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="gg-next-sigma-panel">
+        <div className="gg-next-sigma-canvas-wrap gg-next-sigma-canvas-wrap--loading" aria-busy="true" />
+      </div>
+    ),
+  },
+);
 
 const INDEX_NAV_COLLAPSED_KEY = "gg-workbench-index-nav-collapsed";
 
@@ -19,7 +44,14 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
   const [indexNavHydrated, setIndexNavHydrated] = useState(false);
   const [evidenceFieldNotesOpen, setEvidenceFieldNotesOpen] = useState(true);
   const [evidenceSourcesOpen, setEvidenceSourcesOpen] = useState(true);
-  const [includeDeferredInGraphSync, setIncludeDeferredInGraphSync] = useState(false);
+  const [vizPayload, setVizPayload] = useState<WorkbenchVizApiResponse | null>(null);
+  const [vizLoading, setVizLoading] = useState(false);
+  const [graphFooter, setGraphFooter] = useState<WorkbenchGraphFooterSlice | null>(null);
+  const graphRef = useRef<WorkbenchSigmaGraphHandle | null>(null);
+
+  const onGraphFooterState = useCallback((slice: WorkbenchGraphFooterSlice) => {
+    setGraphFooter(slice);
+  }, []);
 
   const {
     sessions,
@@ -53,9 +85,6 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     addTripletEntityAlias,
     removeTripletEntityAlias,
     saveTripletEdit,
-    isGraphSyncing,
-    graphSyncFeedback,
-    syncSessionToGraph,
     graphBackendStatus,
     graphBackendStatusLoading,
     refreshGraphBackendStatus,
@@ -70,6 +99,68 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     () => selectedSession?.claims.filter((claim) => claim.status === "proposed") ?? [],
     [selectedSession?.claims],
   );
+
+  const sessionVizFallback = useMemo(
+    () => (selectedSession ? buildVizGraphFromSession(selectedSession) : null),
+    [selectedSession],
+  );
+
+  const vizLatest = useMemo((): WorkbenchVizApiResponse | null => {
+    if (vizPayload) {
+      return vizPayload;
+    }
+    if (sessionVizFallback && sessionVizFallback.nodes.length > 0) {
+      return { source: "session", graph: sessionVizFallback };
+    }
+    return null;
+  }, [vizPayload, sessionVizFallback]);
+
+  const vizHistory = useSessionVizHistory(selectedSessionId, vizLatest);
+
+  useEffect(() => {
+    if (!selectedSessionId) {
+      setGraphFooter(null);
+    }
+  }, [selectedSessionId]);
+
+  useEffect(() => {
+    if (!selectedSessionId) {
+      setVizPayload(null);
+      setVizLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setVizLoading(true);
+
+    void fetch(`/api/sessions/${encodeURIComponent(selectedSessionId)}/graph/viz`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || res.statusText);
+        }
+        return res.json() as Promise<WorkbenchVizApiResponse>;
+      })
+      .then((body) => {
+        if (!cancelled) {
+          setVizPayload(body);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setVizPayload(null);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setVizLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selectedSessionId, selectedSession?.updatedAt]);
 
   useEffect(() => {
     try {
@@ -92,84 +183,20 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
   const canCollapseIndex = !isNarrowWorkspaceLayout;
   const indexCollapsed = canCollapseIndex && indexNavCollapsed;
 
-  const directionalLine = selectedSession
-    ? `Active session: ${selectedSession.title} · Updated ${formatTimestamp(selectedSession.updatedAt)}`
-    : "Select a session or open a new one to begin.";
-
   return (
     <main className="gg-next-root">
       <header className="gg-next-masthead">
         <div className="gg-next-masthead-band" aria-hidden />
-        <div className="gg-next-masthead-grid">
+        <div className="gg-next-masthead-grid gg-next-masthead-grid--minimal">
           <div className="gg-next-masthead-id">
             <p className="gg-next-kicker">Identification</p>
             <h1 className="gg-next-product">GrooveGraph</h1>
             <p className="gg-next-regime">Research workbench</p>
           </div>
-          <p className="gg-next-directional">{directionalLine}</p>
-          <div
-            className="gg-next-graph-backend"
-            role="status"
-            aria-live="polite"
-            title={
-              graphBackendStatus && !graphBackendStatusLoading ? graphBackendStatus.message : undefined
-            }
-          >
-            {graphBackendStatusLoading ? (
-              <p className="gg-next-graph-backend-text">Graph connection: checking…</p>
-            ) : graphBackendStatus ? (
-              <p className="gg-next-graph-backend-text">
-                <span className="gg-next-graph-backend-label">Graph</span>
-                {graphBackendStatus.database ? (
-                  <>
-                    <span className="gg-next-graph-backend-sep" aria-hidden>
-                      {" · "}
-                    </span>
-                    <span className="gg-next-graph-backend-db">DB “{graphBackendStatus.database}”</span>
-                  </>
-                ) : null}
-                <span className="gg-next-graph-backend-sep" aria-hidden>
-                  {" · "}
-                </span>
-                <span
-                  className={
-                    graphBackendStatus.reachable
-                      ? "gg-next-graph-backend-state gg-next-graph-backend-state--ok"
-                      : graphBackendStatus.configured
-                        ? "gg-next-graph-backend-state gg-next-graph-backend-state--warn"
-                        : "gg-next-graph-backend-state gg-next-graph-backend-state--warn"
-                  }
-                >
-                  {graphBackendStatus.reachable
-                    ? "Connected"
-                    : graphBackendStatus.configured
-                      ? "Unreachable"
-                      : "Not configured"}
-                </span>
-                <button
-                  type="button"
-                  className="gg-next-graph-backend-refresh"
-                  onClick={() => void refreshGraphBackendStatus()}
-                  title="Recheck graph connection"
-                >
-                  Recheck
-                </button>
-              </p>
-            ) : (
-              <p className="gg-next-graph-backend-text gg-next-graph-backend-state--warn">
-                Graph connection: status unavailable.
-              </p>
-            )}
-          </div>
         </div>
       </header>
 
       {error ? <div className="gg-next-alert">{error}</div> : null}
-      {graphSyncFeedback && !error ? (
-        <div className="gg-next-alert gg-next-alert--success" role="status">
-          {graphSyncFeedback}
-        </div>
-      ) : null}
 
       <div
         className="gg-next-body"
@@ -179,8 +206,8 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
           gridTemplateColumns: isNarrowWorkspaceLayout
             ? "minmax(0, 1fr)"
             : indexCollapsed
-              ? `56px minmax(0, ${leftColumnFraction}fr) 12px minmax(0, ${1 - leftColumnFraction}fr)`
-              : `minmax(260px, 0.28fr) minmax(0, ${leftColumnFraction}fr) 12px minmax(0, ${1 - leftColumnFraction}fr)`,
+              ? `56px minmax(0, ${leftColumnFraction}fr) 12px minmax(min(42vw, 560px), ${1 - leftColumnFraction}fr)`
+              : `minmax(200px, 0.26fr) minmax(0, ${leftColumnFraction}fr) 12px minmax(min(38vw, 520px), ${1 - leftColumnFraction}fr)`,
           gap: isNarrowWorkspaceLayout ? "16px" : "0 12px",
           alignItems: "stretch",
         }}
@@ -255,72 +282,79 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                 </button>
               </div>
             ) : null}
-            <div className="gg-next-plate gg-next-plate--rail">
-              <div className="gg-next-plate-band" aria-hidden />
-              <div className="gg-next-plate-inner">
-                <p className="gg-next-plate-kicker">New session</p>
-                <label className="gg-next-field">
-                  <span className="gg-next-field-label">Seed</span>
-                  <input
-                    value={seedQuery}
-                    onChange={(e) => setSeedQuery(e.target.value)}
-                    placeholder="Artist, URL, question"
-                    className="gg-next-input"
-                  />
-                </label>
-                <button
-                  type="button"
-                  className="gg-next-cta"
-                  onClick={() => void createSession()}
-                  disabled={isBusy}
-                >
-                  {isBusy ? "Opening…" : "Open session"}
-                </button>
-              </div>
-            </div>
-            <div className="gg-next-index-past">
-              <div
-                className="gg-next-index-past-header"
-                role="group"
-                aria-label={`Past sessions, ${sessions.length} total`}
-              >
-                <span className="gg-next-index-past-label">Past sessions</span>
+            <details className="gg-next-sessions-details" open>
+              <summary className="gg-next-sessions-summary">
+                <span className="gg-next-sessions-summary-title">Sessions</span>
                 <span className="gg-next-badge" aria-hidden>
                   {sessions.length}
                 </span>
-              </div>
-              <ul className="gg-next-index-list" aria-label="Past sessions">
-                {sessions.length === 0 ? (
-                  <li className="gg-next-index-empty">
-                    <EmptyState className="gg-next-empty" text="No sessions yet." />
-                  </li>
-                ) : (
-                  sessions.map((session) => {
-                    const active = selectedSessionId === session.id;
-                    return (
-                      <li key={session.id}>
-                        <button
-                          type="button"
-                          className={`gg-next-index-item${active ? " gg-next-index-item--active" : ""}`}
-                          onClick={() => setSelectedSessionId(session.id)}
-                        >
-                          <span className="gg-next-index-disc" aria-hidden />
-                          <span className="gg-next-index-copy">
-                            <span className="gg-next-index-title">{session.title}</span>
-                            <span className="gg-next-index-meta">{formatTimestamp(session.updatedAt)}</span>
-                          </span>
-                        </button>
+              </summary>
+              <div className="gg-next-sessions-panel">
+                <div className="gg-next-plate gg-next-plate--rail">
+                  <div className="gg-next-plate-band" aria-hidden />
+                  <div className="gg-next-plate-inner">
+                    <p className="gg-next-plate-kicker">New session</p>
+                    <label className="gg-next-field">
+                      <span className="gg-next-field-label">Seed</span>
+                      <input
+                        value={seedQuery}
+                        onChange={(e) => setSeedQuery(e.target.value)}
+                        placeholder="Artist, URL, question"
+                        className="gg-next-input"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      className="gg-next-cta"
+                      onClick={() => void createSession()}
+                      disabled={isBusy}
+                    >
+                      {isBusy ? "Opening…" : "Open session"}
+                    </button>
+                  </div>
+                </div>
+                <div className="gg-next-index-past">
+                  <div
+                    className="gg-next-index-past-header"
+                    role="group"
+                    aria-label={`History, ${sessions.length} total`}
+                  >
+                    <span className="gg-next-index-past-label">History</span>
+                  </div>
+                  <ul className="gg-next-index-list" aria-label="Past sessions">
+                    {sessions.length === 0 ? (
+                      <li className="gg-next-index-empty">
+                        <EmptyState className="gg-next-empty" text="No sessions yet." />
                       </li>
-                    );
-                  })
-                )}
-              </ul>
-            </div>
+                    ) : (
+                      sessions.map((session) => {
+                        const active = selectedSessionId === session.id;
+                        return (
+                          <li key={session.id}>
+                            <button
+                              type="button"
+                              className={`gg-next-index-item${active ? " gg-next-index-item--active" : ""}`}
+                              onClick={() => setSelectedSessionId(session.id)}
+                            >
+                              <span className="gg-next-index-disc" aria-hidden />
+                              <span className="gg-next-index-copy">
+                                <span className="gg-next-index-title">{session.title}</span>
+                                <span className="gg-next-index-meta">{formatTimestamp(session.updatedAt)}</span>
+                              </span>
+                            </button>
+                          </li>
+                        );
+                      })
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </details>
           </aside>
         )}
 
         <div className="gg-next-corridor gg-next-corridor--discovery">
-          <section className="gg-next-plate gg-next-plate--hero">
+          <section className="gg-next-plate gg-next-plate--hero gg-next-plate--investigation">
             <div
               className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--orange-route)" }}
@@ -330,6 +364,9 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               <div className="gg-next-plate-heading">
                 <p className="gg-next-plate-kicker">Primary module</p>
                 <h2 className="gg-next-plate-title">Investigation</h2>
+                <p className="gg-next-plate-subtitle">
+                  Your questions and the assistant&apos;s answers appear in the thread below.
+                </p>
               </div>
               {selectedSession ? (
                 <>
@@ -349,12 +386,21 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                               : undefined
                           }
                           className={`gg-next-bubble gg-next-bubble--${entry.role}`}
+                          aria-label={
+                            entry.role === "user"
+                              ? `Your message · ${formatTimestamp(entry.createdAt)}`
+                              : `Assistant reply · ${formatTimestamp(entry.createdAt)}`
+                          }
                         >
-                          <div className="gg-next-bubble-head">
-                            <span className="gg-next-bubble-role">{entry.role}</span>
-                            <time className="gg-next-bubble-time">{formatTimestamp(entry.createdAt)}</time>
+                          {entry.role === "assistant" ? (
+                            <div className="gg-next-bubble-head">
+                              <span className="gg-next-bubble-role">Research assistant</span>
+                              <time className="gg-next-bubble-time">{formatTimestamp(entry.createdAt)}</time>
+                            </div>
+                          ) : null}
+                          <div className="gg-next-bubble-body">
+                            <MarkdownMessage content={entry.content} />
                           </div>
-                          <MarkdownMessage content={entry.content} />
                         </article>
                       ))
                     )}
@@ -367,7 +413,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                         onChange={(e) => setMessage(e.target.value)}
                         placeholder="Discovery question, refinement, or evidence request."
                         rows={3}
-                        className="gg-next-textarea"
+                        className="gg-next-textarea gg-next-textarea--compose"
                       />
                     </label>
                     <button
@@ -388,8 +434,91 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               )}
             </div>
           </section>
+        </div>
 
-          <section className="gg-next-plate gg-next-plate--evidence">
+        {!isNarrowWorkspaceLayout ? (
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize split"
+            tabIndex={-1}
+            className={`gg-next-split${isMainGridResizing ? " gg-next-split--active" : ""}`}
+            onPointerDown={beginMainGridResize}
+          >
+            <span className="gg-next-split-cap" aria-hidden />
+            <span className="gg-next-split-ring" aria-hidden />
+            <span className="gg-next-split-cap" aria-hidden />
+            <span className="gg-next-split-tag">Split</span>
+          </div>
+        ) : null}
+
+        <div className="gg-next-corridor gg-next-corridor--review">
+          <section className="gg-next-plate gg-next-plate--graph-approval">
+            <div
+              className="gg-next-plate-band gg-next-plate-band--module"
+              style={{ background: "var(--magenta-route)" }}
+              aria-hidden
+            />
+            <div className="gg-next-plate-inner gg-next-plate-inner--grow">
+              <div className="gg-next-plate-heading gg-next-plate-heading--graph-map">
+                <div className="gg-next-plate-heading-text">
+                  <p className="gg-next-plate-kicker">Decision</p>
+                  <h2 className="gg-next-plate-title">Graph map</h2>
+                </div>
+                {selectedSession ? (
+                  <div className="gg-next-graph-chrome-inline" aria-label="Graph snapshot history">
+                    <div className="gg-next-graph-chrome-inner">
+                      <button
+                        type="button"
+                        className="gg-next-graph-history-btn"
+                        disabled={!vizHistory.canBack}
+                        aria-disabled={!vizHistory.canBack}
+                        onClick={vizHistory.goBack}
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="button"
+                        className="gg-next-graph-history-btn"
+                        disabled={!vizHistory.canForward}
+                        aria-disabled={!vizHistory.canForward}
+                        onClick={vizHistory.goForward}
+                      >
+                        Forward
+                      </button>
+                      <span className="gg-next-graph-chrome-pos" aria-live="polite">
+                        {vizHistory.positionLabel}
+                      </span>
+                      {!vizHistory.isViewingLatest && vizHistory.currentCapturedAt != null ? (
+                        <span className="gg-next-graph-chrome-stale">
+                          Graph as of {new Date(vizHistory.currentCapturedAt).toLocaleString()}
+                        </span>
+                      ) : null}
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+              {selectedSession ? (
+                <div className="gg-next-sigma-host">
+                  <WorkbenchSigmaGraph
+                    ref={graphRef}
+                    graph={vizHistory.effectiveGraph}
+                    dataSource={vizHistory.effectiveSource}
+                    loading={
+                      vizLoading &&
+                      !vizPayload &&
+                      !(sessionVizFallback && sessionVizFallback.nodes.length > 0)
+                    }
+                    onFooterStateChange={onGraphFooterState}
+                    historyResetKey={vizHistory.index}
+                  />
+                </div>
+              ) : null}
+            </div>
+          </section>
+
+          <div className="gg-next-review-below-graph">
+          <section className="gg-next-plate gg-next-plate--evidence gg-next-plate--approval">
             <div
               className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--blue-route)" }}
@@ -397,7 +526,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
             />
             <div className="gg-next-plate-inner gg-next-plate-inner--grow">
               <div className="gg-next-plate-heading">
-                <p className="gg-next-plate-kicker">Informational support</p>
+                <p className="gg-next-plate-kicker">Approval support</p>
                 <h2 className="gg-next-plate-title">Evidence</h2>
               </div>
               <div className="gg-next-evidence-stack">
@@ -454,26 +583,8 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               </div>
             </div>
           </section>
-        </div>
 
-        {!isNarrowWorkspaceLayout ? (
-          <div
-            role="separator"
-            aria-orientation="vertical"
-            aria-label="Resize split"
-            tabIndex={-1}
-            className={`gg-next-split${isMainGridResizing ? " gg-next-split--active" : ""}`}
-            onPointerDown={beginMainGridResize}
-          >
-            <span className="gg-next-split-cap" aria-hidden />
-            <span className="gg-next-split-ring" aria-hidden />
-            <span className="gg-next-split-cap" aria-hidden />
-            <span className="gg-next-split-tag">Split</span>
-          </div>
-        ) : null}
-
-        <div className="gg-next-corridor gg-next-corridor--review">
-          <section className="gg-next-plate">
+          <section className="gg-next-plate gg-next-plate--relationships">
             <div
               className="gg-next-plate-band gg-next-plate-band--module"
               style={{ background: "var(--magenta-route)" }}
@@ -482,30 +593,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
             <div className="gg-next-plate-inner">
               <div className="gg-next-plate-heading">
                 <p className="gg-next-plate-kicker">Decision</p>
-                <h2 className="gg-next-plate-title">Graph review</h2>
-                {selectedSession ? (
-                  <div className="gg-next-graph-sync">
-                    <label className="gg-next-graph-sync-deferred">
-                      <input
-                        type="checkbox"
-                        checked={includeDeferredInGraphSync}
-                        onChange={(event) => setIncludeDeferredInGraphSync(event.target.checked)}
-                        disabled={isGraphSyncing || isBusy}
-                      />
-                      <span>Include deferred</span>
-                    </label>
-                    <button
-                      type="button"
-                      className="gg-next-cta gg-next-cta--secondary"
-                      disabled={isGraphSyncing || isBusy}
-                      onClick={() =>
-                        void syncSessionToGraph({ includeDeferred: includeDeferredInGraphSync })
-                      }
-                    >
-                      {isGraphSyncing ? "Syncing…" : "Sync to graph"}
-                    </button>
-                  </div>
-                ) : null}
+                <h2 className="gg-next-plate-title">Relationship review</h2>
               </div>
               {selectedSession ? (
                 <div className="gg-next-review-stack">
@@ -640,7 +728,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                   ) : tripletCandidates.length ? (
                     <EmptyState
                       className="gg-next-empty"
-                      text="All relationship candidates have been reviewed (accepted, deferred, or rejected). Use Sync to graph when ready."
+                      text="All relationship candidates have been reviewed (accepted, deferred, or rejected)."
                     />
                   ) : (
                     <EmptyState className="gg-next-empty" text="No relationship triplets yet." />
@@ -663,7 +751,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
             />
             <div className="gg-next-plate-inner gg-next-plate-inner--grow">
               <div className="gg-next-plate-heading">
-                <p className="gg-next-plate-kicker">Supporting review</p>
+                <p className="gg-next-plate-kicker">Approval support</p>
                 <h2 className="gg-next-plate-title">Claims</h2>
               </div>
               {pendingClaims.length ? (
@@ -697,13 +785,148 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
               )}
             </div>
           </section>
+          </div>
         </div>
       </div>
+
+      <footer className="gg-next-footer" role="contentinfo">
+        <div className="gg-next-footer-inner">
+          <div className="gg-next-footer-row">
+            <div className="gg-next-footer-cell">
+              <span className="gg-next-footer-k">Session</span>
+              <span className="gg-next-footer-v" title={selectedSession ? selectedSession.title : undefined}>
+                {selectedSession
+                  ? `${truncateFoot(selectedSession.title, 36)} · ${formatTimestamp(selectedSession.updatedAt)}`
+                  : "—"}
+              </span>
+            </div>
+            <div className="gg-next-footer-cell">
+              <span className="gg-next-footer-k">Map</span>
+              <span className="gg-next-footer-v">{footerMapLine(graphFooter)}</span>
+            </div>
+            <div className="gg-next-footer-cell gg-next-footer-cell--selection">
+              <span className="gg-next-footer-k">Selection</span>
+              <span className="gg-next-footer-v" title={footerSelectionFull(graphFooter)}>
+                {footerSelectionLine(graphFooter)}
+              </span>
+              {graphFooter?.focusedNodeId ? (
+                <button
+                  type="button"
+                  className="gg-next-footer-clear-focus"
+                  onClick={() => graphRef.current?.clearFocus()}
+                >
+                  Clear focus
+                </button>
+              ) : null}
+            </div>
+            <div className="gg-next-footer-cell gg-next-footer-cell--db">
+              <span className="gg-next-footer-k">Graph DB</span>
+              <span className="gg-next-footer-db">
+                {graphBackendStatusLoading ? (
+                  <span className="gg-next-footer-v">Checking…</span>
+                ) : graphBackendStatus ? (
+                  <>
+                    <span className="gg-next-footer-v">
+                      {graphBackendStatus.database ? (
+                        <>
+                          <span className="gg-next-footer-db-name">{graphBackendStatus.database}</span>
+                          <span className="gg-next-footer-sep" aria-hidden>
+                            {" · "}
+                          </span>
+                        </>
+                      ) : null}
+                      <span
+                        className={
+                          graphBackendStatus.reachable
+                            ? "gg-next-footer-db-state gg-next-footer-db-state--ok"
+                            : "gg-next-footer-db-state gg-next-footer-db-state--warn"
+                        }
+                        title={graphBackendStatus.message}
+                      >
+                        {graphDbFooterLabel(graphBackendStatus)}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      className="gg-next-footer-recheck"
+                      onClick={() => void refreshGraphBackendStatus()}
+                      title="Recheck graph connection"
+                    >
+                      Recheck
+                    </button>
+                  </>
+                ) : (
+                  <span className="gg-next-footer-v gg-next-footer-db-state--warn">Unavailable</span>
+                )}
+              </span>
+            </div>
+          </div>
+        </div>
+      </footer>
+
     </main>
   );
 }
 
-/** Evidence plate: one stacked section (Field notes or Sources). Spec: docs/product/RESEARCH_WORKBENCH_PRD.mdc Phase 1 §6–7. */
+function graphDbFooterLabel(s: GraphBackendStatusPayload): string {
+  if (s.reachable) {
+    return "Connected";
+  }
+  if (s.configured) {
+    return "Unreachable";
+  }
+  if (s.connectionStringEmpty) {
+    return "Connection string empty";
+  }
+  return "Not configured";
+}
+
+function truncateFoot(text: string, max: number): string {
+  const t = text.trim();
+  if (t.length <= max) {
+    return t;
+  }
+  return `${t.slice(0, Math.max(0, max - 1))}…`;
+}
+
+function footerMapLine(slice: WorkbenchGraphFooterSlice | null): string {
+  if (!slice) {
+    return "—";
+  }
+  if (slice.phase === "loading") {
+    return "Loading…";
+  }
+  if (slice.phase === "empty") {
+    return "No graph data";
+  }
+  if (slice.phase === "empty-filter") {
+    return slice.filterNote ?? "Nothing matches filters";
+  }
+  const src = slice.dataSource === "typedb" ? "TypeDB" : "Session";
+  return `${src} · ${slice.nodeCount}×${slice.edgeCount}`;
+}
+
+function footerSelectionLine(slice: WorkbenchGraphFooterSlice | null): string {
+  if (!slice?.selectedNode) {
+    return "—";
+  }
+  const n = slice.selectedNode;
+  const label = truncateFoot(n.label, 32);
+  const bits = [label, n.subtitle, n.reviewStatus ?? "proposed"].filter(
+    (x) => typeof x === "string" && x.length > 0,
+  );
+  return bits.join(" · ");
+}
+
+function footerSelectionFull(slice: WorkbenchGraphFooterSlice | null): string | undefined {
+  if (!slice?.selectedNode) {
+    return undefined;
+  }
+  const n = slice.selectedNode;
+  return [n.label, n.subtitle, n.reviewStatus ?? "proposed", n.id].filter(Boolean).join(" · ");
+}
+
+/** Evidence plate: one stacked section (Field notes or Sources). Spec: docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc §5–6. */
 function EvidenceCollapsibleSection({
   sectionId,
   title,

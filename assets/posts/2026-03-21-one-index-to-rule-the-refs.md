@@ -11,11 +11,11 @@ GrooveGraph Next had grown a polite kind of clutter: nineteen tiny files under `
 
 **Refs.** `refs/INDEX.md` is now the single chat-friendly map from topic to canonical path, including `.cursor/rules` mirrors. The per-topic stub files are gone. If your muscle memory said `@refs/agents.md`, aim at `@refs/INDEX.md` and the agents row instead—one update surface, fewer drift vectors.
 
-**Headcount evidence.** Serial runs for App Service smoke and SWA smoke were captured in markdown siblings under the old `research/headcount/` tree. That folder was later removed on consolidation; the same narratives live in **git history** (see `docs/WORKFLOW_VALIDATION.mdc` path notes). The in-repo Headcount suite was later retired entirely.
+**Headcount evidence.** Serial runs for App Service smoke and SWA smoke were captured in markdown siblings under the old `research/headcount/` tree. That folder was later removed on consolidation; the same narratives live in **git history**. The in-repo Headcount suite was later retired entirely.
 
-**Hygiene runs.** Historical hygiene logs lived under `research/hygiene/`; new generalization hygiene evidence should be appended to **`docs/GENERALIZATION_AUDIT.mdc`** §3 and/or **`docs/DECISION_LOG.mdc`** per `docs/HYGIENE.mdc`.
+**Hygiene runs.** Historical hygiene logs lived under `research/hygiene/`; new generalization hygiene evidence should be appended to **`docs/DECISION_LOG.mdc`** per `docs/HYGIENE.mdc`.
 
-**Research workspace validation.** Bootstrap pass and first Prince end-to-end session are documented together in `docs/research-workbench-validation.md` (Part A / Part B). `docs/WORKFLOW_VALIDATION.mdc` and `product/README.md` point at the canonical app and validation record.
+**Research workspace validation.** Bootstrap pass and first Prince end-to-end session are documented together in `docs/research-workbench-validation.md` (Part A / Part B). `product/README.md` points at the canonical app and validation record.
 
 **Product surface.** `product/README.md` describes the canonical workbench app, env, graph sync, and deploy pointers. Static HTML under `product/public/` (e.g. design-system board) supports Figma capture workflows per `docs/design-language/FIGMA_MCP.mdc`.
 

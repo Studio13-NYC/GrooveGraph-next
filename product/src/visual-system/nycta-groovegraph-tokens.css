@@ -77,6 +77,19 @@
 
   --gg-accent-directional: var(--gg-route-orange);
 
+  /*
+   * Workbench graph viz: entity KindFamily fills (schema-aligned clusters; see graph-viz-styles.ts).
+   * Map grammar: one hue per family — People brown, Recordings yellow, Studios blue, Labels red,
+   * Genres lime, Gear gray, Other slate.
+   */
+  --gg-viz-family-people: var(--gg-route-brown);
+  --gg-viz-family-recordings: var(--gg-route-yellow);
+  --gg-viz-family-studios: var(--gg-route-blue);
+  --gg-viz-family-labels: var(--gg-route-red);
+  --gg-viz-family-genres: var(--gg-route-lime);
+  --gg-viz-family-gear: var(--gg-route-gray);
+  --gg-viz-family-other: var(--gg-slate);
+
   /* High-contrast text on dark route / ink fills (badges, discs on black) */
   --gg-on-dark-fg: #ffffff;
 

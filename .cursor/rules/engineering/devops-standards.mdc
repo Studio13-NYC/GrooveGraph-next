@@ -1,0 +1,32 @@
+---
+description: DevOps standards for configuration, deployment, secrets, logging, and rollback safety.
+alwaysApply: false
+---
+
+# DevOps Standards
+
+## Purpose
+Keep deployments reproducible, observable, and safe to operate.
+
+## Requirements
+- externalize environment-specific configuration
+- never hardcode secrets
+- keep deployment steps reproducible and documented
+- provide health checks and useful logging
+- define rollback expectations for risky changes
+- keep infrastructure changes understandable and reviewable
+- prefer the simplest pipeline that satisfies reliability needs
+- surface operational risks before rollout
+
+## Apply When
+- changing deployment pipelines
+- modifying infrastructure configuration
+- preparing production or staging rollouts
+
+## GrooveGraph Azure baseline
+
+- Treat **`rg-groovegraph`** as preserved shared infrastructure.
+- Do not destroy the resource group, App Service plan, or Application Insights unless explicitly instructed.
+- It is acceptable to overwrite app-host surfaces (App Service is canonical for this app).
+- Prefer the smallest smoke path that proves hosting, routing, env wiring, and the **`product/`** app.
+- Canonical env and pointers: **`docs/AZURE_BASELINE.mdc`**, **`product/README.md`**, root **`scripts/`** deploy helpers.

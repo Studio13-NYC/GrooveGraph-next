@@ -8,7 +8,7 @@ Use the strongest model only where it adds real leverage. Everything else should
 
 This document is the routing source of truth for GrooveGraph Next.
 
-If routing guidance here conflicts with `AGENTS.mdc`, `README.md`, `.cursor/rules/subagent-routing.mdc`, or `docs/AGENT_REGISTRY.mdc`, update those files to match this document.
+If routing guidance here conflicts with `AGENTS.mdc`, `README.md`, `.cursor/rules/global/*.mdc`, `docs/AGENT_REGISTRY.mdc`, or the **`.cursor/agents/*.mdc`** role cards, update those files to match this document.
 
 ## Operating rules
 
@@ -18,18 +18,20 @@ If routing guidance here conflicts with `AGENTS.mdc`, `README.md`, `.cursor/rule
 - The orchestrator may retain work only for final synthesis, cross-domain conflict resolution, or materially changing acceptance criteria.
 - Any orchestrator override must make an explicit case: name the skipped specialist, explain why delegation is worse here, and explain why direct orchestration is safer.
 - Missing specialist coverage is not an override. Stop, create the specialist, then resume the workflow.
-- Default model for a new specialist is `GPT-5.4-mini` unless a stronger model is explicitly justified.
-- As specialist coverage improves, expensive orchestration should shrink.
+- New role cards should default to **`model: inherit`** in frontmatter; if you pin a model, prefer an efficient tier for narrow specialists unless a stronger lane is explicitly justified.
+- As specialist coverage improves, expensive top-session orchestration should shrink.
 
 ## Lane defaults
 
-- `GPT-5.4`: orchestration, cross-domain judgment, final synthesis
-- `Composer 1.5`: Cursor-native rules, skills, prompts, and tool contracts
-- `GPT-5.4-mini`: most specialist reasoning lanes and the default for new specialists
-- `GPT-5.4-nano`: routing, compression, triage, and bounded hygiene analysis
-- `GPT-5.3-codex`: bounded implementation after scope is explicit
+Agent role cards use **`model: inherit`** by default so the **active Cursor session** chooses the model. When you **pin** models instead:
 
-See `docs/AGENT_REGISTRY.mdc` for the current operator matrix.
+- Prefer a **strong** tier for **`orchestrator`** (judgment, cross-domain synthesis).
+- Prefer **efficient** tiers for **`qa`** review passes and repetitive hygiene tooling (**`docs/HYGIENE.mdc`**).
+- Prefer a **coding-oriented** tier for **`development`** when doing large bounded implementation.
+
+Meta work (editing `.cursor/` rules and skills) is ordinary repo work: use **`development`** with **`architecture`** review when contracts change—there is no separate meta agent file.
+
+See `docs/AGENT_REGISTRY.mdc` and **`.cursor/agents/*.mdc`** for the operator matrix.
 
 ## Concision
 

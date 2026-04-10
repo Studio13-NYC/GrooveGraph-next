@@ -65,7 +65,7 @@ Use these tools when adding or overhauling UI surfaces (e.g. `product` at `/`).
 
 ## Ownership
 
-- **`graphic-artist`:** Frames, naming, token fidelity, manual-first vocabulary.
+- **`design`:** Frames, naming, token fidelity, manual-first vocabulary.
 - **`implementer`:** Wiring React to match `get_design_context` and tokens; Code Connect file paths.
 
 Workbench frames should live in **`groovegraph-design-system.fig`** (or its published twin); add the **full Figma URL** to [`GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`](GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc) once hosted.

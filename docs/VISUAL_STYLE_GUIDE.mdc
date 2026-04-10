@@ -19,9 +19,9 @@
 - **Historical reference pack** (Vignelli diagram scan, manual extracts) lived under `graphic-design-agent-assets/` — **removed**; use **git history** if you need those files
 - `product/src/visual-system/nycta-groovegraph-tokens.css` — **CSS custom properties** (canonical). Import from **`product/app/globals.css`**: `@import "../src/visual-system/nycta-groovegraph-tokens.css";`
 
-**Definitive interactive reference (HTML5, typography through CSS motion):**
+**Definitive interactive reference (App Router, tokens, typography, components):**
 
-- With the product dev server: `http://localhost:3000/design-system-styleguide.html` — source: `product/public/design-system-styleguide.html`
+- With the product dev server: `http://localhost:3000/design` — source: `product/app/design/` (`page.tsx`, `styleguide.css`, layout metadata)
 
 **Interactive animation reference (GSAP + ScrollTrigger, NYCTA tokens, 12 principles):**
 

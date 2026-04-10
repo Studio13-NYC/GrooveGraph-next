@@ -1,0 +1,29 @@
+---
+description: LLM integration standards for prompts, context packets, tool use, and structured output.
+alwaysApply: false
+---
+
+# LLM Patterns
+
+## Purpose
+Use LLM capabilities intentionally and keep model-dependent behavior constrained.
+
+## Requirements
+- use deterministic code when it is sufficient
+- isolate prompt text from business logic
+- make context assembly explicit
+- prefer structured output contracts
+- define tool use and fallback behavior clearly
+- keep retrieval preparation separate from answer formatting
+- bound model responsibilities so contracts remain testable
+- record assumptions when prompts depend on hidden or inferred context
+
+## Apply When
+- designing prompts
+- building context-packing logic
+- integrating model outputs into application code
+
+## GrooveGraph delegation packets
+
+- Canonical packet schema and examples: **`docs/CONTEXT_PACKETS.mdc`**.
+- Prefer explicit writable vs read-only scope, stop conditions, and output shape when handing work between agents.

@@ -67,7 +67,7 @@ follow_on_hints:
   - <next likely consumer>
 ```
 
-## Example packet: `graphic-artist`
+## Example packet: `design`
 
 ```yaml
 goal: >

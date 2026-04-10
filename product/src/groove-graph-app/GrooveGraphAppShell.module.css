@@ -1,0 +1,490 @@
+/**
+ * Scoped layout for the GrooveGraph app surface (/main).
+ * Inner widgets may still use global workbench token classes (gg-next-*, triplet-*, etc.).
+ */
+
+.root {
+  --gg-main-desktop-pane-min: min(500px, 70vh);
+  /* Masthead (~band+title block) + bodyGrid margin-top + flex gap before review — Evidence stays below first screen */
+  --gg-main-above-fold-chrome: 188px;
+
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  overflow: visible;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--gg-font-sans);
+  isolation: isolate;
+}
+
+.root > .masthead,
+.root > :global(.gg-next-alert) {
+  flex-shrink: 0;
+}
+
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  background: var(--gg-sign-panel);
+}
+
+.mastheadBand {
+  height: var(--gg-sign-band-height);
+  background: var(--gg-sign-band);
+}
+
+.mastheadGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 14px 24px 16px;
+  gap: 8px;
+  max-width: 1680px;
+  margin: 0 auto;
+}
+
+/* Short page: flex-grow fills main below masthead. Long page: height follows content.
+   Do NOT use flex: 1 1 0; min-height: 0 here — that traps layout height to the viewport
+   while overflow: visible lets review paint past the footer slot (footer “floats” mid-page). */
+.bodyGrid {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: visible;
+  max-width: 1680px;
+  margin: 8px auto 0;
+  padding: 0 24px 12px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: stretch;
+  position: relative;
+  z-index: 0;
+}
+
+.narrowStack {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+/* Desktop is split into an explicit top content row and a separate review row underneath it. */
+.desktopTopGrid,
+.desktopReviewGrid {
+  min-width: 0;
+}
+
+/* One viewport band: fill space below masthead (not capped at 500px — that let Evidence peek in). */
+.desktopTopGrid {
+  flex: 1 1 0;
+  min-height: min(var(--gg-main-desktop-pane-min), calc(100dvh - var(--gg-main-above-fold-chrome)));
+  max-height: calc(100dvh - var(--gg-main-above-fold-chrome));
+  overflow: hidden;
+  grid-auto-rows: 1fr;
+  align-items: stretch;
+}
+
+.desktopReviewGrid {
+  flex: 0 0 auto;
+}
+
+.reviewOffset {
+  min-height: 0;
+}
+
+.gridIndex {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  min-height: 0;
+}
+
+.gridDiscovery {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.gridSplit {
+  grid-column: 3;
+  grid-row: 1 / -1;
+}
+
+.gridGraph {
+  grid-column: 4;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Desktop row 2: Evidence under Chat (col 2); Relationship + Claims under Graph (col 4). */
+.gridReviewEvidence {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+}
+
+.gridReviewRightStack {
+  grid-column: 4;
+  grid-row: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Corridors: match legacy stretch behavior so graph + chat share row height. */
+.discoveryCorridor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  height: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+  flex: 1 1 0;
+  overflow: hidden;
+}
+
+.discoveryCorridor :global(.gg-next-plate--hero),
+.discoveryCorridor :global(.gg-next-plate--investigation) {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.chatPlate {
+  min-height: var(--gg-main-desktop-pane-min);
+  min-width: 0;
+}
+
+/* Narrow: graph + approval stack in one column (unchanged flow). */
+.reviewCorridorNarrow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: visible;
+  min-width: 0;
+  align-self: stretch;
+  padding-right: 2px;
+}
+
+.reviewCorridorNarrow .graphPlate {
+  flex: 1 1 auto;
+}
+
+.graphPlate {
+  flex: 1 1 auto;
+  min-height: var(--gg-main-desktop-pane-min);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.gridGraph .graphPlate {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
+}
+
+.graphPlate :global(.gg-next-plate-inner--grow) {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.graphPlate :global(.gg-next-plate-heading) {
+  flex-shrink: 0;
+}
+
+.graphPlate :global(.gg-next-sigma-host) {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.graphPlate :global(.gg-next-sigma-panel) {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.graphPlate :global(.gg-next-sigma-canvas-column) {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.graphPlate :global(.gg-next-sigma-canvas-wrap) {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.reviewBelow {
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-right: 2px;
+}
+
+/* Undo legacy fixed module height so outer collapsible + 500px scroll region control layout. */
+.reviewBelow :global(.gg-next-plate--evidence),
+.reviewBelow :global(.gg-next-plate--claims),
+.reviewBelow :global(.gg-next-plate--relationships) {
+  height: auto;
+  max-height: none;
+  min-height: 0;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+.collapsibleBody :global(.gg-next-evidence-stack) {
+  flex: none;
+  overflow: visible;
+  min-height: 0;
+}
+
+.collapsibleBody :global(.gg-next-evidence-section--open) {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.collapsibleBody :global(.claims-review-list) {
+  max-height: none;
+  overflow: visible;
+}
+
+.collapsibleToggle {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font: inherit;
+  color: inherit;
+}
+
+.collapsibleToggle:focus-visible {
+  outline: 2px solid var(--gg-route-blue);
+  outline-offset: 3px;
+  border-radius: var(--gg-radius-r1);
+}
+
+.collapsibleChevron {
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: inline-flex;
+  color: var(--gg-slate);
+  transition: transform 0.15s ease;
+}
+
+.collapsibleChevronOpen {
+  transform: rotate(180deg);
+}
+
+.collapsibleHeadingText {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.collapsibleBody {
+  max-height: 500px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-top: 12px;
+  padding-right: 4px;
+  scrollbar-gutter: stable;
+}
+
+.sigmaLoadingShell {
+  border: 2px solid var(--ink);
+  border-radius: var(--gg-radius-r2);
+  background: var(--gg-sign-panel);
+  min-height: min(320px, 50vh);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sigmaLoadingCanvas {
+  flex: 1 1 auto;
+  min-height: 200px;
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--ink) 6%, var(--paper)),
+    color-mix(in srgb, var(--ink) 6%, var(--paper)) 12px,
+    color-mix(in srgb, var(--ink) 10%, var(--paper)) 12px,
+    color-mix(in srgb, var(--ink) 10%, var(--paper)) 24px
+  );
+}
+
+.graphSigmaHost {
+  position: relative;
+}
+
+.graphNodeInspector {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 6;
+  max-width: min(320px, calc(100% - 24px));
+  padding: 12px 12px 10px;
+  border: 2px solid var(--ink);
+  border-radius: var(--gg-radius-r2);
+  background: var(--paper);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--ink) 18%, transparent);
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+}
+
+.graphNodeInspectorHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+}
+
+.graphNodeInspectorTitle {
+  margin: 0;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label);
+  text-transform: uppercase;
+  color: var(--gg-slate);
+}
+
+.graphNodeInspectorClose {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--ink);
+  border-radius: var(--gg-radius-r1);
+  background: var(--gg-sign-panel);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.graphNodeInspectorClose:hover {
+  background: color-mix(in srgb, var(--gg-accent-directional) 12%, var(--paper));
+}
+
+.graphNodeInspectorClose:focus-visible {
+  outline: 2px solid var(--gg-route-blue);
+  outline-offset: 2px;
+}
+
+.graphNodeInspectorDl {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.graphNodeInspectorRow {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+
+.graphNodeInspectorRow dt {
+  margin: 0;
+  font-size: var(--gg-type-grid-1);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--gg-tracking-label);
+  color: var(--gg-slate);
+}
+
+.graphNodeInspectorRow dd {
+  margin: 0;
+  min-width: 0;
+  word-break: break-all;
+}
+
+.graphNodeInspectorMono {
+  font-family: var(--gg-font-mono, ui-monospace, monospace);
+  font-size: var(--gg-type-grid-1);
+}
+
+.graphNodeInspectorTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.graphNodeInspectorTag {
+  display: inline-block;
+  padding: 2px 6px;
+  border: 1px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  border-radius: var(--gg-radius-r1);
+  font-size: var(--gg-type-grid-1);
+  background: color-mix(in srgb, var(--ink) 4%, var(--paper));
+}
+
+.graphNodeInspectorHint {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px dashed color-mix(in srgb, var(--ink) 20%, transparent);
+  font-size: var(--gg-type-grid-1);
+  line-height: var(--gg-leading-body);
+  color: var(--gg-slate);
+}
+
+/* Do not use margin-top: auto here: on main.gg-app (flex column) it absorbs free space
+   before bodyGrid flex-grow, which can leave the footer visually “floating” over the review row.
+   bodyGrid already has flex: 1 0 auto so it receives extra height; footer follows in normal flow. */
+.footer {
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+  border-top: 2px solid var(--ink);
+  background: var(--gg-sign-panel);
+}
+
+/* Inner row uses global .gg-next-footer-* for parity with legacy workbench (DB cell, recheck). */
+.footer :global(.gg-next-footer-inner) {
+  max-width: 1680px;
+  margin: 0 auto;
+  padding: 10px 24px 14px;
+}

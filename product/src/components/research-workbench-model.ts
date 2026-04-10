@@ -12,6 +12,7 @@ export type GraphBackendStatusPayload = {
   reachable: boolean;
   database: string | null;
   message: string;
+  connectionStringEmpty?: boolean;
 };
 
 export type WorkspaceResponse = {
@@ -93,9 +94,6 @@ export type ResearchWorkbenchModel = {
     aliasIndex: number,
   ) => void;
   saveTripletEdit: (relationshipId: string) => Promise<void>;
-  isGraphSyncing: boolean;
-  graphSyncFeedback: string | null;
-  syncSessionToGraph: (options?: { includeDeferred?: boolean }) => Promise<void>;
   graphBackendStatus: GraphBackendStatusPayload | null;
   graphBackendStatusLoading: boolean;
   refreshGraphBackendStatus: () => Promise<void>;

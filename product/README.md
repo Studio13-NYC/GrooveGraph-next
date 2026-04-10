@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-Open **http://localhost:3000**. Production build: `npm run build -w @groovegraph-next/product`.
+Open **http://localhost:3000**. **Graph viz option prototypes** (Sigma): **http://localhost:3000/viz-check**. Production build: `npm run build -w @groovegraph-next/product`.
 
 ## Persistence
 

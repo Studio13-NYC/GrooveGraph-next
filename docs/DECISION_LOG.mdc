@@ -67,3 +67,33 @@ Previously: workbench synced to Neo4j Aura with labels **`Entity`**, **`Research
 ### D012 - Consolidated monorepo: single app in `product/`
 
 `prototypes/` and `research/` were **removed** from the working tree. The discovery-first **research workbench** is the **only** Next.js app package: **`product/`** (`@groovegraph-next/product`). Workbench validation evidence lives in **`docs/research-workbench-validation.md`**. Headcount, hygiene logs, and reboot briefs that previously lived under `research/` are **git history** only unless copied into `docs/`.
+
+## 2026-04-10
+
+### D013 - Workbench graph viz, agent framework refresh, hygiene gate
+
+**Product**
+
+- Research workbench UI refactor: `GrooveGraphApp` shell, Sigma-based graph (`WorkbenchSigmaGraph`, viz API `.../graph/viz`), workbench CSS expansion, design and viz-check routes, session viz history hook, TypeDB persistence extensions, graph backend status and config updates.
+- Dependencies: `sigma`, `graphology`, layout helper; Next 16 build passes with one Turbopack NFT warning traced through `next.config.ts` → `config.ts` → OpenAI client (non-fatal).
+
+**Framework (`.cursor/`, docs)**
+
+- Replaced legacy multi-agent files with specialist agents (`api`, `architecture`, `design`, `development`, `devops`, `graph`, `llm`, `qa`, `ui`) plus `engineering/` and `global/` rules and granular `skills/` trees; updated orchestration and registry docs accordingly.
+- Removed obsolete plans, rules, and skills (e.g. GSAP, studio13-wayfinding, old graph-data-viz skill bundles); trimmed or deleted superseded docs (`GENERALIZATION_AUDIT`, `WORKFLOW_VALIDATION`, etc.).
+- New/updated docs: `GRAPH_VIZ_UX_RESEARCH.md`, `SESSION_PATTERNS_AND_ANTIPATTERNS.md`; TypeDB schema export refreshed in `docs/DB-Schema-Export.typeql`.
+- Removed `assets/examples/` sample SVGs and brief template (no longer required for `validate:visual-system`).
+
+**Hygiene (2026-04-10 run)**
+
+| Step | Result | Notes |
+|------|--------|--------|
+| `npm run cleanup:check` | Knip exit 1 | Advisory: 8 unused scripts under `scripts/`, unlisted `@next/env` in `product/next.config.ts`, unused exports in `scripts/lib/typedb-database-copy.mjs`, product hooks/viz/style modules, and knip hint on `archive/**/*.mjs`. No auto-deletes per `docs/HYGIENE.mdc`. |
+| `npm run validate:docs` | Pass | |
+| `npm run validate:visual-system` | Pass | Asserts `product/src/visual-system/tokens.ts` and `nycta-groovegraph-tokens.css` only. |
+| `npm run build:product` | Pass | Turbopack NFT warning as above. |
+| `npm run test -w @groovegraph-next/product` | Pass | `graph-persistence/helpers.test.ts` |
+
+**Repo hygiene**
+
+- `.gitignore`: ignore `.temp/` (local TypeDB migrate scratch).

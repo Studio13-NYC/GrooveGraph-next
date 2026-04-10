@@ -1,0 +1,22 @@
+---
+description: Prefer safe, minimal changes and clearly flag breaking or migration-relevant edits.
+alwaysApply: true
+---
+
+# Change Safety Rule
+
+## Purpose
+Favor minimal, safe, reversible change.
+
+## Requirements
+- prefer scoped edits over broad rewrites
+- call out contract-breaking changes
+- identify migration impacts before structural edits
+- preserve backward compatibility unless explicitly changing it
+- separate speculative improvements from required fixes
+
+## Apply When
+- editing existing code
+- changing contracts, schemas, or deployment configuration
+- proposing refactors
+- fixing bugs in shared systems

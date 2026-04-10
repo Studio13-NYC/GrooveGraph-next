@@ -1,0 +1,23 @@
+---
+description: Testing standards for unit, integration, and end-to-end validation.
+alwaysApply: false
+---
+
+# Testing Standards
+
+## Purpose
+Provide confidence through targeted, layered verification.
+
+## Requirements
+- test changed behavior first
+- include unhappy-path and edge-case checks
+- verify public contracts, not just internal implementation
+- add regression coverage for fixed bugs where practical
+- separate unit, integration, and end-to-end scope clearly
+- test cross-layer assumptions when a task spans UI, API, graph, or LLM behavior
+- report gaps and residual risks explicitly
+
+## Apply When
+- validating a fix or feature
+- preparing release confidence checks
+- reviewing contract changes

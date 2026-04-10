@@ -1,24 +1,26 @@
 # Agent Registry
 
-Compact operator matrix for GrooveGraph Next.
+Compact operator matrix for GrooveGraph Next. Agent role cards live under **`.cursor/agents/*.mdc`**; rules under **`.cursor/rules/{global,engineering}/`**; skills under **`.cursor/skills/**/**/SKILL.md`**.
 
-- Use the listed specialist first.
-- The orchestrator may override only with an explicit case.
-- If no specialist fits, stop and create one.
-- Default model for a new specialist is `GPT-5.4-mini` unless a stronger lane is justified.
-- Keep packets and outputs concise by default.
-- **Code surface:** the only Next.js app in this repo is **`product/`** (research workbench). Specialists that touch implementation should default exploration there; agent role cards live under **`.cursor/agents/`** with this registry and related docs in **`docs/`**.
+- Prefer the listed **specialist** when the task fits one domain.
+- Use **`orchestrator`** when routing is unclear or work spans multiple domains.
+- Use **`architecture`** before changing contracts across UI, API, graph, or LLM layers.
+- Default agent **`model`** in frontmatter is **`inherit`** (follows parent session) unless a card pins a model.
+- Keep handoffs explicit; see **`docs/CONTEXT_PACKETS.mdc`**.
 
-| Agent | Use for | Default model |
+| Agent | Use for | Default model (frontmatter) |
 |---|---|---|
-| `orchestrator` | decomposition, override judgment, final synthesis | `GPT-5.4` |
-| `composer-meta` | rules, skills, prompts, tool contracts | `Composer 1.5` |
-| `explorer` | bounded exploration and context gathering | `GPT-5.4-mini` |
-| `product-manager` | discovery-first product framing and reboot briefs | `GPT-5.4-mini` |
-| `implementer` | bounded implementation after scope is fixed | `GPT-5.3-codex` |
-| `reviewer` | bug-finding and change review | `GPT-5.4-mini` |
-| `tester` | workflow validation and failure interpretation | `GPT-5.4-mini` |
-| `hygienist` | cleanup analysis and removal proposals | `GPT-5.4-nano` |
-| `graphic-artist` | visual systems and campaign graphics | `GPT-5.4-mini` |
-| `animator` | GSAP motion, timelines, and React/Next animation implementation | `GPT-5.4-mini` |
-| `infrastructure-deployment` | Azure infrastructure and deployment work | `GPT-5.4-mini` |
+| `orchestrator` | Decomposition, routing, handoffs, final synthesis | `inherit` |
+| `architecture` | Structure, contracts, boundaries, tradeoffs (often read-first) | `inherit` |
+| `development` | Cross-cutting implementation, glue, debugging | `inherit` |
+| `api` | Endpoints, validation, typed API contracts | `inherit` |
+| `ui` | Client UI, layout, components, CSS | `inherit` |
+| `design` | Design system, tokens, Figma/Pencil alignment | `inherit` |
+| `graph` | TypeDB schema, queries, graph persistence mapping | `inherit` |
+| `llm` | Prompts, context packing, structured model I/O | `inherit` |
+| `qa` | Test plans, regression, e2e scenarios (often read-first) | `inherit` |
+| `devops` | Deploy, env, pipelines, cloud ops (may be long-running) | `inherit` |
+
+**Hygiene and cleanup:** follow **`docs/HYGIENE.mdc`**; primary implementer is typically **`development`** with **`qa`** for validation—there is no separate `hygienist` agent file.
+
+**Meta authoring (rules/skills):** owned by **`development`** with **`architecture`** review when contracts change; there is no separate `composer-meta` agent file.

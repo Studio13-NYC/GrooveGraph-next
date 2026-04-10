@@ -1,0 +1,25 @@
+---
+description: TypeDB schema and query standards for readable modeling and safe evolution.
+alwaysApply: false
+---
+
+# TypeDB Query Standards
+
+## Purpose
+Keep TypeDB schema and query work explicit, semantically correct, and maintainable.
+
+## Requirements
+- preserve clear distinction between entities, relations, and attributes
+- model domain meaning explicitly rather than overloading a relation
+- keep query intent readable and easy to review
+- separate schema evolution from retrieval/query changes when possible
+- prefer additive schema evolution before destructive changes
+- make assumptions about uniqueness, cardinality, and ownership explicit
+- keep application result-mapping logic separate from raw query logic
+- avoid hidden semantic shortcuts that make future schema evolution harder
+- document migration implications when changing types or attributes
+
+## Apply When
+- designing or modifying TypeDB schema
+- writing or debugging queries
+- mapping TypeDB results into application types

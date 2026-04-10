@@ -20,14 +20,28 @@ import {
 } from "@/src/lib/server/graph-persistence/helpers";
 import { WORKBENCH_TYPEDB3_SCHEMA_LINES } from "@/src/lib/server/graph-persistence/typedb-workbench-schema";
 import type { GraphPersistence, GraphSyncResult } from "@/src/lib/server/graph-persistence/types";
+import { extractWorkbenchVizNeighborhood } from "@/src/lib/workbench-viz/viz-neighborhood";
+import type { WorkbenchVizEdge, WorkbenchVizGraph, WorkbenchVizNode } from "@/src/types/workbench-viz-graph";
 import type {
   EntityCandidate,
   RelationshipCandidate,
   ResearchSession,
+  ReviewStatus,
 } from "@/src/types/research-session";
 
 let driverSingleton: TypeDBHttpDriver | null = null;
 const schemaReadyForDatabase = new Set<string>();
+
+function parseReviewStatus(raw: string | null): ReviewStatus | undefined {
+  if (!raw) {
+    return undefined;
+  }
+  const v = raw.trim().toLowerCase();
+  if (v === "proposed" || v === "accepted" || v === "deferred" || v === "rejected") {
+    return v;
+  }
+  return undefined;
+}
 
 function getDriver(cfg: NonNullable<ReturnType<typeof getTypeDbConfig>>): TypeDBHttpDriver {
   if (!driverSingleton) {
@@ -93,6 +107,14 @@ function attributeValue(row: ConceptRow, varName: string): string | null {
   return null;
 }
 
+function entityIidFromRow(row: ConceptRow, varName: string): string | null {
+  const concept = row[varName];
+  if (concept?.kind === "entity" && concept.iid) {
+    return String(concept.iid);
+  }
+  return null;
+}
+
 async function runSchemaLine(
   driver: TypeDBHttpDriver,
   database: string,
@@ -125,6 +147,14 @@ async function ensureWorkbenchSchema(driver: TypeDBHttpDriver, database: string)
 async function openWriteTx(driver: TypeDBHttpDriver, database: string): Promise<string> {
   const res = await driver.openTransaction(database, "write", {
     transactionTimeoutMillis: 120_000,
+  });
+  const ok = unwrapApi(res, "openTransaction");
+  return ok.transactionId;
+}
+
+async function openReadTx(driver: TypeDBHttpDriver, database: string): Promise<string> {
+  const res = await driver.openTransaction(database, "read", {
+    transactionTimeoutMillis: 60_000,
   });
   const ok = unwrapApi(res, "openTransaction");
   return ok.transactionId;
@@ -620,8 +650,148 @@ async function persistResearchSessionToTypeDb(
   };
 }
 
+async function fetchSessionVizGraphFromTypeDb(
+  sessionId: string,
+  options?: { focusNodeId?: string },
+): Promise<WorkbenchVizGraph> {
+  const config = getTypeDbConfig();
+  if (!config) {
+    throw new Error(
+      "TypeDB is not configured. Set TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS (or TYPEDB_HOST), TYPEDB_DATABASE, or TYPEDB_CONNECTION_STRING (see product/.env.example and product/README.md).",
+    );
+  }
+
+  const sidLit = escapeTypeqlString(sessionId);
+  const driver = getDriver(config);
+  await ensureWorkbenchSchema(driver, config.database);
+  const txId = await openReadTx(driver, config.database);
+
+  try {
+    const nodesQuery = `
+match
+$s isa! research-session, has session-id $sid;
+$sid == "${sidLit}";
+$l isa! session-includes-entity,
+  links (container-session: $s, member-entity: $e);
+$e isa! graph-entity,
+  has display-name $dn,
+  has provisional-entity-kind $pk,
+  has review-status $st;
+`.trim();
+
+    const nodesQueryRelaxed = `
+match
+$s isa! research-session, has session-id $sid;
+$sid == "${sidLit}";
+$l isa! session-includes-entity,
+  links (container-session: $s, member-entity: $e);
+$e isa! graph-entity,
+  has display-name $dn,
+  has provisional-entity-kind $pk;
+`.trim();
+
+    let nodesRes = await runInTx(driver, txId, nodesQuery, "vizSessionEntities");
+    if (nodesRes.answerType !== "conceptRows" || !nodesRes.answers?.length) {
+      nodesRes = await runInTx(driver, txId, nodesQueryRelaxed, "vizSessionEntitiesRelaxed");
+    }
+    const nodeMap = new Map<string, WorkbenchVizNode>();
+    if (nodesRes.answerType === "conceptRows" && nodesRes.answers?.length) {
+      for (const { data: row } of nodesRes.answers) {
+        const iid = entityIidFromRow(row, "e");
+        if (!iid) {
+          continue;
+        }
+        const label = attributeValue(row, "dn")?.trim() || "Entity";
+        const pk = attributeValue(row, "pk");
+        const st = attributeValue(row, "st");
+        const reviewStatus = parseReviewStatus(st);
+        nodeMap.set(iid, {
+          id: iid,
+          label,
+          subtitle: pk ?? undefined,
+          reviewStatus,
+        });
+      }
+    }
+
+    const edgesQuery = `
+match
+$r isa! graph-relationship,
+  has rel-session-id $rsid,
+  has graph-rel-edge-key $gk,
+  has rel-verb $verb,
+  has rel-review-status $rst;
+$rsid == "${sidLit}";
+$r links (source-entity: $src, target-entity: $tgt);
+$src isa! graph-entity;
+$tgt isa! graph-entity;
+`.trim();
+
+    const edgesQueryRelaxed = `
+match
+$r isa! graph-relationship,
+  has rel-session-id $rsid,
+  has graph-rel-edge-key $gk,
+  has rel-verb $verb;
+$rsid == "${sidLit}";
+$r links (source-entity: $src, target-entity: $tgt);
+$src isa! graph-entity;
+$tgt isa! graph-entity;
+`.trim();
+
+    let edgesRes = await runInTx(driver, txId, edgesQuery, "vizSessionRels");
+    if (edgesRes.answerType !== "conceptRows" || !edgesRes.answers?.length) {
+      edgesRes = await runInTx(driver, txId, edgesQueryRelaxed, "vizSessionRelsRelaxed");
+    }
+    const edges: WorkbenchVizEdge[] = [];
+    if (edgesRes.answerType === "conceptRows" && edgesRes.answers?.length) {
+      for (const { data: row } of edgesRes.answers) {
+        const src = entityIidFromRow(row, "src");
+        const tgt = entityIidFromRow(row, "tgt");
+        const edgeId = attributeValue(row, "gk");
+        const verb = attributeValue(row, "verb");
+        const rst = attributeValue(row, "rst");
+        if (!src || !tgt || !edgeId) {
+          continue;
+        }
+        edges.push({
+          id: edgeId,
+          source: src,
+          target: tgt,
+          label: verb ?? undefined,
+          reviewStatus: parseReviewStatus(rst),
+        });
+        if (!nodeMap.has(src)) {
+          nodeMap.set(src, { id: src, label: "Entity", reviewStatus: "proposed" });
+        }
+        if (!nodeMap.has(tgt)) {
+          nodeMap.set(tgt, { id: tgt, label: "Entity", reviewStatus: "proposed" });
+        }
+      }
+    }
+
+    await rollbackTx(driver, txId);
+    const full: WorkbenchVizGraph = {
+      nodes: [...nodeMap.values()],
+      edges,
+    };
+    const focus = options?.focusNodeId?.trim();
+    if (focus) {
+      const sub = extractWorkbenchVizNeighborhood(full, focus);
+      if (sub) {
+        return sub;
+      }
+    }
+    return full;
+  } catch (err) {
+    await rollbackTx(driver, txId);
+    throw err;
+  }
+}
+
 export function createTypeDbGraphPersistence(): GraphPersistence {
   return {
     persistResearchSession: (session, opts) => persistResearchSessionToTypeDb(session, opts ?? {}),
+    fetchSessionVizGraph: (sessionId, opts) => fetchSessionVizGraphFromTypeDb(sessionId, opts),
   };
 }

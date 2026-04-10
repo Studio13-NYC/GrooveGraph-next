@@ -1,4 +1,5 @@
 import type { ResearchSession } from "@/src/types/research-session";
+import type { WorkbenchVizGraph } from "@/src/types/workbench-viz-graph";
 
 export type GraphSyncSkippedRelationship = {
   relationshipId: string;
@@ -36,4 +37,9 @@ export type GraphPersistence = {
     session: ResearchSession,
     options?: { includeDeferred?: boolean },
   ): Promise<GraphSyncResult>;
+  /** Read-only subgraph for canvas viz (TypeDB entity IIDs as node ids). */
+  fetchSessionVizGraph(
+    sessionId: string,
+    options?: { focusNodeId?: string },
+  ): Promise<WorkbenchVizGraph>;
 };

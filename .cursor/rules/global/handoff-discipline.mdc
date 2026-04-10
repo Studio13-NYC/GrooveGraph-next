@@ -1,0 +1,22 @@
+---
+description: Preserve ownership boundaries and pass clean assumptions, constraints, and open questions between agents.
+alwaysApply: true
+---
+
+# Handoff Discipline Rule
+
+## Purpose
+Make multi-agent collaboration explicit and low-friction.
+
+## Requirements
+- state assumptions, constraints, and unresolved questions
+- preserve ownership boundaries
+- pass only the context needed for the next agent
+- do not silently redefine another agent's contract
+- identify upstream and downstream effects when changing interfaces
+
+## Apply When
+- routing work between agents
+- escalating to architecture
+- handing code from one layer to another
+- summarizing partial work for continuation

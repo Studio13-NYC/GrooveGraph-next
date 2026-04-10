@@ -85,8 +85,8 @@ scope:
   readable:
     - docs/design-language/FOUNDATION.mdc
     - docs/VISUAL_STYLE_GUIDE.mdc
-    - graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg
-    - framework/src/visual-system/nycta-groovegraph-tokens.css
+    - docs/design-language/FOUNDATION.mdc
+    - product/src/visual-system/nycta-groovegraph-tokens.css
     - product/
 inputs:
   files:
@@ -101,7 +101,7 @@ reference_boundary:
   read_only:
     - external design PDFs or vendor docs (when cited)
   writable:
-    - this repository (docs, framework, product, ontology)
+    - this repository (docs, product, `.cursor/`)
 expected_output:
   format: brief
   must_include:

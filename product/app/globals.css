@@ -1,4 +1,4 @@
-@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";
+@import "../src/visual-system/nycta-groovegraph-tokens.css";
 
 /* Workspace-specific names layered on shared NYCTA tokens (any app can import the same sheet). */
 :root {

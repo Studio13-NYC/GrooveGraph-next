@@ -41,7 +41,7 @@ export function candidateKey(sessionId: string, candidateId: string): string {
   return `${sessionId}:${candidateId}`;
 }
 
-export function countByStatus<T extends { status: string }>(items: T[], status: string): number {
+function countByStatus<T extends { status: string }>(items: T[], status: string): number {
   return items.filter((item) => item.status === status).length;
 }
 

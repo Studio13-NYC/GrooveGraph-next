@@ -6,6 +6,8 @@
 
 **Quick entry:** [`../VISUAL_STYLE_GUIDE.mdc`](../VISUAL_STYLE_GUIDE.mdc) — summary, regimes, checklist.
 
-**CSS tokens:** `framework/src/visual-system/nycta-groovegraph-tokens.css` — import `@groovegraph-next/framework/nycta-groovegraph-tokens.css` from any app; re-export beside map scans in `MTA-Graphic_Deisgn_Standards/`
+**CSS tokens:** `product/src/visual-system/nycta-groovegraph-tokens.css` — imported from `product/app/globals.css`.
 
-**Archive index:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
+**Reference pack:** The former `graphic-design-agent-assets/` tree (scans, extracts) was removed; use **git history** to recover files if needed.
+
+**Figma:** [`groovegraph-design-system.fig`](./groovegraph-design-system.fig) in this folder is the **canonical** design-system file. [`images/groovegraph-design-system.fig`](./images/groovegraph-design-system.fig) duplicates it; remove or relink after confirming which copy you edit in Figma.

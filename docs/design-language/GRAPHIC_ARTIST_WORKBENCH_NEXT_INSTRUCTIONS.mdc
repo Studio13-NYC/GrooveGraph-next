@@ -27,10 +27,9 @@ You are the **graphic-artist** lane (`.cursor/agents/graphic-artist.mdc`). You o
 
 ## 3. Design authority (order)
 
-1. `docs/design-language/FOUNDATION.mdc` (§ Context split)
+1. `docs/design-language/FOUNDATION.mdc` — § Context split; map grammar (§1); signage / software wayfinding (§2); decision-point information
 2. `docs/design-language/FIGMA_MCP.mdc` + Figma **`get_design_context`** when frames exist
-3. `framework/src/visual-system/nycta-groovegraph-tokens.css` — **only** CSS color/geometry source
-4. `graphic-design-agent-assets/.../SOFTWARE_WAYFINDING_FOUNDATION.md` — decision-point information
+3. `product/src/visual-system/nycta-groovegraph-tokens.css` — **only** CSS color/geometry source
 
 ---
 

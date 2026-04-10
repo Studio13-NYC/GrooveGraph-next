@@ -1,7 +1,7 @@
 import { TypeDBHttpDriver, isApiErrorResponse } from "@typedb/driver-http";
 import { getTypeDbConfig } from "@/src/lib/server/config";
 
-export type GraphBackendStatusPayload = {
+type GraphBackendStatusPayload = {
   configured: boolean;
   reachable: boolean;
   database: string | null;

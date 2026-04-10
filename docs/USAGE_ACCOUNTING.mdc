@@ -42,12 +42,9 @@ That means:
 
 ## Framework surface
 
-The reusable implementation lives in:
+Reference **TypeScript** helpers for JSONL append and slice rollups previously lived under **`orchestration/`** (**removed**). Recover from **git history** if you need them; this document defines the **contract** (`cost_summary`, measurement modes, JSONL shape).
 
-- `framework/src/telemetry-log.ts`
-- `framework/src/usage-accounting.ts`
-
-It provides:
+Those helpers provided:
 
 - append-only JSONL persistence for slice summaries
 - normalized `cost_summary` handling

@@ -8,7 +8,7 @@
 
 - **Default branch:** `main`
 - **Canonical org remote:** use the Studio13 org URL shown by `git remote -v` (GitHub may display a redirect notice if the remote was renamed—prefer the canonical `Studio13-NYC/GrooveGraph-next` location when updating remotes)
-- **Scope:** all framework docs, `.cursor/` agents and rules, `framework/`, `product/`, `ontology/`, and deployment scripts live here
+- **Scope:** all framework docs, `.cursor/` agents and rules, `product/`, and deployment scripts live here
 
 ## README language
 

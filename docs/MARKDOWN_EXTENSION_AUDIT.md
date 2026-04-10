@@ -8,9 +8,9 @@ Generated as part of the markdown hygiene pass: **stale portable-blueprint file 
 
 | Extension | Count |
 |-----------|------:|
-| `.mdc` | 54 |
-| `.md` | 27 |
-| **Total** | **81** |
+| `.mdc` | 53 |
+| `.md` | 14 |
+| **Total** | **67** |
 
 ## Convention (applied)
 
@@ -20,17 +20,16 @@ Generated as part of the markdown hygiene pass: **stale portable-blueprint file 
 | Canonical policy docs under `docs/` (except `README.md`) | **`.mdc`** |
 | Repo operating contract | **`AGENTS.mdc`** (root) |
 | Cursor agents, skills, rules | **`.mdc`** under `.cursor/` |
-| Design-authority doc in assets | **`graphic-design-agent-assets/mta-design-foundation.mdc`** |
-| Refs alias map | **`refs/INDEX.md`** |
-| Research, hygiene logs, narrative posts, MTA extracts | **`.md`** |
+| Design authority (merged) | **`docs/design-language/FOUNDATION.mdc`** (see also **`.cursor/rules/mta-design-foundation.mdc`**) |
+| Research, hygiene logs, narrative posts | **`.md`** |
 
 **Capitalization:** Use **`README.md`**, not `readme.md` or `Readme.md`.
 
-**Removed:** All references to a non-existent root portable-blueprint file that was previously named in docs and refs. Generalization content is covered by **`docs/GENERALIZATION_AUDIT.mdc`** and **`refs/INDEX.md`** (alias row). **`AGENTS.mdc`** + **`docs/`** are the live contract.
+**Removed:** All references to a non-existent root portable-blueprint file that was previously named in docs. Generalization content is covered by **`docs/GENERALIZATION_AUDIT.mdc`**. **`AGENTS.mdc`** + **`docs/`** are the live contract. **`refs/`** and **`orchestration/`** were later removed — use **`docs/INDEX.mdc`** as the single doc map. Repo-root **`ontology/`** was removed; live TypeDB **`define`** text is captured in **`docs/DB-Schema-Export.typeql`** (regenerate: **`npm run dump:typedb-schema`**).
 
 ---
 
-## Fine as-is — `.mdc` (54)
+## Fine as-is — `.mdc` (53)
 
 Sorted by path:
 
@@ -56,6 +55,7 @@ Sorted by path:
 - `.cursor/rules/subagent-routing.mdc`
 - `.cursor/rules/visual-style-guide.mdc`
 - `.cursor/skills/agent-orchestrator/SKILL.mdc`
+- `.cursor/skills/cloud-agent-repo-starter/SKILL.mdc`
 - `.cursor/skills/context-packet-builder/SKILL.mdc`
 - `.cursor/skills/graph-data-viz-system/reference.mdc`
 - `.cursor/skills/graph-data-viz-system/SKILL.mdc`
@@ -70,7 +70,6 @@ Sorted by path:
 - `docs/DECISION_LOG.mdc`
 - `docs/GENERALIZATION_AUDIT.mdc`
 - `docs/GITHUB_STRATEGY.mdc`
-- `docs/HEADCOUNT.mdc`
 - `docs/HYGIENE.mdc`
 - `docs/INDEX.mdc`
 - `docs/MODEL_ROUTING.mdc`
@@ -87,15 +86,16 @@ Sorted by path:
 - `docs/design-language/WORKBENCH_VOCAB.mdc`
 - `docs/product/RESEARCH_WORKBENCH_PRD.mdc`
 - `docs/ux/RESEARCH_WORKBENCH_UX_INTERVIEW.mdc`
-- `graphic-design-agent-assets/mta-design-foundation.mdc`
 
 ---
 
-## Fine as-is — `.md` (27)
+## Fine as-is — `.md` (14)
 
 Sorted by path:
 
 - `README.md` (repo root)
+- `.cursor/plans/archive/graph_provider_neo4j-typedb_3ef1b048.plan.md`
+- `.cursor/plans/neo4j_branch_typedb_cleanup.plan.md`
 - `assets/README.md`
 - `assets/examples/README.md`
 - `assets/examples/graphic-brief-template.md`
@@ -104,23 +104,15 @@ Sorted by path:
 - `assets/posts/2026-03-21-one-index-to-rule-the-refs.md`
 - `docs/MARKDOWN_EXTENSION_AUDIT.md` (this inventory)
 - `docs/design-language/README.md`
-- `framework/README.md`
-- `framework/src/visual-system/README.md`
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted.md`
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v2.md`
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
-- `graphic-design-agent-assets/graphic-designer.md`
-- `product/README.md`
-- `refs/INDEX.md`
 - `docs/research-workbench-validation.md`
+- `product/README.md`
+- `product/src/visual-system/README.md`
 
 ---
 
 ## Should change
 
-**None** at audit time. Prior hygiene renamed `framework/README.mdc` and `docs/design-language/README.mdc` to **`README.md`**; `package.json` `validate:docs` and `docs/INDEX.mdc` were updated accordingly.
+**None** at audit time. Prior hygiene renamed `docs/design-language/README.mdc` to **`README.md`**; `package.json` `validate:docs` and `docs/INDEX.mdc` were updated accordingly. The old `framework/` workspace was folded into **`product/src/visual-system/`** (orchestration TS lived under **`orchestration/`** until that folder was removed). **`graphic-design-agent-assets/`** (MTA scans, extracts, duplicate rule fragment) was **removed** — recover from **git history** if needed; authority lives in **`docs/design-language/FOUNDATION.mdc`**. Re-run a file inventory to refresh counts in this table.
 
 Re-run inventory after large doc moves to confirm no stray **`README.mdc`** or broken links.
 
@@ -130,3 +122,4 @@ Re-run inventory after large doc moves to confirm no stray **`README.mdc`** or b
 
 - **`npm run validate:docs`** checks root `README.md`, `AGENTS.mdc`, and a fixed list of canonical `docs/**/*.mdc` paths including `docs/design-language/README.md`.
 - **`docs/MARKDOWN_EXTENSION_AUDIT.md`** is informational (`.md`); it is not required by `validate:docs`.
+- **`docs/DB-Schema-Export.typeql`** is TypeQL (not Markdown): snapshot of the live TypeDB schema via HTTP **`getDatabaseSchema`**; refresh with **`npm run dump:typedb-schema`** (uses `product/.env.local`).

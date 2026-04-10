@@ -2,13 +2,13 @@
   "name": "groovegraph-next",
   "private": true,
   "version": "0.1.0",
-  "workspaces": ["framework", "product"],
+  "workspaces": ["product"],
   "scripts": {
     "dev": "npm run dev -w @groovegraph-next/product",
     "validate:repo": "node -e \"console.log('groovegraph-next repo scaffold ready')\"",
     "validate:docs": "node -e \"const fs=require('fs'); ['README.md','AGENTS.mdc','docs/AGENT_ORCHESTRATION.mdc','docs/MODEL_ROUTING.mdc','docs/CONTEXT_PACKETS.mdc','docs/USAGE_ACCOUNTING.mdc','docs/HYGIENE.mdc','docs/OBSERVABILITY.mdc','docs/VISUAL_STYLE_GUIDE.mdc','docs/design-language/FOUNDATION.mdc','docs/design-language/README.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('docs present')\"",
-    "validate:visual-system": "node -e \"const fs=require('fs'); ['framework/src/visual-system/tokens.ts','assets/examples/new-regime-governance-map.svg','assets/examples/old-regime-satire-panel.svg','assets/examples/graphic-brief-template.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system assets present')\"",
-    "validate:framework": "npm run validate:framework -w @groovegraph-next/framework",
+    "validate:visual-system": "node -e \"const fs=require('fs'); ['product/src/visual-system/tokens.ts','product/src/visual-system/nycta-groovegraph-tokens.css','assets/examples/new-regime-governance-map.svg','assets/examples/old-regime-satire-panel.svg','assets/examples/graphic-brief-template.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system assets present')\"",
+    "dump:typedb-schema": "node scripts/dump-typedb-schema.mjs",
     "cleanup:check": "npm prune && npx knip",
     "build:product": "npm run build -w @groovegraph-next/product",
     "start:product": "npm run start -w @groovegraph-next/product"

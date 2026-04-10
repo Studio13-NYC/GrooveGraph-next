@@ -43,17 +43,12 @@ Every surface should answer:
 
 Read these in order when the task needs concrete reference material:
 
-1. `docs/design-language/FOUNDATION.mdc`
-2. `docs/design-language/FIGMA_MCP.mdc` (when Figma is in scope)
-3. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg` (for **diagram** / map-like visuals)
-4. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
-5. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
-6. `framework/src/visual-system/nycta-groovegraph-tokens.css` (package import: `@groovegraph-next/framework/nycta-groovegraph-tokens.css`)
-7. `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
-8. `graphic-design-agent-assets/graphic-designer.md`
-9. `graphic-design-agent-assets/mta-design-foundation.mdc`
+1. `docs/design-language/FOUNDATION.mdc` (merged map + signage + software wayfinding)
+2. `docs/VISUAL_STYLE_GUIDE.mdc`
+3. `docs/design-language/FIGMA_MCP.mdc` (when Figma is in scope)
+4. `product/src/visual-system/nycta-groovegraph-tokens.css` (loaded via `product/app/globals.css`)
 
-If the files disagree, follow **FOUNDATION.md**, then the **software wayfinding foundation**, then v3 manual notes; use the **vignelli map** for **diagram** geometry only.
+If sources disagree, follow **FOUNDATION.mdc**, then **tokens**, then Figma. For **diagram** / map-like visuals, use **FOUNDATION §1** + tokens (historical Vignelli scan lived in removed `graphic-design-agent-assets/` — **git history** if needed).
 
 ## Working method
 

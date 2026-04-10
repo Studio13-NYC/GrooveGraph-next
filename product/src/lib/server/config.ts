@@ -15,7 +15,7 @@ export function getExtractionModel(): string {
   return process.env.OPENAI_RESEARCH_EXTRACTION_MODEL ?? "gpt-5.4-mini";
 }
 
-export type TypeDbConnectionConfig = {
+type TypeDbConnectionConfig = {
   username: string;
   password: string;
   addresses: string[];
@@ -23,7 +23,7 @@ export type TypeDbConnectionConfig = {
 };
 
 /**
- * TypeDB Cloud / CE HTTP driver config. Mirrors ontology/scripts/lib/typedb-env.mjs (env vars only;
+ * TypeDB Cloud / CE HTTP driver config. Same env vars as scripts/dump-typedb-schema.mjs (env vars only;
  * Next.js loads .env.local into process.env).
  */
 export function getTypeDbConfig(): TypeDbConnectionConfig | null {

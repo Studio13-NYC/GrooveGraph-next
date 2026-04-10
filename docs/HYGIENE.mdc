@@ -63,7 +63,11 @@ npm run cleanup:check
 
 ## Knip and workspace packages
 
-Root `knip.json` lists `@groovegraph-next/framework` under `ignoreDependencies` because `product/` imports `nycta-groovegraph-tokens.css` via CSS `@import`, which `knip` does not treat as a JavaScript dependency. Do not drop that ignore unless you add another traceable consumption path or CSS-aware analysis.
+The repo workspace is **`product/`** only. CSS tokens load via a relative `@import` in `product/app/globals.css` (not a package dependency).
+
+`@typedb/driver-http` is declared on **`product/`** and as a **root** `devDependency` for **`scripts/dump-typedb-schema.mjs`** so `cleanup:check` (knip) stays honest; versions should stay aligned with **`product/package.json`**.
+
+Root `knip.json` **`ignoreFiles`** lists `archive/**/*.mjs` and **`product/src/visual-system/tokens.ts`** so `cleanup:check` does not treat on-demand CLI tools or the optional TS token mirror as dead app code. Revisit if those paths become first-class imports from `product/`.
 
 ## Where to log hygiene evidence (post-consolidation)
 

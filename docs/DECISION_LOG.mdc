@@ -12,7 +12,6 @@ The repo starts as a seed monorepo with:
 
 - `.cursor/`
 - `docs/`
-- `framework/`
 - `product/`
 - `prototypes/` *(removed 2026-04-08 — see D012)*
 - `research/` *(removed 2026-04-08 — see D012)*
@@ -61,7 +60,7 @@ Discovery-first product definition is now a first-class lane rather than an impl
 
 **Update (2026-04):** The product **only** writes to **TypeDB** (`product/src/lib/server/typedb-graph-persistence.ts`, `POST .../graph/sync`). Neo4j-era code and Aura migration scripts are archived under **`archive/neo4j-branch-only/`**; git branch **`neo4j`** holds the pre–TypeDB app snapshot.
 
-Previously: workbench synced to Neo4j Aura with labels **`Entity`**, **`ResearchSession`**, etc. Entity upsert rules (candidate keys, external IDs, name + kind) are preserved in the TypeDB adapter against types aligned with **`ontology/groovegraph-schema.tql`**.
+Previously: workbench synced to Neo4j Aura with labels **`Entity`**, **`ResearchSession`**, etc. Entity upsert rules (candidate keys, external IDs, name + kind) are preserved in the TypeDB adapter against types aligned with the workbench schema and the live DB snapshot in **`docs/DB-Schema-Export.typeql`** (regenerate with **`npm run dump:typedb-schema`**).
 
 ## 2026-04-08
 

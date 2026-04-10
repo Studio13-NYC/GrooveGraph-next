@@ -4,7 +4,7 @@ This repo treats **Figma** as the **living visual specification** for applicatio
 
 ## Authority
 
-- **Tokens and geometry:** [`framework/src/visual-system/nycta-groovegraph-tokens.css`](../../framework/src/visual-system/nycta-groovegraph-tokens.css) — if Figma and tokens disagree, **tokens win** unless the brief explicitly updates tokens.
+- **Tokens and geometry:** [`product/src/visual-system/nycta-groovegraph-tokens.css`](../../product/src/visual-system/nycta-groovegraph-tokens.css) — if Figma and tokens disagree, **tokens win** unless the brief explicitly updates tokens.
 - **Art direction:** [`FOUNDATION.mdc`](FOUNDATION.mdc), then Figma frames for scoped UI work.
 - **Code ↔ design linkage:** [Code Connect](https://www.figma.com/developers/code-connect) — use Figma MCP **suggestions** and persist approved mappings so repeat passes stay aligned.
 
@@ -46,9 +46,9 @@ Use these tools when adding or overhauling UI surfaces (e.g. `product` at `/`).
 
 **Tokens**
 
-- Canonical CSS: `framework/src/visual-system/nycta-groovegraph-tokens.css`.
-- Consumed via: `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`
-- TypeScript mirror: `framework/src/visual-system/tokens.ts` (keep in sync with CSS).
+- Canonical CSS: `product/src/visual-system/nycta-groovegraph-tokens.css`.
+- Consumed via: `product/app/globals.css` → `@import "../src/visual-system/nycta-groovegraph-tokens.css";`
+- TypeScript mirror: `product/src/visual-system/tokens.ts` (keep in sync with CSS).
 
 **Research workbench**
 
@@ -61,7 +61,7 @@ Use these tools when adding or overhauling UI surfaces (e.g. `product` at `/`).
 
 **Assets**
 
-- NYCTA / Vignelli references: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`.
+- NYCTA / Vignelli discipline: `docs/design-language/FOUNDATION.mdc` (historical asset folder removed; see git history for old scans).
 
 ## Ownership
 

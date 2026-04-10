@@ -16,10 +16,8 @@
 
 **Archival sources and tokens:**
 
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md` — what to read; what is superseded
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg` — **diagram / map** visual reference (1972 diagram grammar)
-- `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md` — NYCTA manual notes (plates, grids, bands)
-- `framework/src/visual-system/nycta-groovegraph-tokens.css` — **CSS custom properties** (canonical). Import: `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";` from any workspace package that depends on `@groovegraph-next/framework`.
+- **Historical reference pack** (Vignelli diagram scan, manual extracts) lived under `graphic-design-agent-assets/` — **removed**; use **git history** if you need those files
+- `product/src/visual-system/nycta-groovegraph-tokens.css` — **CSS custom properties** (canonical). Import from **`product/app/globals.css`**: `@import "../src/visual-system/nycta-groovegraph-tokens.css";`
 
 **Definitive interactive reference (HTML5, typography through CSS motion):**
 
@@ -41,13 +39,13 @@
 
 ## One-sentence summary
 
-GrooveGraph graphics use the **1970 NYCTA Graphics Standards Manual** discipline for **application UI** (modular plates, grid, functional color coding, Helvetica-scale hierarchy) and **1972 Vignelli diagram grammar** for **maps and route-shaped diagrams** (orthogonal + 45°, uniform trunk weight, parallel gutter, explicit junctions, token-bound hues). **Software** behavior follows **`SOFTWARE_WAYFINDING_FOUNDATION.md`**. **Product UI** avoids transit **metaphors** in copy (lines, stops, interchanges as journey nouns); see **WORKBENCH_VOCAB**.
+GrooveGraph graphics use the **1970 NYCTA Graphics Standards Manual** discipline for **application UI** (modular plates, grid, functional color coding, Helvetica-scale hierarchy) and **1972 Vignelli diagram grammar** for **maps and route-shaped diagrams** (orthogonal + 45°, uniform trunk weight, parallel gutter, explicit junctions, token-bound hues). **Software** behavior (decision-point information, identification / directional / informational layers) is folded into **`docs/design-language/FOUNDATION.mdc`**. **Product UI** avoids transit **metaphors** in copy (lines, stops, interchanges as journey nouns); see **WORKBENCH_VOCAB**.
 
 ---
 
 ## Quick token pointer
 
-Hex and geometry live in **`framework/src/visual-system/nycta-groovegraph-tokens.css`**. Default canvas (UI and maps): **white** (light) / **near-black** (dark) — **no warm beige**. **UI baseline type:** **Helvetica Neue** via `--gg-font-sans`, aligned with **`docs/design-language/groovegraph-design-system.fig`**. TypeScript mirror: **`framework/src/visual-system/tokens.ts`**.
+Hex and geometry live in **`product/src/visual-system/nycta-groovegraph-tokens.css`**. Default canvas (UI and maps): **white** (light) / **near-black** (dark) — **no warm beige**. **UI baseline type:** **Helvetica Neue** via `--gg-font-sans`, aligned with **`docs/design-language/groovegraph-design-system.fig`**. TypeScript mirror: **`product/src/visual-system/tokens.ts`**.
 
 ---
 

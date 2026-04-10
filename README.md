@@ -11,11 +11,9 @@
 - `.cursor/agents/`: specialist agent definitions
 - `.cursor/rules/`: durable Cursor rules for routing, context, boundaries, and visual style
 - `.cursor/skills/`: reusable skills for orchestration and packet generation
-- `refs/INDEX.md`: single alias map (`@refs/INDEX.md`) to canonical docs and `.cursor/rules`
-- `docs/`: canonical framework documentation
-- `framework/`: orchestration utilities and reusable support code
+- `docs/`: canonical framework documentation (`docs/INDEX.mdc` for the full map)
 - `product/`: **GrooveGraph Next.js app** — investigation / graph-review workbench (same surface as [groovegraph.s13.nyc](https://groovegraph.s13.nyc/))
-- `ontology/`: canonical TypeQL model for TypeDB; legacy Neo4j migration artifacts under `archive/neo4j-branch-only/`
+- `docs/DB-Schema-Export.typeql`: TypeQL snapshot of the live TypeDB schema (regenerate with `npm run dump:typedb-schema`); legacy Neo4j migration artifacts under `archive/neo4j-branch-only/`
 
 ## Local development
 
@@ -58,7 +56,7 @@ See `docs/AGENT_REGISTRY.mdc` for the full matrix. Quick map:
 
 ## Visual system
 
-The default visual language follows the **1972 Vignelli NYCTA diagram** and **NYCTA Graphics Standards Manual** discipline under `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`. Merged authority: `docs/design-language/FOUNDATION.mdc`. Short entry: `docs/VISUAL_STYLE_GUIDE.mdc`. Shared CSS tokens: `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`.
+The default visual language follows the **1972 Vignelli NYCTA diagram** and **NYCTA Graphics Standards Manual** discipline as documented in **`docs/design-language/FOUNDATION.mdc`**. Short entry: `docs/VISUAL_STYLE_GUIDE.mdc`. Shared CSS tokens: `product/src/visual-system/nycta-groovegraph-tokens.css` (imported from `product/app/globals.css`). Historical scans and extracts that used to live under `graphic-design-agent-assets/` were removed — recover from **git history** if needed.
 
 ## First docs to read
 

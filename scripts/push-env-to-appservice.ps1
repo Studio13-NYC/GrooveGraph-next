@@ -1,10 +1,16 @@
 param(
-  [string]$EnvFile = (Join-Path (Split-Path -Parent $PSScriptRoot) ".env.local"),
+  # Default: product/.env.local (canonical Next.js app secrets). Override with -EnvFile for a different path.
+  [string]$EnvFile = "",
   [string]$ResourceGroup = "rg-groovegraph",
   [string]$WebAppName = "as-groovegraph-api"
 )
 
 $ErrorActionPreference = "Stop"
+
+$repoRoot = Split-Path -Parent $PSScriptRoot
+if (-not $EnvFile) {
+  $EnvFile = Join-Path $repoRoot "product\.env.local"
+}
 
 if (-not (Test-Path -LiteralPath $EnvFile)) {
   throw "Env file not found: $EnvFile"
@@ -32,7 +38,7 @@ try {
   if ($LASTEXITCODE -ne 0) {
     throw "az webapp config appsettings set failed with exit code $LASTEXITCODE"
   }
-  Write-Host "App settings updated on $WebAppName ($ResourceGroup). Keys: $($items.name -join ', ')" -ForegroundColor Green
+  Write-Host "App settings updated on $WebAppName ($ResourceGroup) from $EnvFile. Keys: $($items.name -join ', ')" -ForegroundColor Green
 }
 finally {
   if ($jsonPath -and (Test-Path -LiteralPath $jsonPath)) {

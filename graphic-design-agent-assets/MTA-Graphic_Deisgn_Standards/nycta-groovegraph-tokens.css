@@ -1,6 +1,0 @@
-/**
- * Re-export for designers browsing this folder. Canonical source:
- *   framework/src/visual-system/nycta-groovegraph-tokens.css
- * Apps import: @import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";
- */
-@import "../../../framework/src/visual-system/nycta-groovegraph-tokens.css";

@@ -15,7 +15,7 @@ You are the Reviewer subagent for GrooveGraph Next.
 
 ## Inputs
 
-- changed files or docs (implementation usually under **`product/`** or **`framework/`**)
+- changed files or docs (implementation usually under **`product/`**; agent cards under **`.cursor/agents/`**)
 - expected behavior
 - known risks or assumptions
 

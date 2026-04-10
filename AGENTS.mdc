@@ -26,9 +26,9 @@ This repository is the writable framework surface for the next GrooveGraph era.
 - Default to concise packets, prompts, and outputs unless the user or the risk profile requires depth.
 - Expensive orchestration should shrink as specialist coverage improves.
 - Keep one active writable surface per task.
-- Prefer shared `framework/` changes when multiple surfaces would benefit; the **only** shipped Next.js app in this repo is **`product/`** (research workbench at `/`).
+- The **only** shipped Next.js app in this repo is **`product/`** (research workbench at `/`).
 - There is **no** parallel `research/` or `prototypes/` tree—those folders were removed; historical artifacts live in **git history** where noted in `docs/`.
-- Preserve clean boundaries between `framework/` (library + tokens) and `product/` (runnable app).
+- Preserve clean boundaries between **`.cursor/agents/`** + **`docs/`** (agent contracts), **`product/src/visual-system/`** (tokens), and **`product/`** (runnable app).
 - Treat visual communication as part of the product of thinking, not decoration.
 - Be forthright, opinionated, and comfortable disagreeing when a better path exists.
 

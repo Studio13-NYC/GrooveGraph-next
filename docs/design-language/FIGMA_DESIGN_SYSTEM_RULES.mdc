@@ -1,6 +1,6 @@
 # GrooveGraph Next — Figma / MCP design system rules (repo analysis)
 
-Structured reference for integrating Figma with this codebase via MCP. **CSS tokens** in `framework/src/visual-system/nycta-groovegraph-tokens.css` remain the implementation contract unless a brief updates them.
+Structured reference for integrating Figma with this codebase via MCP. **CSS tokens** in `product/src/visual-system/nycta-groovegraph-tokens.css` remain the implementation contract unless a brief updates them.
 
 ---
 
@@ -8,13 +8,13 @@ Structured reference for integrating Figma with this codebase via MCP. **CSS tok
 
 | Kind | Location | Format |
 |------|----------|--------|
-| Colors, radii, type scale, strokes | `framework/src/visual-system/nycta-groovegraph-tokens.css` | CSS custom properties on `:root`, dark mode via `@media (prefers-color-scheme: dark)` |
-| TS mirror (optional) | `framework/src/visual-system/tokens.ts` | Keep aligned with CSS when used |
+| Colors, radii, type scale, strokes | `product/src/visual-system/nycta-groovegraph-tokens.css` | CSS custom properties on `:root`, dark mode via `@media (prefers-color-scheme: dark)` |
+| TS mirror (optional) | `product/src/visual-system/tokens.ts` | Keep aligned with CSS when used |
 
 **Consumption:**
 
 ```css
-@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";
+@import "../src/visual-system/nycta-groovegraph-tokens.css";
 ```
 
 No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same names (e.g. `gg/route/orange` → `--gg-route-orange`) for designer ↔ engineer parity.
@@ -26,7 +26,7 @@ No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same
 | Area | Location | Notes |
 |------|----------|--------|
 | Research workbench (Next regime) | `product/src/components/` | `WorkbenchNextView`, `ResearchWorkbench`, `research-workbench-widgets` |
-| Framework UI | `framework/` | Shared tokens; app-specific plates live in workspace |
+| Product tokens | `product/src/visual-system/` | Shared CSS/TS tokens; app-specific plates live in `product/` |
 
 **Architecture:** React function components; scoped CSS under `.gg-next-root` for `/` (`app/workbench.css`). No Storybook in this package by default.
 
@@ -35,14 +35,14 @@ No Style Dictionary pipeline in-repo; **Figma Variables** should mirror the same
 ## 3. Frameworks and libraries
 
 - **UI:** React 19, Next.js App Router (`product`).
-- **Styling:** Global CSS + scoped workbench sheet; tokens from framework package (not Tailwind in `product` by default).
+- **Styling:** Global CSS + scoped workbench sheet; tokens from `product/src/visual-system/` (not Tailwind in `product` by default).
 - **Build:** Next.js (Turbopack in dev per project config).
 
 ---
 
 ## 4. Assets
 
-- NYCTA / Vignelli references: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`.
+- NYCTA / Vignelli discipline: `docs/design-language/FOUNDATION.mdc`.
 - Posts / static: `assets/` as applicable.
 - No dedicated CDN config in `product`.
 

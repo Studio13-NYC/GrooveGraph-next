@@ -10,7 +10,7 @@ You are the Tester subagent for GrooveGraph Next.
 ## Repo bootstrap (run / build / smoke)
 
 - Use **`.cursor/skills/cloud-agent-repo-starter/SKILL.mdc`** for install commands, ports, env files, and area-specific validation before deep testing.
-- For **visual acceptance**, cross-check **`docs/VISUAL_STYLE_GUIDE.mdc`** and **`docs/design-language/FOUNDATION.mdc`** (tokens under `framework/src/visual-system/`).
+- For **visual acceptance**, cross-check **`docs/VISUAL_STYLE_GUIDE.mdc`** and **`docs/design-language/FOUNDATION.mdc`** (tokens under `product/src/visual-system/`).
 
 ## Mission
 

@@ -1,0 +1,677 @@
+# TypeDB schema export (full define text) from live database.
+# Database: groove-graph
+# Generated: 2026-04-10 (npm run dump:typedb-schema)
+# Source: TypeDB HTTP driver getDatabaseSchema — committed schema in the server, not inferred from instance values.
+# Re-run after schema changes; edit in Studio rather than here unless you know the file is the new source of truth.
+define
+
+attribute aura-migration-neo4j-element-id,
+ value string;
+attribute aura-album-id,
+ value string;
+attribute aura-album-meta,
+ value string;
+attribute aura-album-name,
+ value string;
+attribute aura-album-title,
+ value string;
+attribute aura-artist-id,
+ value string;
+attribute aura-artist-meta,
+ value string;
+attribute aura-artist-active-years,
+ value string;
+attribute aura-artist-biography,
+ value string;
+attribute aura-artist-birth-name,
+ value string;
+attribute aura-artist-born,
+ value string;
+attribute aura-artist-born-place,
+ value string;
+attribute aura-artist-country,
+ value string;
+attribute aura-artist-genres,
+ value string;
+attribute aura-artist-name,
+ value string;
+attribute aura-artist-origin,
+ value string;
+attribute aura-artist-roles,
+ value string;
+attribute aura-artist-wikidata-id,
+ value string;
+attribute aura-band-id,
+ value string;
+attribute aura-band-meta,
+ value string;
+attribute aura-band-active-years,
+ value string;
+attribute aura-band-aliases,
+ value string;
+attribute aura-band-biography,
+ value string;
+attribute aura-band-country,
+ value string;
+attribute aura-band-name,
+ value string;
+attribute aura-effect-id,
+ value string;
+attribute aura-effect-meta,
+ value string;
+attribute aura-effect-name,
+ value string;
+attribute aura-entity-aliases,
+ value string;
+attribute aura-entity-attributes-json,
+ value string;
+attribute aura-entity-candidate-keys,
+ value string;
+attribute aura-entity-created-at,
+ value string;
+attribute aura-entity-display-name,
+ value string;
+attribute aura-entity-evidence-snippet-ids,
+ value string;
+attribute aura-entity-external-ids,
+ value string;
+attribute aura-entity-last-session-id,
+ value string;
+attribute aura-entity-name-norm,
+ value string;
+attribute aura-entity-provisional-kind,
+ value string;
+attribute aura-entity-status,
+ value string;
+attribute aura-entity-updated-at,
+ value string;
+attribute aura-entity-type-id,
+ value string;
+attribute aura-entity-type-meta,
+ value string;
+attribute aura-entity-type-entity-label,
+ value string;
+attribute aura-entity-type-name,
+ value string;
+attribute aura-genre-id,
+ value string;
+attribute aura-genre-meta,
+ value string;
+attribute aura-genre-name,
+ value string;
+attribute aura-graph-entity-id,
+ value string;
+attribute aura-graph-entity-meta,
+ value string;
+attribute aura-graph-entity-active-years,
+ value string;
+attribute aura-graph-entity-aliases,
+ value string;
+attribute aura-graph-entity-biography,
+ value string;
+attribute aura-graph-entity-city,
+ value string;
+attribute aura-graph-entity-country,
+ value string;
+attribute aura-graph-entity-entity-label,
+ value string;
+attribute aura-graph-entity-genres,
+ value string;
+attribute aura-graph-entity-name,
+ value string;
+attribute aura-graph-entity-origin,
+ value string;
+attribute aura-graph-entity-roles,
+ value string;
+attribute aura-graph-entity-title,
+ value string;
+attribute aura-graph-entity-wikidata-id,
+ value string;
+attribute aura-instrument-id,
+ value string;
+attribute aura-instrument-meta,
+ value string;
+attribute aura-instrument-name,
+ value string;
+attribute aura-instrument-title,
+ value string;
+attribute aura-label-id,
+ value string;
+attribute aura-label-meta,
+ value string;
+attribute aura-label-aliases,
+ value string;
+attribute aura-label-name,
+ value string;
+attribute aura-performance-id,
+ value string;
+attribute aura-performance-meta,
+ value string;
+attribute aura-performance-name,
+ value string;
+attribute aura-person-id,
+ value string;
+attribute aura-person-meta,
+ value string;
+attribute aura-person-active-years,
+ value string;
+attribute aura-person-biography,
+ value string;
+attribute aura-person-country,
+ value string;
+attribute aura-person-genres,
+ value string;
+attribute aura-person-name,
+ value string;
+attribute aura-person-origin,
+ value string;
+attribute aura-person-roles,
+ value string;
+attribute aura-person-wikidata-id,
+ value string;
+attribute aura-release-id,
+ value string;
+attribute aura-release-meta,
+ value string;
+attribute aura-release-format,
+ value string;
+attribute aura-release-release-date,
+ value string;
+attribute aura-release-title,
+ value string;
+attribute aura-research-session-id,
+ value string;
+attribute aura-research-session-seed-query,
+ value string;
+attribute aura-research-session-title,
+ value string;
+attribute aura-research-session-updated-at,
+ value string;
+attribute aura-session-id,
+ value string;
+attribute aura-session-date,
+ value string;
+attribute aura-session-name,
+ value string;
+attribute aura-session-studio-name,
+ value string;
+attribute aura-studio-id,
+ value string;
+attribute aura-studio-meta,
+ value string;
+attribute aura-studio-biography,
+ value string;
+attribute aura-studio-city,
+ value string;
+attribute aura-studio-country,
+ value string;
+attribute aura-studio-founded,
+ value string;
+attribute aura-studio-location,
+ value string;
+attribute aura-studio-name,
+ value string;
+attribute aura-track-id,
+ value string;
+attribute aura-track-meta,
+ value string;
+attribute aura-track-name,
+ value string;
+attribute aura-track-title,
+ value string;
+attribute aura-r-collaborated-with-meta,
+ value string;
+attribute aura-r-collaborated-with-context,
+ value string;
+attribute aura-r-collaborated-with-id,
+ value string;
+attribute aura-r-contains-id,
+ value string;
+attribute aura-r-features-meta,
+ value string;
+attribute aura-r-features-id,
+ value string;
+attribute aura-r-graph-rel-confidence,
+ value string;
+attribute aura-r-graph-rel-evidence-snippet-ids,
+ value string;
+attribute aura-r-graph-rel-relationship-id,
+ value string;
+attribute aura-r-graph-rel-session-id,
+ value string;
+attribute aura-r-graph-rel-status,
+ value string;
+attribute aura-r-graph-rel-updated-at,
+ value string;
+attribute aura-r-graph-rel-verb,
+ value string;
+attribute aura-r-influenced-by-meta,
+ value string;
+attribute aura-r-influenced-by-id,
+ value string;
+attribute aura-r-is-a-entity-label,
+ value string;
+attribute aura-r-is-a-id,
+ value string;
+attribute aura-r-member-of-meta,
+ value string;
+attribute aura-r-member-of-context,
+ value string;
+attribute aura-r-member-of-id,
+ value string;
+attribute aura-r-member-of-role,
+ value string;
+attribute aura-r-part-of-genre-meta,
+ value string;
+attribute aura-r-part-of-genre-id,
+ value string;
+attribute aura-r-performed-by-meta,
+ value string;
+attribute aura-r-performed-by-id,
+ value string;
+attribute aura-r-played-instrument-meta,
+ value string;
+attribute aura-r-played-instrument-id,
+ value string;
+attribute aura-r-played-on-meta,
+ value string;
+attribute aura-r-played-on-id,
+ value string;
+attribute aura-r-produced-by-meta,
+ value string;
+attribute aura-r-produced-by-id,
+ value string;
+attribute aura-r-recorded-at-meta,
+ value string;
+attribute aura-r-recorded-at-id,
+ value string;
+attribute aura-r-recorded-in-session-id,
+ value string;
+attribute aura-r-released-meta,
+ value string;
+attribute aura-r-released-id,
+ value string;
+attribute aura-r-released-by-meta,
+ value string;
+attribute aura-r-released-by-id,
+ value string;
+attribute aura-r-released-on-meta,
+ value string;
+attribute aura-r-released-on-id,
+ value string;
+attribute aura-r-session-includes-entity-candidate-key,
+ value string;
+attribute aura-r-session-includes-entity-updated-at,
+ value string;
+attribute aura-r-written-by-id,
+ value string;
+attribute display-name,
+ value string;
+attribute entity-aliases-json,
+ value string;
+attribute entity-attributes-json,
+ value string;
+attribute entity-candidate-keys-json,
+ value string;
+attribute entity-created-at,
+ value string;
+attribute entity-evidence-snippet-ids-json,
+ value string;
+attribute entity-external-ids-json,
+ value string;
+attribute entity-last-session-id,
+ value string;
+attribute entity-updated-at,
+ value string;
+attribute graph-rel-edge-key,
+ value string;
+attribute inclusion-candidate-key,
+ value string;
+attribute inclusion-updated-at,
+ value string;
+attribute normalized-name,
+ value string;
+attribute provisional-entity-kind,
+ value string;
+attribute rel-confidence,
+ value string;
+attribute rel-evidence-snippet-ids-json,
+ value string;
+attribute rel-relationship-id,
+ value string;
+attribute rel-review-status,
+ value string;
+attribute rel-session-id,
+ value string;
+attribute rel-updated-at,
+ value string;
+attribute rel-verb,
+ value string;
+attribute review-status,
+ value string;
+attribute seed-query-text,
+ value string;
+attribute session-id,
+ value string;
+attribute session-updated-at,
+ value string;
+attribute title-string,
+ value string;
+entity aura-imported-node,
+  owns aura-migration-neo4j-element-id,
+  plays aura-rel-collaborated-with:collaborated-with-from,
+  plays aura-rel-collaborated-with:collaborated-with-to,
+  plays aura-rel-contains:contains-from,
+  plays aura-rel-contains:contains-to,
+  plays aura-rel-features:features-from,
+  plays aura-rel-features:features-to,
+  plays aura-rel-graph-rel:graph-rel-from,
+  plays aura-rel-graph-rel:graph-rel-to,
+  plays aura-rel-influenced-by:influenced-by-from,
+  plays aura-rel-influenced-by:influenced-by-to,
+  plays aura-rel-is-a:is-a-from,
+  plays aura-rel-is-a:is-a-to,
+  plays aura-rel-member-of:member-of-from,
+  plays aura-rel-member-of:member-of-to,
+  plays aura-rel-part-of-genre:part-of-genre-from,
+  plays aura-rel-part-of-genre:part-of-genre-to,
+  plays aura-rel-performed-by:performed-by-from,
+  plays aura-rel-performed-by:performed-by-to,
+  plays aura-rel-played-instrument:played-instrument-from,
+  plays aura-rel-played-instrument:played-instrument-to,
+  plays aura-rel-played-on:played-on-from,
+  plays aura-rel-played-on:played-on-to,
+  plays aura-rel-produced-by:produced-by-from,
+  plays aura-rel-produced-by:produced-by-to,
+  plays aura-rel-recorded-at:recorded-at-from,
+  plays aura-rel-recorded-at:recorded-at-to,
+  plays aura-rel-recorded-in-session:recorded-in-session-from,
+  plays aura-rel-recorded-in-session:recorded-in-session-to,
+  plays aura-rel-released-by:released-by-from,
+  plays aura-rel-released-by:released-by-to,
+  plays aura-rel-released-on:released-on-from,
+  plays aura-rel-released-on:released-on-to,
+  plays aura-rel-released:released-from,
+  plays aura-rel-released:released-to,
+  plays aura-rel-session-includes-entity:session-includes-entity-from,
+  plays aura-rel-session-includes-entity:session-includes-entity-to,
+  plays aura-rel-written-by:written-by-from,
+  plays aura-rel-written-by:written-by-to;
+entity aura-node-album,
+  sub aura-imported-node,
+  owns aura-album-id @key,
+  owns aura-album-meta,
+  owns aura-album-name,
+  owns aura-album-title;
+entity aura-node-artist,
+  sub aura-imported-node,
+  owns aura-artist-active-years,
+  owns aura-artist-biography,
+  owns aura-artist-birth-name,
+  owns aura-artist-born,
+  owns aura-artist-born-place,
+  owns aura-artist-country,
+  owns aura-artist-genres,
+  owns aura-artist-id @key,
+  owns aura-artist-meta,
+  owns aura-artist-name,
+  owns aura-artist-origin,
+  owns aura-artist-roles,
+  owns aura-artist-wikidata-id;
+entity aura-node-band,
+  sub aura-imported-node,
+  owns aura-band-active-years,
+  owns aura-band-aliases,
+  owns aura-band-biography,
+  owns aura-band-country,
+  owns aura-band-id @key,
+  owns aura-band-meta,
+  owns aura-band-name;
+entity aura-node-effect,
+  sub aura-imported-node,
+  owns aura-effect-id @key,
+  owns aura-effect-meta,
+  owns aura-effect-name;
+entity aura-node-entity,
+  sub aura-imported-node,
+  owns aura-entity-aliases,
+  owns aura-entity-attributes-json,
+  owns aura-entity-candidate-keys,
+  owns aura-entity-created-at,
+  owns aura-entity-display-name,
+  owns aura-entity-evidence-snippet-ids,
+  owns aura-entity-external-ids,
+  owns aura-entity-last-session-id,
+  owns aura-entity-name-norm,
+  owns aura-entity-provisional-kind,
+  owns aura-entity-status,
+  owns aura-entity-updated-at;
+entity aura-node-entity-type,
+  sub aura-imported-node,
+  owns aura-entity-type-entity-label,
+  owns aura-entity-type-id @key,
+  owns aura-entity-type-meta,
+  owns aura-entity-type-name;
+entity aura-node-genre,
+  sub aura-imported-node,
+  owns aura-genre-id @key,
+  owns aura-genre-meta,
+  owns aura-genre-name;
+entity aura-node-graph-entity,
+  sub aura-imported-node,
+  owns aura-graph-entity-active-years,
+  owns aura-graph-entity-aliases,
+  owns aura-graph-entity-biography,
+  owns aura-graph-entity-city,
+  owns aura-graph-entity-country,
+  owns aura-graph-entity-entity-label,
+  owns aura-graph-entity-genres,
+  owns aura-graph-entity-id @key,
+  owns aura-graph-entity-meta,
+  owns aura-graph-entity-name,
+  owns aura-graph-entity-origin,
+  owns aura-graph-entity-roles,
+  owns aura-graph-entity-title,
+  owns aura-graph-entity-wikidata-id;
+entity aura-node-instrument,
+  sub aura-imported-node,
+  owns aura-instrument-id @key,
+  owns aura-instrument-meta,
+  owns aura-instrument-name,
+  owns aura-instrument-title;
+entity aura-node-label,
+  sub aura-imported-node,
+  owns aura-label-aliases,
+  owns aura-label-id @key,
+  owns aura-label-meta,
+  owns aura-label-name;
+entity aura-node-performance,
+  sub aura-imported-node,
+  owns aura-performance-id @key,
+  owns aura-performance-meta,
+  owns aura-performance-name;
+entity aura-node-person,
+  sub aura-imported-node,
+  owns aura-person-active-years,
+  owns aura-person-biography,
+  owns aura-person-country,
+  owns aura-person-genres,
+  owns aura-person-id @key,
+  owns aura-person-meta,
+  owns aura-person-name,
+  owns aura-person-origin,
+  owns aura-person-roles,
+  owns aura-person-wikidata-id;
+entity aura-node-release,
+  sub aura-imported-node,
+  owns aura-release-format,
+  owns aura-release-id @key,
+  owns aura-release-meta,
+  owns aura-release-release-date,
+  owns aura-release-title;
+entity aura-node-research-session,
+  sub aura-imported-node,
+  owns aura-research-session-id @key,
+  owns aura-research-session-seed-query,
+  owns aura-research-session-title,
+  owns aura-research-session-updated-at;
+entity aura-node-session,
+  sub aura-imported-node,
+  owns aura-session-date,
+  owns aura-session-id @key,
+  owns aura-session-name,
+  owns aura-session-studio-name;
+entity aura-node-studio,
+  sub aura-imported-node,
+  owns aura-studio-biography,
+  owns aura-studio-city,
+  owns aura-studio-country,
+  owns aura-studio-founded,
+  owns aura-studio-id @key,
+  owns aura-studio-location,
+  owns aura-studio-meta,
+  owns aura-studio-name;
+entity aura-node-track,
+  sub aura-imported-node,
+  owns aura-track-id @key,
+  owns aura-track-meta,
+  owns aura-track-name,
+  owns aura-track-title;
+entity research-session,
+  owns seed-query-text,
+  owns session-id @key,
+  owns session-updated-at,
+  owns title-string,
+  plays session-includes-entity:container-session;
+entity graph-entity,
+  owns display-name,
+  owns entity-aliases-json,
+  owns entity-attributes-json,
+  owns entity-candidate-keys-json,
+  owns entity-created-at,
+  owns entity-evidence-snippet-ids-json,
+  owns entity-external-ids-json,
+  owns entity-last-session-id,
+  owns entity-updated-at,
+  owns normalized-name,
+  owns provisional-entity-kind,
+  owns review-status,
+  plays graph-relationship:source-entity,
+  plays graph-relationship:target-entity,
+  plays session-includes-entity:member-entity;
+relation aura-rel-collaborated-with,
+  relates collaborated-with-from,
+  relates collaborated-with-to,
+  owns aura-r-collaborated-with-context,
+  owns aura-r-collaborated-with-id,
+  owns aura-r-collaborated-with-meta;
+relation aura-rel-contains,
+  relates contains-from,
+  relates contains-to,
+  owns aura-r-contains-id;
+relation aura-rel-features,
+  relates features-from,
+  relates features-to,
+  owns aura-r-features-id,
+  owns aura-r-features-meta;
+relation aura-rel-graph-rel,
+  relates graph-rel-from,
+  relates graph-rel-to,
+  owns aura-r-graph-rel-confidence,
+  owns aura-r-graph-rel-evidence-snippet-ids,
+  owns aura-r-graph-rel-relationship-id,
+  owns aura-r-graph-rel-session-id,
+  owns aura-r-graph-rel-status,
+  owns aura-r-graph-rel-updated-at,
+  owns aura-r-graph-rel-verb;
+relation aura-rel-influenced-by,
+  relates influenced-by-from,
+  relates influenced-by-to,
+  owns aura-r-influenced-by-id,
+  owns aura-r-influenced-by-meta;
+relation aura-rel-is-a,
+  relates is-a-from,
+  relates is-a-to,
+  owns aura-r-is-a-entity-label,
+  owns aura-r-is-a-id;
+relation aura-rel-member-of,
+  relates member-of-from,
+  relates member-of-to,
+  owns aura-r-member-of-context,
+  owns aura-r-member-of-id,
+  owns aura-r-member-of-meta,
+  owns aura-r-member-of-role;
+relation aura-rel-part-of-genre,
+  relates part-of-genre-from,
+  relates part-of-genre-to,
+  owns aura-r-part-of-genre-id,
+  owns aura-r-part-of-genre-meta;
+relation aura-rel-performed-by,
+  relates performed-by-from,
+  relates performed-by-to,
+  owns aura-r-performed-by-id,
+  owns aura-r-performed-by-meta;
+relation aura-rel-played-instrument,
+  relates played-instrument-from,
+  relates played-instrument-to,
+  owns aura-r-played-instrument-id,
+  owns aura-r-played-instrument-meta;
+relation aura-rel-played-on,
+  relates played-on-from,
+  relates played-on-to,
+  owns aura-r-played-on-id,
+  owns aura-r-played-on-meta;
+relation aura-rel-produced-by,
+  relates produced-by-from,
+  relates produced-by-to,
+  owns aura-r-produced-by-id,
+  owns aura-r-produced-by-meta;
+relation aura-rel-recorded-at,
+  relates recorded-at-from,
+  relates recorded-at-to,
+  owns aura-r-recorded-at-id,
+  owns aura-r-recorded-at-meta;
+relation aura-rel-recorded-in-session,
+  relates recorded-in-session-from,
+  relates recorded-in-session-to,
+  owns aura-r-recorded-in-session-id;
+relation aura-rel-released,
+  relates released-from,
+  relates released-to,
+  owns aura-r-released-id,
+  owns aura-r-released-meta;
+relation aura-rel-released-by,
+  relates released-by-from,
+  relates released-by-to,
+  owns aura-r-released-by-id,
+  owns aura-r-released-by-meta;
+relation aura-rel-released-on,
+  relates released-on-from,
+  relates released-on-to,
+  owns aura-r-released-on-id,
+  owns aura-r-released-on-meta;
+relation aura-rel-session-includes-entity,
+  relates session-includes-entity-from,
+  relates session-includes-entity-to,
+  owns aura-r-session-includes-entity-candidate-key,
+  owns aura-r-session-includes-entity-updated-at;
+relation aura-rel-written-by,
+  relates written-by-from,
+  relates written-by-to,
+  owns aura-r-written-by-id;
+relation graph-relationship,
+  relates source-entity,
+  relates target-entity,
+  owns graph-rel-edge-key @key,
+  owns rel-confidence,
+  owns rel-evidence-snippet-ids-json,
+  owns rel-relationship-id,
+  owns rel-review-status,
+  owns rel-session-id,
+  owns rel-updated-at,
+  owns rel-verb;
+relation session-includes-entity,
+  relates container-session,
+  relates member-entity,
+  owns inclusion-candidate-key @key,
+  owns inclusion-updated-at;

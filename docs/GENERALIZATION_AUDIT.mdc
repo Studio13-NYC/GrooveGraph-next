@@ -24,7 +24,7 @@ The blueprint criterion used here: *"the whole system can be copied to another p
 | One orchestrator owns decomposition and completion | Aligned | `docs/AGENT_ORCHESTRATION.mdc`, `.cursor/agents/orchestrator.mdc` |
 | Bounded delegation with explicit packets | Aligned | `docs/CONTEXT_PACKETS.mdc`, packet template and example |
 | One source of truth per concern | Aligned | `docs/INDEX.mdc`, precedence order in canonical docs |
-| Evidence over vibes | Aligned | `docs/research-workbench-validation.md`, `docs/WORKFLOW_VALIDATION.mdc`, headcount runs (historical serial markdown: git history) |
+| Evidence over vibes | Aligned | `docs/research-workbench-validation.md`, `docs/WORKFLOW_VALIDATION.mdc` (historical headcount narratives: git history) |
 | Proposal-first cleanup | Aligned | `docs/HYGIENE.mdc`, hygienist lane, `cleanup:check` script |
 | Traceability without log spam | Aligned | `docs/OBSERVABILITY.mdc`, `.telemetry/` design |
 
@@ -37,7 +37,6 @@ The blueprint criterion used here: *"the whole system can be copied to another p
 | `.cursor/rules/` | Present | subagent-routing, context-passing, forthright-guidance, etc. |
 | `.cursor/skills/` | Present | agent-orchestrator, context-packet-builder |
 | `docs/` | Present | Canonical policy docs per INDEX |
-| `framework/` | Present | `@groovegraph-next/framework` |
 | `product/` | Present | `@groovegraph-next/product` |
 | `prototypes/` | Removed | Consolidated away (2026-04-08); not part of fork template |
 | `research/` | Removed | Evidence moved to `docs/` or git history |
@@ -71,7 +70,6 @@ These are correct for this repo and should remain. When forking, they are the pr
 | Location | Content | Fork action |
 |---|---|---|
 | `package.json` | `name: "groovegraph-next"` | Replace with fork project name |
-| `framework/package.json` | `@groovegraph-next/framework` | Replace with fork package scope |
 | `product/package.json` | `@groovegraph-next/product` | Replace with fork package scope |
 | `docs/AZURE_BASELINE.mdc` | `rg-groovegraph`, `swa-groovegraph`, `as-groovegraph-api`, `appi-groovegraph`, etc. | Replace with fork Azure resource names |
 | `scripts/deploy-*.ps1` | Hardcoded `rg-groovegraph`, `as-groovegraph-api`, `swa-groovegraph` | Replace with fork resource names |

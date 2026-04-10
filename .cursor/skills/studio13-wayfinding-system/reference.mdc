@@ -1,6 +1,6 @@
 # Studio13 Wayfinding Reference
 
-This reference distills the highest-signal rules from `graphic-design-agent-assets/` into software-facing guidance for GrooveGraph Next.
+This reference distills the highest-signal rules from **`docs/design-language/FOUNDATION.mdc`** into software-facing guidance for GrooveGraph Next.
 
 ## Design translation
 
@@ -41,7 +41,7 @@ Rules:
 
 New-regime **map and route** colors are **not** ad hoc Studio13 oranges — they are the **NYCTA / Vignelli** system:
 
-- Use **`framework/src/visual-system/nycta-groovegraph-tokens.css`** (`--gg-route-*`, `--gg-map-water`, `--gg-map-park`, `--gg-surface-canvas`, `--gg-ink`). **`--gg-map-land`** mirrors the canvas — no warm substrate.
+- Use **`product/src/visual-system/nycta-groovegraph-tokens.css`** (`--gg-route-*`, `--gg-map-water`, `--gg-map-park`, `--gg-surface-canvas`, `--gg-ink`). **`--gg-map-land`** mirrors the canvas — no warm substrate.
 - **Directional emphasis** in UI = **`--gg-accent-directional`** (same as **orange route** on the map).
 
 Usage rules:
@@ -49,8 +49,6 @@ Usage rules:
 - land / water / ink / route families do most of the work on **map-like** surfaces
 - extra hues appear only for **coded** meaning (route family, exit, transfer, status)
 - do not introduce decorative palette drift
-
-**Note:** `graphic-design-agent-assets/styles.css` is a **legacy dark Studio13 theme** for other contexts — do not treat it as the authoritative palette for NYCTA new-regime GrooveGraph graphics.
 
 ## Layout
 

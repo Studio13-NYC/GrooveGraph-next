@@ -1,7 +1,7 @@
 /**
- * TypeDB 3.x one-line `define` statements for workbench graph types aligned with
- * ontology/groovegraph-schema.tql (research-session, graph-entity, graph-relationship,
- * session-includes-entity). Plus graph-rel-edge-key for relation identity.
+ * TypeDB 3.x one-line `define` statements for workbench graph types (research-session,
+ * graph-entity, graph-relationship, session-includes-entity). Plus graph-rel-edge-key for relation identity.
+ * Full live schema snapshot: docs/DB-Schema-Export.typeql (npm run dump:typedb-schema).
  *
  * Applied idempotently before writes (ignores "already exists" errors).
  */

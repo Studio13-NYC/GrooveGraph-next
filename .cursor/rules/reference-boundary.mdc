@@ -4,7 +4,7 @@ description: Canonical work happens only in this repository; no external legacy 
 
 # Reference boundary
 
-**This repository** is the source of truth for GrooveGraph Next: docs, rules, skills, framework code, ontology, and the **`product/`** app (research workbench). There is no separate in-tree `research/` package; validation and briefs live under **`docs/`** where applicable.
+**This repository** is the source of truth for GrooveGraph Next: docs, rules, skills, and the **`product/`** app (research workbench). TypeDB schema as deployed is reflected in **`docs/DB-Schema-Export.typeql`** when refreshed. There is no separate in-tree `research/` package; validation and briefs live under **`docs/`** where applicable.
 
 ## Rules
 
@@ -12,5 +12,5 @@ description: Canonical work happens only in this repository; no external legacy 
 - Do not port prompts or rules from outside this repo without explicit review.
 - Distinguish clearly between:
   - read-only external references (public specs, vendor docs, design PDFs)
-  - writable framework and product outputs in this tree
+  - writable orchestration, product, and doc outputs in this tree
 - Prefer clear structure in this repo over inherited complexity from elsewhere.

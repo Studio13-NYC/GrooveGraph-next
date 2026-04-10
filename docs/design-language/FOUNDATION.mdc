@@ -4,17 +4,10 @@ This document is the **single merged authority** for how GrooveGraph Next interp
 
 **Figma (application UI):** For **workbench and product UI** layout and component structure, **Figma is the living spec** alongside this doc — canonical file **[`groovegraph-design-system.fig`](groovegraph-design-system.fig)** (baseline type **Helvetica Neue**, aligned with **`--gg-font-sans`**). See [`FIGMA_MCP.mdc`](FIGMA_MCP.mdc) for the MCP workflow (`create_design_system_rules`, `generate_figma_design`, `get_design_context`, `get_code_connect_suggestions`). **CSS tokens** remain the implementation source of truth unless a brief explicitly changes them.
 
-**Physical and digitized sources** (archived under `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/`):
+**Source lineage:** This document **merges** NYCTA / Vignelli discipline into one implementation contract. Historically, supporting scans and OCR extracts lived under **`graphic-design-agent-assets/`** (removed from the tree). Recover those files from **git history** if you need the original Vignelli diagram image, manual page JPGs, or standalone extract markdown. For day-to-day work, treat **this file**, **`docs/VISUAL_STYLE_GUIDE.mdc`**, **`product/src/visual-system/nycta-groovegraph-tokens.css`**, and **`groovegraph-design-system.fig`** as sufficient.
 
-1. **`vignelli-subway-map-19721.jpg`** — 1972 New York City Subway diagram (Massimo Vignelli). Primary reference for **color**, **line weight**, **parallel corridors**, **curve language**, **symbols**, and **figure/ground** (land, water, parks).
-2. **`mta_style_guide_extracted_v3.md`** — Normalized notes from the **NYCTA Graphics Standards Manual** (identification / directional / informational signs, type grids, discs, arrows, modular plates, exit/transfer, glossary). Use for **sign semantics** and **reproduction discipline** (“photographic precision”, no arbitrary redraw).
-3. **`SOFTWARE_WAYFINDING_FOUNDATION.md`** (same folder) — How signage rules translate to **software**: decision-point information, hierarchy, motion restraint, map grammar as interface logic.
-
-**Machine-readable tokens:** `framework/src/visual-system/nycta-groovegraph-tokens.css` — import in any workspace app via  
-`@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`  
-(add `"@groovegraph-next/framework": "file:../framework"` or another correct relative path to `framework/` from that package’s `package.json`).  
-Re-export next to map scans: `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/nycta-groovegraph-tokens.css`.  
-**Index of what to read first:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/CANONICAL.md`
+**Machine-readable tokens:** `product/src/visual-system/nycta-groovegraph-tokens.css` — the Next app imports it from **`product/app/globals.css`** via  
+`@import "../src/visual-system/nycta-groovegraph-tokens.css";`
 
 **Workbench copy vocabulary:** [`WORKBENCH_VOCAB.mdc`](WORKBENCH_VOCAB.mdc) — manual-first terms (index, module, split); no transit metaphors in UI strings.
 
@@ -45,7 +38,7 @@ When a **graph view** or **map panel** is literally route-shaped, then apply §1
 
 ---
 
-## 2. Signage system (NYCTA manual, via v3 extract)
+## 2. Signage system (NYCTA manual discipline)
 
 ### Information only at the decision point
 
@@ -101,7 +94,7 @@ When a **graph view** or **map panel** is literally route-shaped, then apply §1
 
 ## 4. Line and symbol tokens (implementation)
 
-Use CSS / SVG variables from **`framework/src/visual-system/nycta-groovegraph-tokens.css`** (via the framework package import):
+Use CSS / SVG variables from **`product/src/visual-system/nycta-groovegraph-tokens.css`** (loaded via `product/app/globals.css`):
 
 - `--gg-route-stroke-ui`, `--gg-route-stroke-ui-bold`, `--gg-route-stroke-hairline`
 - `--gg-route-parallel-gap`
@@ -132,14 +125,15 @@ For **retrospective critique** only: whiteboard / editorial-cartoon language (de
 
 ## 8. When sources appear to conflict
 
-1. **Map geometry and color families** — defer to **`vignelli-subway-map-19721.jpg`** and `nycta-groovegraph-tokens.css`.
-2. **Sign semantics, plate logic, exit/transfer** — defer to **`mta_style_guide_extracted_v3.md`**.
-3. **Software behavior and hierarchy** — defer to **`SOFTWARE_WAYFINDING_FOUNDATION.md`**.
+1. **Map geometry and color families** — defer to **§1** (map grammar) and **`nycta-groovegraph-tokens.css`**.
+2. **Sign semantics, plate logic, exit/transfer** — defer to **§2** (signage system).
+3. **Software behavior and hierarchy** — defer to **§2** (information at the decision point; identification / directional / informational) and [`WORKBENCH_VOCAB.mdc`](WORKBENCH_VOCAB.mdc) for product copy.
 4. **GrooveGraph-specific motion or graph UX** — defer to the relevant Cursor **skills** after the above.
+5. **Figma vs tokens** — **tokens win** unless the brief explicitly updates tokens.
 
 ---
 
 ## 9. Maintenance
 
-- If manual OCR extracts are corrected, update **`mta_style_guide_extracted_v3.md`** only; retire duplicate claims in older extract files (see `CANONICAL.md`).
-- If tokens change, update **`framework/src/visual-system/nycta-groovegraph-tokens.css`** and **`framework/src/visual-system/tokens.ts`** together (keep TypeScript and CSS in sync).
+- If tokens change, update **`product/src/visual-system/nycta-groovegraph-tokens.css`** and **`product/src/visual-system/tokens.ts`** together (keep TypeScript and CSS in sync).
+- If you reintroduce external reference packs (scans, extracts), store them under **`docs/design-language/`** or a documented submodule — do not resurrect the old `graphic-design-agent-assets/` path without updating this file and **`.cursor/rules/mta-design-foundation.mdc`**.

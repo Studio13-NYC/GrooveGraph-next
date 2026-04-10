@@ -1,11 +1,11 @@
 # Cloud agent — repo run & test starter
 
-Use this skill on **first touch** with the repo or when spinning up validation: install, run, smoke-test, and interpret failures. It is **minimal** by design; deepen with `docs/INDEX.mdc`, `refs/INDEX.md`, and area-specific READMEs.
+Use this skill on **first touch** with the repo or when spinning up validation: install, run, smoke-test, and interpret failures. It is **minimal** by design; deepen with `docs/INDEX.mdc` and area-specific READMEs.
 
 ## Global setup (all areas)
 
 - **Prereqs:** Node.js + npm (workspace uses Next 16 / React 19; use a current LTS Node).
-- **Install once from repo root:** `npm install` (workspaces: `framework`, `product`).
+- **Install once from repo root:** `npm install` (workspace: `product`).
 - **No monorepo “login”:** local apps do not use user auth. **Secrets** = API keys in **gitignored** env files only (`product/.env.local`). Never commit keys.
 - **Feature flags:** there is **no** shared feature-flag SDK in this repo today. If you add flags later, document env var names here and in the owning package README.
 
@@ -17,18 +17,13 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 |------|---------|----------------|
 | Scaffold | `npm run validate:repo` | Root scripts run |
 | Docs present | `npm run validate:docs` | Core policy docs exist |
-| Framework files | `npm run validate:framework` | Expected `framework/src` entry files exist |
 | Visual assets | `npm run validate:visual-system` | Example SVGs / brief template under `assets/examples/` |
 
 **Optional hygiene:** `npm run cleanup:check` (prune + knip) — may require tuning; treat failures as triage, not always blockers.
 
-### `framework/` (TypeScript library, no dev server)
-
-- **Validate:** `npm run validate:framework` (from root) or `npm run validate:framework -w framework`.
-- **Test workflow:** after edits, run **`npm run build:product`** so TypeScript consumers compile.
-- **Design linkage:** canonical tokens live in `framework/src/visual-system/` (`nycta-*-tokens.css`, `tokens.ts`); npm import path matches the `exports` field in `framework/package.json` (CSS entry for tokens).
-
 ### `product/` (Next.js GrooveGraph app, port **3000** default)
+
+- **Design linkage:** canonical tokens live in `product/src/visual-system/` (`nycta-groovegraph-tokens.css`, `tokens.ts`); CSS is imported from `product/app/globals.css`.
 
 - **Role:** investigation / graph-review **research workbench** at **`/`** (same surface as production `https://groovegraph.s13.nyc/`).
 - **Configure:** copy `product/.env.example` → `product/.env.local`. Set at least `OPENAI_API_KEY`. Optional: `OPENAI_RESEARCH_MODEL`, `OPENAI_RESEARCH_EXTRACTION_MODEL`. For graph sync: `TYPEDB_*` per `.env.example`.
@@ -42,20 +37,18 @@ Use this skill on **first touch** with the repo or when spinning up validation: 
 - **Validate:** `npm run validate:docs` ensures a **subset** of canonical files exist; full map is `docs/INDEX.mdc`.
 - **QA workflow:** when behavior vs doc conflicts, **docs + `AGENTS.mdc` win** over skills; update docs/rules together per `docs/SUBAGENT_MAINTENANCE.mdc` when changing contracts.
 
-### `graphic-design-agent-assets/` (reference only)
+### `docs/design-language/` (visual QA, no separate build)
 
-- **No build.** Use for **visual QA** against `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc`.
-- **Quick references:** `MTA-Graphic_Deisgn_Standards/CANONICAL.md` (what is authoritative vs superseded), `vignelli-subway-map-19721.jpg` (diagram grammar), `mta_style_guide_extracted_v3.md` (manual-derived rules), `SOFTWARE_WAYFINDING_FOUNDATION.md` (software translation).
+- **No build.** Use **`FOUNDATION.mdc`**, **`VISUAL_STYLE_GUIDE.mdc`**, **`groovegraph-design-system.fig`**, and **`product/src/visual-system/`** for visual QA. Historical scans/extracts were under `graphic-design-agent-assets/` (removed — **git history** if needed).
 
 ### Historical validation narratives
 
 - **Workbench validation record:** `docs/research-workbench-validation.md` (bootstrap + first end-to-end session evidence).
-- **Headcount concept:** orchestration test definitions live in `docs/HEADCOUNT.mdc` (agent chain scenarios, not a single npm test).
 
 ## Cross-cutting QA checklist (functionality + design)
 
 1. **Run the narrowest command** for the touched area (validate → build → dev).
-2. **Product / workbench UI:** compare to **tokens** (see `framework/src/visual-system/` and `docs/VISUAL_STYLE_GUIDE.mdc`) and **FOUNDATION.mdc** (application UI vs map-shaped grammar split; workbench copy per `WORKBENCH_VOCAB.mdc`).
+2. **Product / workbench UI:** compare to **tokens** (see `product/src/visual-system/` and `docs/VISUAL_STYLE_GUIDE.mdc`) and **FOUNDATION.mdc** (application UI vs map-shaped grammar split; workbench copy per `WORKBENCH_VOCAB.mdc`).
 3. **Research workbench:** stacked Evidence/Sources behavior and height bands per `AGENTS.mdc` + PRD cross-links in `product/README.md`.
 4. **Secrets / hygiene:** no new committed secrets; session data under `product/.data/` stays gitignored.
 
@@ -65,5 +58,5 @@ When you discover a new **command**, **port**, **env var**, **smoke URL**, or **
 
 1. Add it **under the right codebase area** above (keep tables/commands copy-pasteable).
 2. If it is **canonical policy**, also add or link from **`docs/INDEX.mdc`** or the relevant package README so humans and agents do not diverge.
-3. If it affects **Cursor behavior globally**, mirror into **`.cursor/rules/`** (see `refs/INDEX.md` rule map) rather than letting this skill drift alone.
+3. If it affects **Cursor behavior globally**, mirror into **`.cursor/rules/`** (see `docs/INDEX.mdc` for doc ↔ rule sync) rather than letting this skill drift alone.
 4. Keep this file **short**; move long runbooks to `docs/` and link one line here.

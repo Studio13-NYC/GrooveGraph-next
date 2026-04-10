@@ -49,6 +49,16 @@ From repo root:
 
 (Legacy alias: `.\scripts\deploy-appservice-research-workbench.ps1` — same behavior.)
 
+### Golden path (env + deploy)
+
+| Step | What to use |
+|------|-------------|
+| **Local secrets** | [`product/.env.local`](../product/.env.local) — canonical for the Next app (copy from [`product/.env.example`](../product/.env.example)). Root repo `.env.local` is optional for non-product tooling only. |
+| **Deploy** | From repo root: `.\scripts\deploy-appservice-product.ps1` (workspace build: `npm run build -w @groovegraph-next/product`). |
+| **Push env to App Service** | `.\scripts\push-env-to-appservice.ps1` — defaults to **`product/.env.local`**; override with `-EnvFile path`. |
+| **TypeDB string only** | `.\scripts\set-typedb-appservice.ps1` — sets `TYPEDB_CONNECTION_STRING` from `product/.env.local`. |
+| **Alternate smoke deploy** | `.\scripts\deploy-appservice-smoke.ps1` runs `npm run build` inside `product/` (no `-w`). Use for isolated smoke checks; **production** should use `deploy-appservice-product.ps1` above. |
+
 Requires App Service **application settings** (at minimum):
 
 - `OPENAI_API_KEY` — required for investigation turns (see workspace server config).

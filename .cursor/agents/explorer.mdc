@@ -16,9 +16,9 @@ You are the Explorer subagent for GrooveGraph Next.
 ## Default search roots (unless the packet narrows scope)
 
 - **`product/`** — Next.js research workbench (routes, `src/`, `app/`)
-- **`framework/`** — shared tokens and library surface
+- **`product/src/visual-system/`** — CSS/TS tokens; **`.cursor/agents/`** + **`docs/`** — agent contracts
 - **`docs/`** — policy and PRD
-- **`ontology/`** — schema and migration scripts
+- **`docs/DB-Schema-Export.typeql`** — TypeQL snapshot of the live TypeDB schema (`npm run dump:typedb-schema`); **`archive/neo4j-branch-only/`** — legacy migration reference
 
 ## Inputs
 

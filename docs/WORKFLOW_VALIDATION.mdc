@@ -2,6 +2,8 @@
 
 **Path note:** Older bullets reference `research/…` files that were removed when the app was consolidated into `product/`. Retrieve those artifacts from **git history** if needed; the live workbench validation record is `docs/research-workbench-validation.md`.
 
+**Changelog convention:** Any `research/...` path in the sections below is **historical** (pre-consolidation). Those files are not in the current tree; use **git history** for the exact snapshot.
+
 ## Goal
 
 Validate that the new framework supports representative workflows before any new GrooveGraph product build begins.
@@ -95,7 +97,7 @@ Framework response:
   - `assets/examples/new-regime-governance-map.svg`
   - `assets/examples/old-regime-satire-panel.svg`
   - `assets/examples/graphic-brief-template.md`
-- added operational visual tokens in `framework/src/visual-system/tokens.ts`
+- added operational visual tokens in `product/src/visual-system/tokens.ts`
 
 ## Outcome
 
@@ -107,68 +109,11 @@ The framework is now validated for the following workflow types:
 
 The repo is ready for future execution work as a clean-start framework surface.
 
-## Validation 6: headcount orchestration suite design
+## Historical: Headcount suite (retired)
 
-Validation method:
+The **Headcount** typed orchestration tests and runbook (`docs/HEADCOUNT.mdc`) were **removed**; this repo no longer maintains serial/async headcount scenarios in-tree. Older revisions of this file documented Validations 6–11 for that suite; evidence and narratives lived under `research/headcount/` and in **git history**.
 
-- framework-owned test design in `framework/src/headcount.ts`
-- human-readable runbook in `docs/HEADCOUNT.mdc`
-
-Observed result:
-
-- the framework now has one serial orchestration test and one async orchestration test
-- both tests cover every current agent lane
-- both tests include rough reference budget ranges rather than pretending to be official accounting
-
-Framework response:
-
-- added `framework/src/headcount.ts`
-- added `docs/HEADCOUNT.mdc`
-- updated `docs/INDEX.mdc`
-
-## Validation 7: serial headcount execution
-
-Validation method:
-
-- executed the serial `headcount-serial-release-packet` workflow through the current agent set
-- persisted a human-readable run report and a JSONL slice summary
-
-Observed result:
-
-- pass
-- each current lane participated in the expected serial order
-- the run converged on a real one-file smoke-page revision in `product/app/page.tsx`
-- reviewer found no issues
-- tester validated the revised page through build and local runtime evidence
-- infrastructure-deployment produced a bounded App Service release path
-
-Framework response:
-
-- added serial headcount evidence (now `research/headcount/headcount-serial-evidence.md`, § Run 001)
-- added `.telemetry/slice-costs.jsonl`
-
-## Validation 8: async headcount execution
-
-Validation method:
-
-- executed the async `headcount-async-launch-pack` workflow through the current agent set
-- synthesized the results into one framework-only launch pack
-- persisted a JSONL slice summary
-
-Observed result:
-
-- pass
-- the run stayed inside the framework/workbench boundary
-- every async lane contributed an independent result
-- the orchestrator resolved scaffold ambiguity into one coherent final artifact
-- rough slice cost was persisted with estimated values and explicit unknowns where appropriate
-
-Framework response:
-
-- populated initial async headcount evidence (superseded file removed on consolidation; narrative succeeded by `research/headcount/headcount-async-launch-pack-002.md`)
-- appended async run telemetry to `.telemetry/slice-costs.jsonl`
-
-## Validation 9: hygiene lane bootstrap
+## Validation 6: hygiene lane bootstrap
 
 Validation method:
 
@@ -187,55 +132,15 @@ Framework response:
 - added `.cursor/agents/hygienist.mdc`
 - added `docs/HYGIENE.mdc`
 - updated routing, orchestration, and maintenance docs to include the hygiene lane
-- updated `docs/HEADCOUNT.mdc` and `framework/src/headcount.ts` so the current agent set is represented honestly
-- added hygiene evidence (now `research/hygiene/HYGIENE_LOG.md`, 2026-03-18 Run 001)
+- added hygiene evidence (historical path: `research/hygiene/HYGIENE_LOG.md`, 2026-03-18 Run 001 — git history)
 
-## Validation 10: refreshed serial headcount evidence
-
-Validation method:
-
-- reran the serial `headcount-serial-release-packet` workflow against the current lane set
-- used one bounded implementation surface: the product app under `product/` (historical smoke HTML was removed on consolidation)
-- validated the rendered result through a local browser-served static page
-
-Observed result:
-
-- pass
-- the rerun exercised the full current serial lane set, including `hygienist`
-- the run converged on a real one-file SWA smoke-page parity revision
-- browser-visible evidence confirmed the explanatory `body` line now renders beneath the red status banner
-- local browser testing also exposed a real boundary: localhost validation cannot prove remote App Service hydration because the static page hits a CORS restriction from `http://localhost:3001`
-- the bounded hygiene step returned no cleanup action
-
-Framework response:
-
-- added serial headcount rerun evidence (now `research/headcount/headcount-serial-evidence.md`, § Run 002)
-
-## Validation 11: refreshed async headcount evidence
-
-Validation method:
-
-- reran the async `headcount-async-launch-pack` evidence pass against the current typed and documented contract
-- synthesized a refreshed framework-only launch pack that explicitly includes `hygienist`
-
-Observed result:
-
-- pass
-- all current async lanes are now represented in the refreshed evidence
-- the framework-only boundary remains explicit and intact
-- the cost summary remains rough-reference telemetry with explicit `estimated` and `unknown` labels only
-
-Framework response:
-
-- added `research/headcount/headcount-async-launch-pack-002.md`
-
-## Validation 12: ProductManager lane bootstrap
+## Validation 7: ProductManager lane bootstrap
 
 Validation method:
 
 - added a dedicated `product-manager` lane to the framework surfaces
-- updated the typed registry, routing mirrors, orchestration docs, and headcount runbook to include the new lane
-- executed one bounded ProductManager-style research packet (in-repo discovery and `research/product/` artifact)
+- updated **`.cursor/agents/`**, routing mirrors, and orchestration docs to include the new lane
+- executed one bounded ProductManager-style research packet (in-repo discovery; historical `research/product/` artifacts — git history)
 
 Observed result:
 
@@ -247,12 +152,11 @@ Observed result:
 Framework response:
 
 - added `.cursor/agents/product-manager.mdc`
-- updated `framework/src/subagent-registry.ts`
+- updated the subagent registry in **`.cursor/agents/`** and **`docs/AGENT_REGISTRY.mdc`**
 - updated routing, orchestration, maintenance, and operating-contract docs to include the lane
-- updated `framework/src/headcount.ts` and `docs/HEADCOUNT.mdc` so the canonical lane set is represented honestly
-- added `research/product/productmanager-reboot-brief-001.md`
+- added historical `research/product/productmanager-reboot-brief-001.md` (git history)
 
-## Validation 13: OpenAI research workspace bootstrap
+## Validation 8: OpenAI research workspace bootstrap
 
 Validation method:
 
@@ -273,7 +177,7 @@ Framework response:
 - added `product/`
 - added research workspace validation notes (now `docs/research-workbench-validation.md`, Part A)
 
-## Validation 14: OpenAI research workspace end-to-end artist-seed session
+## Validation 9: OpenAI research workspace end-to-end artist-seed session
 
 Validation method:
 

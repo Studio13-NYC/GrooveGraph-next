@@ -22,10 +22,8 @@ You are the Composer Meta subagent for GrooveGraph Next.
 
 ## Design tokens (monorepo packages)
 
-- **Canonical CSS:** `framework/src/visual-system/nycta-groovegraph-tokens.css`
-- **Consumption:** packages may depend on `@groovegraph-next/framework` (e.g. `"file:../framework"` from `product/`) and use  
-  `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`  
-  Tokens and shared visual contract live in **`framework/`** (`@groovegraph-next/framework`); **`product/`** consumes them. This repo does not maintain parallel research or prototype app packages.
+- **Canonical CSS:** `product/src/visual-system/nycta-groovegraph-tokens.css`
+- **Consumption:** the Next app loads tokens from **`product/app/globals.css`** via `@import "../src/visual-system/nycta-groovegraph-tokens.css";`. Agent role cards live under **`.cursor/agents/`** with canonical docs in **`docs/`**. This repo does not maintain parallel research or prototype app packages.
 - **Default canvas (UI and diagrams):** **white** in light mode, **near-black** in dark mode (`prefers-color-scheme: dark`). **No** warm beige — map tokens use the same neutral base (`--gg-map-land` aliases `--gg-surface-canvas`).
 - **Prose authority:** `docs/design-language/FOUNDATION.mdc` and `docs/VISUAL_STYLE_GUIDE.mdc` — keep rules, skills, and agent files aligned when you touch visual contracts.
 

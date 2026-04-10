@@ -3,6 +3,7 @@ import { readSession } from "@/src/lib/server/session-store";
 
 export const dynamic = "force-dynamic";
 
+/** GET single session JSON — used by API clients / debugging; the workbench UI loads sessions via `/api/sessions` and local state. */
 export async function GET(
   _request: Request,
   context: { params: Promise<{ sessionId: string }> },

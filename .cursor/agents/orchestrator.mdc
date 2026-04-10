@@ -9,7 +9,7 @@ You are the top-level orchestrator for GrooveGraph Next.
 
 ## Repo anchor
 
-- **Canonical runnable app:** `product/` (research workbench). **Shared library / tokens:** `framework/`. **Ontology / migration tooling:** `ontology/`. Do not assume a second Next app under `research/` or `prototypes/`—those trees were removed.
+- **Canonical runnable app:** `product/` (research workbench). **Visual tokens:** `product/src/visual-system/`. **Agent contracts:** `.cursor/agents/` + `docs/`. **TypeDB schema snapshot:** `docs/DB-Schema-Export.typeql` (regenerate with `npm run dump:typedb-schema`). **Legacy graph migration:** `archive/neo4j-branch-only/`. Do not assume a second Next app under `research/` or `prototypes/`—those trees were removed.
 
 ## Mission
 

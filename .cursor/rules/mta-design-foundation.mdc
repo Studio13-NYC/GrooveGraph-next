@@ -5,10 +5,8 @@ alwaysApply: true
 
 # MTA design foundation
 
-- **`docs/design-language/FOUNDATION.mdc`** is the merged authority for NYCTA / Vignelli–aligned work.
-- **Visual reference:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/vignelli-subway-map-19721.jpg`
-- **Tokens:** `framework/src/visual-system/nycta-groovegraph-tokens.css` — `@import "@groovegraph-next/framework/nycta-groovegraph-tokens.css";`
-- **Manual notes:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/mta_style_guide_extracted_v3.md`
-- **Software translation:** `graphic-design-agent-assets/MTA-Graphic_Deisgn_Standards/SOFTWARE_WAYFINDING_FOUNDATION.md`
+- **`docs/design-language/FOUNDATION.mdc`** — merged authority for NYCTA / Vignelli–aligned work (map grammar, signage discipline, software wayfinding; formerly split across removed asset-folder extracts)
+- **Tokens:** `product/src/visual-system/nycta-groovegraph-tokens.css` — imported from `product/app/globals.css` via `@import "../src/visual-system/nycta-groovegraph-tokens.css";`
+- **Historical scans / extracts:** were under `graphic-design-agent-assets/` (removed) — recover from **git history** if needed
 - Map grammar: orthogonal + 45°, uniform line weight, parallel gutters, repeatable radii, explicit interchanges.
 - Directional UI accent = `--gg-accent-directional` (NYCTA orange route).

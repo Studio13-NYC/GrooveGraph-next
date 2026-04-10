@@ -1,5 +1,7 @@
 # Documentation Index
 
+**Doc catalog:** this file is the canonical map of policy and product docs under `docs/`.
+
 ## Product
 
 | File | Purpose |
@@ -20,13 +22,13 @@
 | `design-language/FOUNDATION.mdc` | Merged NYCTA / Vignelli design authority (map + manual + software) |
 | `design-language/README.md` | Index for the design-language folder |
 | `design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc` | Execution brief for research workbench chrome (graphic-artist lane) |
+| `DB-Schema-Export.typeql` | TypeQL export of the live TypeDB schema (regenerate: `npm run dump:typedb-schema` from repo root) |
 | `GITHUB_STRATEGY.mdc` | Canonical successor-repo and remote strategy |
 | `AZURE_BASELINE.mdc` | Current Azure environment, preservation rules, and overwrite boundaries |
 | `HYGIENE.mdc` | Canonical cleanup workflow, `hygienist` lane, and proposal-first removal policy |
 | `OBSERVABILITY.mdc` | Canonical traceability, logging, and Azure runtime observability guidance |
 | `DECISION_LOG.mdc` | Durable record of governing decisions |
 | `SUBAGENT_MAINTENANCE.mdc` | Checklist for adding or changing subagents |
-| `HEADCOUNT.mdc` | Canonical serial and async orchestration test suite for current agents |
 | `WORKFLOW_VALIDATION.mdc` | Evidence from representative framework workflow checks |
 | `GENERALIZATION_AUDIT.mdc` | Audit for reuse vs product-specific; fork checklist |
 | `RESEARCH_WORKBENCH_WAYFINDING_PLAN.mdc` | Live-site design critique turned into a `graphic-artist` execution brief and implementation-ready S13/MTA redesign plan for the research workbench |
@@ -51,7 +53,6 @@ When files drift, use this precedence:
 - `.cursor/agents/` for role cards
 - `.cursor/rules/` for durable Cursor behavior
 - `.cursor/skills/` for reusable operational helpers — orchestration checklist (`agent-orchestrator`), packet template (`context-packet-builder`, canonical schema in `CONTEXT_PACKETS.mdc`), visual/motion helpers (`studio13-wayfinding-system`, `gsap-motion-system`, `graph-data-viz-system`), and **Cloud agent run/test bootstrap** (`cloud-agent-repo-starter`)
-- `../refs/INDEX.md` for the consolidated alias map (`@refs/INDEX.md`) to canonical docs and rules
 - `assets/posts/` for narrative updates and framework blog posts
 - `docs/research-workbench-validation.md` for workbench validation evidence; **`docs/product/`** for PRD and product-manager-style briefs; historical `research/*` paths are **git history** only after repo consolidation
 

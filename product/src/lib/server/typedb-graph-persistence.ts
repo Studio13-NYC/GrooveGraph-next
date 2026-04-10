@@ -544,7 +544,7 @@ async function persistResearchSessionToTypeDb(
   const config = getTypeDbConfig();
   if (!config) {
     throw new Error(
-      "TypeDB is not configured. Set TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS (or TYPEDB_HOST), TYPEDB_DATABASE, or TYPEDB_CONNECTION_STRING (see ontology/README.md).",
+      "TypeDB is not configured. Set TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS (or TYPEDB_HOST), TYPEDB_DATABASE, or TYPEDB_CONNECTION_STRING (see product/.env.example and product/README.md).",
     );
   }
 

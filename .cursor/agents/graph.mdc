@@ -44,5 +44,25 @@ Own TypeDB schema decisions, graph modeling, retrieval logic, and query authorin
 
 ## GrooveGraph Next context
 
-- Runnable app: **`product/`** — graph sync via `typedb-graph-persistence`; runtime schema subset in `product/src/lib/server/graph-persistence/typedb-workbench-schema.ts`.
-- Committed schema snapshot: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`**.
+- Runnable app: **`product/`** — graph sync via `typedb-graph-persistence.ts`; runtime schema subset in `product/src/lib/server/graph-persistence/typedb-workbench-schema.ts`.
+- Committed schema snapshot: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`** after live schema changes.
+
+## TypeDB connection
+
+- **Env vars** (same contract as `product/src/lib/server/config.ts` and `scripts/dump-typedb-schema.mjs`):
+  - `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` (or `TYPEDB_HOST`), `TYPEDB_DATABASE`, **or**
+  - `TYPEDB_CONNECTION_STRING` as `typedb://user:pass@https://host:port/?name=database` (see `config.ts` for delimiter parsing when the password contains `@` or `:`).
+- **`.env.local` loading**: scripts under `scripts/` that talk to TypeDB should load **`product/.env.local` first**, then **repo root `.env.local`**, matching the dump script (Next.js loads env for the app separately).
+- **Security**: never log passwords, tokens, or full connection strings; diagnostics should mirror `getGraphBackendStatus()` (configured / reachable / database name only).
+- **Health / diagnostics**: `product/src/lib/server/graph-backend-status.ts` and **`GET /api/graph-backend-status`** for quick connectivity checks without running ad-hoc queries.
+
+## TypeQL authoring
+
+- **Transactions**: use **`read`** for analytics and graph reads; **`write`** for data mutation; **`schema`** only for `define` / `undefine` / `redefine` (see TypeQL reference: schema stages vs data pipelines).
+- **Prefer explicit types**: use `isa!` when you need **direct** instances of a type (avoids accidental subtype fan-out); use plain `isa` when inheritance is intended.
+- **Aggregates**: pipeline stages like **`reduce`** with **`count($var)`** (and optional `groupby`) apply to answer streams; `count($x);` after `match` is the common single-number pattern (see TypeDB query-clauses docs).
+- **Schema export**: committed truth for review is **`docs/DB-Schema-Export.typeql`**; refresh with **`npm run dump:typedb-schema`** when the live database schema changes.
+
+## Operational queries
+
+- **Per-type counts / degree-style stats**: keep queries **read-only** (`oneShotQuery(..., false, db, "read")` or a read transaction). For “how many entities per label,” decide up front whether you need **direct** counts (`isa!`) or **inherited** counts (`isa`). For “how often type E appears as a role player,” sum **per relation type and role** (each `(relation instance, role)` incidence counts once; two roles in the same relation ⇒ two incidences if the same entity plays both). Repo helper: **`npm run typedb:entity-role-stats`** (`scripts/typedb-entity-role-stats.mjs`) implements the table used for analytics handoffs.

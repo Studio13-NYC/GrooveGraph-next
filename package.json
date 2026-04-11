@@ -9,6 +9,7 @@
     "validate:docs": "node -e \"const fs=require('fs'); ['README.md','AGENTS.mdc','docs/AGENT_ORCHESTRATION.mdc','docs/MODEL_ROUTING.mdc','docs/CONTEXT_PACKETS.mdc','docs/USAGE_ACCOUNTING.mdc','docs/HYGIENE.mdc','docs/OBSERVABILITY.mdc','docs/VISUAL_STYLE_GUIDE.mdc','docs/design-language/FOUNDATION.mdc','docs/design-language/README.md'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('docs present')\"",
     "validate:visual-system": "node -e \"const fs=require('fs'); ['product/src/visual-system/tokens.ts','product/src/visual-system/nycta-groovegraph-tokens.css'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system tokens present')\"",
     "dump:typedb-schema": "node scripts/dump-typedb-schema.mjs",
+    "typedb:entity-role-stats": "node scripts/typedb-entity-role-stats.mjs",
     "migrate:typedb-strip-aura-prefix": "node scripts/migrate-typedb-strip-aura-prefix.mjs",
     "promote:typedb-migrate-temp": "node scripts/typedb-promote-migrate-temp.mjs",
     "cleanup:check": "npm prune && npx knip",

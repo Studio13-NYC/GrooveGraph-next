@@ -7,6 +7,8 @@ coverage/
 .env.*
 !.env.example
 *.log
+!artifacts/logs/debug-63d565.log
+.cursor/debug-*.log
 *.tsbuildinfo
 .vercel/
 .telemetry/
@@ -15,5 +17,8 @@ coverage/
 .DS_Store
 Thumbs.db
 test-output/
+# UI / E2E screenshots (keep artifacts/screenshots/README.md)
+artifacts/screenshots/*
+!artifacts/screenshots/README.md
 /typedb-cloud-credentials-groove-graph.txt
 .temp/

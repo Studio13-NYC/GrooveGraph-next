@@ -42,3 +42,4 @@ Leaf entity types with instances and role-player edge counts:
 - [Docs home](https://typedb.com/docs/home/) — navigation for TypeQL, concepts, drivers.
 - [Query variables and patterns](https://typedb.com/docs/core-concepts/typeql/query-variables-patterns)
 - [Match stage](https://typedb.com/docs/typeql-reference/pipelines/match/)
+- [Reduce operator](https://typedb.com/docs/typeql-reference/pipelines/reduce/) — aggregates, `groupby`, `count` / `sum` / etc.

@@ -10,10 +10,11 @@ Evolve the TypeDB schema with minimal semantic confusion and manageable migratio
 
 ## Process
 1. identify the conceptual change
-2. prefer additive evolution first when possible
-3. separate deprecated and replacement concepts clearly
-4. identify affected queries and mappings
-5. note migration sequence
+2. compare with committed **`docs/DB-Schema-Export.typeql`**; after applying changes in Studio or migration scripts, refresh with **`npm run dump:typedb-schema`**
+3. prefer additive evolution first when possible; avoid **`undefine`** / destructive deletes unless the task explicitly authorizes them
+4. separate deprecated and replacement concepts clearly
+5. identify affected queries, **`typedb-workbench-schema.ts`** lines, and application mappings
+6. note migration sequence (data backfill, dual-write, cutover)
 
 ## Outputs
 - schema change proposal

@@ -1,0 +1,43 @@
+---
+description: TypeDB HTTP connection env contract and TypeQL usage for agents (read vs write, schema vs data).
+alwaysApply: false
+---
+
+# TypeDB connection and TypeQL (GrooveGraph Next)
+
+Authoritative product code: `product/src/lib/server/config.ts` (`getTypeDbConfig`), `product/src/lib/server/typedb-graph-persistence.ts` (driver, transactions, queries).
+
+## Connection
+
+- **Canonical secrets location**: `product/.env.local` (repo-root `.env.local` is a fallback path in the same loader order as the server config).
+- **Variables**: `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` or `TYPEDB_HOST`, `TYPEDB_DATABASE` **or** a single `TYPEDB_CONNECTION_STRING` (`typedb://user:pass@https://host:port/?name=database` — delimited form supports `@` / `:` in passwords; legacy regex exists as fallback).
+- **Server-side access**: Prefer bracket form `process.env["TYPEDB_PASSWORD"]` so bundlers do not mishandle inlined secrets (see `docs/SESSION_PATTERNS_AND_ANTIPATTERNS.md`).
+- **After changing env**: Restart Next dev server; do not commit `.env.local` or credentials.
+- **HTTP driver**: `@typedb/driver-http` `TypeDBHttpDriver` with `{ username, password, addresses }`. Vendor overview: [TypeDB HTTP drivers](https://typedb.com/docs/reference/typedb-http-drivers/).
+
+## Transactions and query types
+
+- **Read** data queries: `openTransaction(..., "read", { transactionTimeoutMillis })` or `oneShotQuery(..., false, database, "read", options)`. Use for `match` / aggregates / `reduce`.
+- **Write** data: `"write"` transaction; `commit` when using multi-step writes. App uses **60_000** ms read and **120_000** ms write timeouts in `typedb-graph-persistence.ts`.
+- **Schema**: `oneShotQuery` / dedicated schema transactions with `transactionType: "schema"` for `define` and other schema operations (see driver typings). Prefer reviewing committed **`docs/DB-Schema-Export.typeql`** before inventing types; refresh with **`npm run dump:typedb-schema`** when the live schema changes.
+
+## TypeQL discipline
+
+- **`define` vs `match`**: `define` changes the schema; `match` reads instances. Do not mix intent: schema evolution is a scoped, reviewed change — agents must not run destructive schema (`undefine`, mass `delete`) unless the task explicitly allows it.
+- **Leaf entity types**: Use `isa!` when the model requires the exact type (avoids accidental matches through subtyping).
+- **`links`**: Relations connect players with `links (role: $player)`; the role label can be omitted to match any role the entity plays in that relation ([links statement](https://typedb.com/docs/typeql-reference/statements/links/)).
+- **Concept rows**: HTTP query answers are often `answerType: "conceptRows"` with per-variable `Concept` objects (`kind`: `entity` | `relation` | `attribute` | `value`). Inspect shapes before mapping (see `typedb-graph-persistence.ts`).
+- **Aggregations / counts**: Prefer `reduce ... = count` in a pipeline; remember that `match` can produce **multiple rows per conceptual instance** when the pattern duplicates bindings (e.g. multiple attributes) — design aggregates so duplicates do not inflate counts.
+- **String literals**: User-controlled text must be escaped for TypeQL strings (product helper `escapeTypeqlString` in `graph-persistence/helpers.ts`).
+
+## Reproducible inventory
+
+Leaf entity types with instances and role-player edge counts:
+
+`node scripts/typedb-entity-relation-inventory.mjs`
+
+## Further reading (vendor)
+
+- [Docs home](https://typedb.com/docs/home/) — navigation for TypeQL, concepts, drivers.
+- [Query variables and patterns](https://typedb.com/docs/core-concepts/typeql/query-variables-patterns)
+- [Match stage](https://typedb.com/docs/typeql-reference/pipelines/match/)

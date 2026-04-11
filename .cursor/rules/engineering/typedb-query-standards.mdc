@@ -23,3 +23,18 @@ Keep TypeDB schema and query work explicit, semantically correct, and maintainab
 - designing or modifying TypeDB schema
 - writing or debugging queries
 - mapping TypeDB results into application types
+
+## Connection & runtime
+
+- **Config source of truth** — `product/src/lib/server/config.ts` (`getTypeDbConfig`): `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` or `TYPEDB_HOST`, `TYPEDB_DATABASE`, or `TYPEDB_CONNECTION_STRING` (see that file for URL-shaped parsing).
+- **Scripts** — match `scripts/dump-typedb-schema.mjs`: load **`product/.env.local`** then **repo `.env.local`** into `process.env` when the script is not run under Next. Do not commit `.env.local` or paste secrets into docs, issues, or logs.
+- **Driver** — `@typedb/driver-http` (`TypeDBHttpDriver`): `openTransaction` / `query` / `commitTransaction` / `rollbackTransaction`, or `oneShotQuery(query, commit, database, transactionType)` for single round-trips. Use **`read`** for data reads, **`write`** for inserts/deletes/updates, **`schema`** for schema stages only.
+- **Observability** — prefer `getGraphBackendStatus()` / `GET /api/graph-backend-status` for “is TypeDB up?” without exposing credentials.
+
+## TypeQL hygiene
+
+- Prefer **explicit typing** (`isa!` vs `isa`) so query intent matches analytics definitions (direct instances vs inheritance).
+- **Read vs write pipelines** — schema queries are single-stage; data pipelines chain `match` with `insert` / `delete` / `put` / `update` / `reduce` / etc. per TypeQL reference; avoid mixing unintended write stages into read-only tooling.
+- **Aggregations** — use pipeline `reduce` / `count` consistent with the official query-clauses guide; when in doubt, `analyze()` in a throwaway transaction can validate pipeline structure.
+- **Operational counts** — for role-player “degree,” count **bindings** `(relation instance, role player)` per relation type and role, then sum; do not assume one edge per relation when types allow multiple players per role.
+- **Schema snapshot** — treat **`docs/DB-Schema-Export.typeql`** as the committed review artifact; run **`npm run dump:typedb-schema`** after server-side schema changes.

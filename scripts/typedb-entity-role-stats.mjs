@@ -17,7 +17,11 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { TypeDBHttpDriver, isApiErrorResponse, isOkResponse } from "@typedb/driver-http";
-import { parseEntityTypeNames, parseRelationTwoRoles } from "./lib/typedb-database-copy.mjs";
+import {
+  parseEntityTypeNames,
+  parseRelationTwoRoles,
+  parseTypeDbConnectionString,
+} from "./lib/typedb-database-copy.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
@@ -37,18 +41,6 @@ function applyDotenvFile(filePath) {
     }
     if (!process.env[key]) process.env[key] = val;
   }
-}
-
-function parseTypeDbConnectionString(cs) {
-  const m = cs.match(/typedb:\/\/([^:]+):([^@]+)@https?:\/\/([^?]+)\?name=([^&\s]+)/);
-  if (!m) return null;
-  const hostPort = m[3].replace(/\/$/, "");
-  return {
-    username: decodeURIComponent(m[1]),
-    password: decodeURIComponent(m[2]),
-    address: hostPort,
-    database: decodeURIComponent(m[4]),
-  };
 }
 
 function getTypeDbConfig() {

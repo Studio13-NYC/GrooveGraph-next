@@ -55,6 +55,12 @@ Use the **NYCTA-inspired** transit/signage system for authoritative “new regim
 - **Evidence UX:** Field notes and Sources as stacked collapsibles; Evidence and Claims plates share a fixed height band (`--gg-workbench-module-max-h`). Binding brief: **`docs/design-language/GRAPHIC_ARTIST_WORKBENCH_NEXT_INSTRUCTIONS.mdc`** §5; validation notes: **`docs/research-workbench-validation.md`**; app runbook: **`product/README.md`**.
 - **Graph persistence:** TypeDB via **`product/`** sync; schema snapshot **`docs/DB-Schema-Export.typeql`**; env **`TYPEDB_*`** per **`product/.env.example`** and **`docs/AZURE_BASELINE.mdc`**. **Graph viz** in the workbench is **`graph` + `ui`** (Sigma.js); see **Agent package** §6 and TypeDB graph-viz guidance ([TypeDB docs — graph visualization](https://typedb.com/docs/guides/integrations/graph-viz/)).
 
+## Secrets and environment (local vs cloud)
+
+- **Local development (humans and local CLI):** Put secrets in **`product/.env.local`** (gitignored). That is the canonical file for the Next app, `npm run dump:typedb-schema`, and scripts that load the same paths as **`product/src/lib/server/config.ts`**. Optional repo-root **`.env.local`** is a fallback for non-product tooling only.
+- **Cursor Cloud Agents:** Configure the same **`TYPEDB_*`** / **`TYPEDB_CONNECTION_STRING`** names (and **`OPENAI_API_KEY`**, etc.) under **Cursor → Cloud Agents → My Secrets** for this repository so the job can expose them as **`process.env`**. Maintenance scripts and **`scripts/lib/typedb-env.mjs`** merge **disk** `.env.local` first, then **`process.env`**, so dashboard secrets apply when there is no `product/.env.local` in the clone—or override missing keys if the platform fills `process.env`.
+- **Agents should assume:** If a task needs TypeDB or OpenAI and the sandbox has **neither** `product/.env.local` **nor** injected `TYPEDB_*` / keys in **`process.env`**, connectivity will fail until one of those channels is present; do not fabricate credentials or commit them to git.
+
 ## Learned User Preferences
 
 - Use documented `TYPEDB_*` keys in **`product/.env.local`** (`KEY=value` without spaces around `=`); do not rely on alternate names such as `connectionString` or informal `username =` lines.
@@ -66,7 +72,7 @@ Use the **NYCTA-inspired** transit/signage system for authoritative “new regim
 
 - **`/api/graph-backend-status`:** `configured: false` means **`getTypeDbConfig()`** returned null (missing or unusable env), not necessarily that the TypeDB cluster is down; `reachable` reflects the health check once config exists.
 - An empty value for **`TYPEDB_CONNECTION_STRING`** (key present, nothing after `=`) is treated as connection-string empty; use a full one-line URL or all four **`TYPEDB_USERNAME` / `TYPEDB_PASSWORD` / `TYPEDB_ADDRESS` / `TYPEDB_DATABASE`** fields per **`product/.env.example`**.
-- Server-side TypeDB settings merge **`product/.env.local`** (and monorepo path fallbacks) with **`process.env`**; **`loadEnvConfig`** in **`next.config`** should target the **`product/`** app root; connection-string parsing uses delimiter-style splits (e.g. at `@https://`) so passwords may contain `@` or `:`.
+- Server-side TypeDB settings merge **`product/.env.local`** (and monorepo path fallbacks) with **`process.env`** (the latter is how **Cursor Cloud Agent secrets** reach the app when no file exists); **`loadEnvConfig`** in **`next.config`** should target the **`product/`** app root; connection-string parsing uses delimiter-style splits (e.g. at `@https://`) so passwords may contain `@` or `:`.
 - Moving to a new database name via export/import copies schema and data as-is; stripping legacy **`aura-`** prefixes in exported TypeQL is a separate step (e.g. **`scripts/strip-typeql-aura-prefix.mjs`**, with collision-aware **`migrated-*`** names when needed).
 - **`scripts/lib/`** (e.g. **`typedb-database-copy.mjs`**) aligns env line parsing with **`product/src/lib/server/config.ts`** for TypeDB tooling.
 - Sigma/workbench graph errors about an unknown **node program** (e.g. **`circle`**) usually indicate **client-side** Sigma configuration, not TypeDB connectivity.

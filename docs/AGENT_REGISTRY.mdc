@@ -24,3 +24,5 @@ Compact operator matrix for GrooveGraph Next. Agent role cards live under **`.cu
 **Hygiene and cleanup:** follow **`docs/HYGIENE.mdc`**; primary implementer is typically **`development`** with **`qa`** for validation—there is no separate `hygienist` agent file.
 
 **Meta authoring (rules/skills):** owned by **`development`** with **`architecture`** review when contracts change; there is no separate `composer-meta` agent file.
+
+**Secrets (local vs cloud):** see **`AGENTS.mdc`** §Secrets and environment — **`product/.env.local`** for humans; **Cursor Cloud Agents → My Secrets** for automated runs using the same variable names as **`product/.env.example`**.

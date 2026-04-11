@@ -47,6 +47,11 @@ In Cursor, the **parent session model** may be stronger than specialists; specia
 
 Before any code change in this repo, assistants follow **`.cursor/rules/global/strict-packet-before-code.mdc`**: emit an **agent list** (with rationale), a full **context packet**, and cite applicable **rules** and **skills**. That block is **necessary but not sufficient** for writes: **delegated implementation** is a **separate run** that applies patches—in Cursor, the **`Task` tool** only (appropriate `subagent_type`; **`explore`** for read-only discovery)—not the orchestrator applying patches in the same turn after only emitting the packet, except where that rule file’s exceptions apply. Read-only explanation and search are exempt from writes (and from delegation when no tree mutation follows). Writable work targets **this repository only**; sibling starter trees such as **`cursor-agent-baseline`** are not edited from here (see **`rules/global/repo-boundary.mdc`**). **Other tooling:** if there is no `Task`, use a **separately scoped agent or job that applies patches**; do not substitute the orchestrator’s inline edits for that delegation unless an exception in the strict rule applies.
 
+## Secrets for delegated runs
+
+- **Local:** specialists use whatever the developer placed in **`product/.env.local`** (see **`AGENTS.mdc`** §Secrets and environment).
+- **Cursor Cloud:** prefer **My Secrets** with the same **`TYPEDB_*`** / **`OPENAI_*`** names as **`product/.env.example`** so **`process.env`** is populated when the cloud runtime supports it; do not expect secrets to exist in the git clone.
+
 ## Authority model
 
 Only the **orchestrator** should merge cross-domain outputs and declare multi-step work complete unless the user scoped a single-agent task.

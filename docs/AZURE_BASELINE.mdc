@@ -54,6 +54,7 @@ From repo root:
 | Step | What to use |
 |------|-------------|
 | **Local secrets** | [`product/.env.local`](../product/.env.local) — canonical for the Next app (copy from [`product/.env.example`](../product/.env.example)). Root repo `.env.local` is optional for non-product tooling only. |
+| **Cursor Cloud Agents** | **My Secrets** (Cursor Cloud Agents dashboard) for this repo — use the **same** `TYPEDB_*` / `OPENAI_*` names as `.env.example` so they map to `process.env` when the runtime injects them. See **`AGENTS.mdc`** §Secrets and environment. Not a substitute for **App Service** application settings in Azure. |
 | **Deploy** | From repo root: `.\scripts\deploy-appservice-product.ps1` (workspace build: `npm run build -w @groovegraph-next/product`). |
 | **Push env to App Service** | `.\scripts\push-env-to-appservice.ps1` — defaults to **`product/.env.local`**; override with `-EnvFile path`. |
 | **TypeDB string only** | `.\scripts\set-typedb-appservice.ps1` — sets `TYPEDB_CONNECTION_STRING` from `product/.env.local`. |

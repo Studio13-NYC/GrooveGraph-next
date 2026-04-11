@@ -49,6 +49,7 @@ Own TypeDB schema decisions, graph modeling, retrieval logic, and query authorin
 
 ## Connecting to TypeDB
 
+- **Where secrets live:** **Humans / local machines:** **`product/.env.local`** (gitignored). **Cursor Cloud Agents:** **My Secrets** in the Cloud Agents dashboard — use identical **`TYPEDB_*`** / **`TYPEDB_CONNECTION_STRING`** names so they can populate **`process.env`** when the job injects them (no file in clone required).
 - **Config source of truth**: `product/src/lib/server/config.ts` — `getTypeDbConfig()` merges **`product/.env.local`** (and monorepo fallbacks: repo `.env.local`, parent `.env.local`) with `process.env`, same key names as **`scripts/lib/typedb-env.mjs`** used by maintenance scripts.
 - **Env variables**: `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` or `TYPEDB_HOST`, `TYPEDB_DATABASE` **or** `TYPEDB_CONNECTION_STRING` (see `config.ts` for delimited `typedb://…@https://…?name=…` parsing).
 - **Server access pattern**: Bracket `process.env["TYPEDB_*"]` for TypeDB secrets — see **`docs/SESSION_PATTERNS_AND_ANTIPATTERNS.md`** (“Bracket access for secrets”, Next + disk map).

@@ -9,7 +9,8 @@ Authoritative product code: `product/src/lib/server/config.ts` (`getTypeDbConfig
 
 ## Connection
 
-- **Canonical secrets location**: `product/.env.local` (repo-root `.env.local` is a fallback path in the same loader order as the server config).
+- **Canonical secrets location (local):** `product/.env.local` (repo-root `.env.local` is a fallback path in the same loader order as the server config). Never commit these files.
+- **Cursor Cloud Agents:** store the same **`TYPEDB_*`** names in **Cloud Agents → My Secrets** for the repository. When the runtime injects them, they appear on **`process.env`**; `getTypeDbConfig()` and **`scripts/lib/typedb-env.mjs`** read disk first, then **`process.env`**, so cloud jobs work without a checked-in `.env.local`. If both exist, disk values win for a given key (first occurrence per loader rules).
 - **Variables**: `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` or `TYPEDB_HOST`, `TYPEDB_DATABASE` **or** a single `TYPEDB_CONNECTION_STRING` (`typedb://user:pass@https://host:port/?name=database` — delimited form supports `@` / `:` in passwords; legacy regex exists as fallback).
 - **Server-side access**: Prefer bracket form `process.env["TYPEDB_PASSWORD"]` so bundlers do not mishandle inlined secrets (see `docs/SESSION_PATTERNS_AND_ANTIPATTERNS.md`).
 - **After changing env**: Restart Next dev server; do not commit `.env.local` or credentials.

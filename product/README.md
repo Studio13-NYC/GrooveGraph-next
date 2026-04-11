@@ -6,6 +6,8 @@ This package is the **canonical GrooveGraph Next.js app**: the text-first invest
 
 Copy `.env.example` → **`.env.local` in `product/`** — this is the **canonical** env file for local dev and for **`scripts/push-env-to-appservice.ps1`** / **`scripts/set-typedb-appservice.ps1`** (Azure App Service). A repo-root `.env.local` is optional for other tooling only.
 
+**Cursor Cloud Agents:** this file is usually **not** in git. For automated runs, add the same keys (**`TYPEDB_*`**, **`OPENAI_API_KEY`**, etc.) under **Cursor → Cloud Agents → My Secrets** so they appear on **`process.env`** when the cloud runtime provides them; repo scripts merge `product/.env.local` (if present) with **`process.env`**. See root **`AGENTS.mdc`** §Secrets and environment.
+
 - `OPENAI_API_KEY` (required for investigation turns)
 - optional model vars per `.env.example`
 - **Graph sync (TypeDB):** set `TYPEDB_*` (or `TYPEDB_CONNECTION_STRING`) per `.env.example`.

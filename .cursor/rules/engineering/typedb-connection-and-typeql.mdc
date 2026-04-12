@@ -33,9 +33,8 @@ Authoritative product code: `product/src/lib/server/config.ts` (`getTypeDbConfig
 
 ## Reproducible inventory
 
-Leaf entity types with instances and role-player edge counts:
-
-`node scripts/typedb-entity-relation-inventory.mjs`
+- **By type (default):** `node scripts/typedb-entity-relation-inventory.mjs` — leaf entity types with instances; total **`links`** edges per type.
+- **By instance:** `node scripts/typedb-entity-relation-inventory.mjs --per-instance` — one row per entity IID with that instance’s relationship count; optional `--max-per-type=N` (default 5000) to avoid huge listings.
 
 The table is **one row per leaf entity type** (not per IID); relationship counts use `match $e isa! T; $r links ($e); reduce $n = count;`, and a successful run also prints **Total entity instances** (`isa entity`).
 

@@ -37,6 +37,8 @@ Leaf entity types with instances and role-player edge counts:
 
 `node scripts/typedb-entity-relation-inventory.mjs`
 
+The table is **one row per leaf entity type** (not per IID); relationship counts use `match $e isa! T; $r links ($e); reduce $n = count;`, and a successful run also prints **Total entity instances** (`isa entity`).
+
 ## Further reading (vendor)
 
 - [Docs home](https://typedb.com/docs/home/) — navigation for TypeQL, concepts, drivers.

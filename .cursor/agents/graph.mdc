@@ -62,7 +62,7 @@ Own TypeDB schema decisions, graph modeling, retrieval logic, and query authorin
 - **Schema vs data**: Prefer the committed snapshot **`docs/DB-Schema-Export.typeql`** for type names; use **`npm run dump:typedb-schema`** after live schema changes. Runtime ensure-schema lines live in **`typedb-workbench-schema.ts`**.
 - **Strings**: Follow `escapeTypeqlString` in **`product/src/lib/server/graph-persistence/helpers.ts`** for interpolated user or external text.
 - **Leaf types**: Use `isa!` when matching exact entity types (see existing queries in `typedb-graph-persistence.ts`).
-- **Inventory (reproducible)**: `node scripts/typedb-entity-relation-inventory.mjs` — markdown table of leaf entity types with instances and counts of **`links`** role-player edges per type.
+- **Inventory (reproducible)**: `node scripts/typedb-entity-relation-inventory.mjs` — markdown table with **one row per leaf entity type** (schema-level entity name from `define`, not one row per entity IID). Only types with **≥1 instance** appear. **Number of relationships** for type `T` is exactly the script’s aggregate: `match $e isa! T; $r links ($e); reduce $n = count;` — the total count of **`links`** role-player edges across **all** instances of `T` (each `(entity instance, relation instance, role)` binding is one row before `reduce`). When connected, the script also prints **Total entity instances** via `match $e isa entity; reduce $total = count;`.
 
 ## Rules and skills
 

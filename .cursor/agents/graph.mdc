@@ -46,3 +46,24 @@ Own TypeDB schema decisions, graph modeling, retrieval logic, and query authorin
 
 - Runnable app: **`product/`** — graph sync via `typedb-graph-persistence`; runtime schema subset in `product/src/lib/server/graph-persistence/typedb-workbench-schema.ts`.
 - Committed schema snapshot: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`**.
+
+## Official TypeDB documentation (canonical links)
+
+Use these as the **authoritative** reference for TypeDB 3.x, TypeQL, and drivers. Prefer them over third-party summaries when semantics matter (inheritance, `isa` vs `isa!`, `links`, pipelines, etc.).
+
+| Topic | URL |
+| --- | --- |
+| Documentation home | https://typedb.com/docs |
+| Core concepts (what TypeDB is) | https://typedb.com/docs/core-concepts/typedb/ |
+| **TypeQL language guide** (overview: schema vs data pipelines, stages) | https://typedb.com/docs/typeql-reference/ |
+| **Data and query model** (entities, relations, attributes, interfaces, IIDs, pipelines) | https://typedb.com/docs/typeql-reference/data-model/ |
+| **Patterns** (conjunction, disjunction, negation) | https://typedb.com/docs/typeql-reference/patterns/ |
+| **Match** stage | https://typedb.com/docs/typeql-reference/pipelines/match/ |
+| **Reduce** (aggregations, `groupby`) | https://typedb.com/docs/typeql-reference/pipelines/reduce/ |
+| Pipeline stages index (**Select**, **Sort**, **Fetch**, etc.) | https://typedb.com/docs/typeql-reference/pipelines/ |
+| Keyword glossary | https://typedb.com/docs/typeql-reference/keywords/ |
+| **TypeDB drivers** (install; language list) | https://typedb.com/docs/home/install/drivers/ |
+| **TypeScript HTTP driver** API reference | https://typedb.com/docs/reference/typedb-http-drivers/typescript/ |
+| **HTTP API** reference (used by `@typedb/driver-http`) | https://typedb.com/docs/reference/typedb-http-api/ |
+
+**Suggested reading order for this repo:** data model → TypeQL language guide → match / reduce → TypeScript HTTP driver (this product uses `@typedb/driver-http`).

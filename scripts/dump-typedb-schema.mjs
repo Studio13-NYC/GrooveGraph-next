@@ -1,74 +1,18 @@
 /**
  * Fetch full TypeQL schema from a live TypeDB database (HTTP API: getDatabaseSchema)
- * and write docs/DB-Schema-Export.typeql. Uses the same TYPEDB_* env contract as product/.
+ * and write docs/DB-Schema-Export.typeql. Uses the same TYPEDB_* env contract as product/
+ * (`product/src/lib/server/config.ts`, `scripts/lib/typedb-env.mjs`).
  */
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { TypeDBHttpDriver, isApiErrorResponse } from "@typedb/driver-http";
+import { getTypeDbConfigFromEnv } from "./lib/typedb-env.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, "..");
 
-function applyDotenvFile(filePath) {
-  if (!fs.existsSync(filePath)) return;
-  const text = fs.readFileSync(filePath, "utf8");
-  for (const line of text.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) continue;
-    const key = trimmed.slice(0, eq).trim();
-    let val = trimmed.slice(eq + 1).trim();
-    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-      val = val.slice(1, -1);
-    }
-    if (!process.env[key]) process.env[key] = val;
-  }
-}
-
-function parseTypeDbConnectionString(cs) {
-  const m = cs.match(/typedb:\/\/([^:]+):([^@]+)@https?:\/\/([^?]+)\?name=([^&\s]+)/);
-  if (!m) return null;
-  const hostPort = m[3].replace(/\/$/, "");
-  return {
-    username: decodeURIComponent(m[1]),
-    password: decodeURIComponent(m[2]),
-    address: hostPort,
-    database: decodeURIComponent(m[4]),
-  };
-}
-
-function getTypeDbConfig() {
-  const env = process.env;
-  const username = env.TYPEDB_USERNAME?.trim();
-  const password = env.TYPEDB_PASSWORD?.trim();
-  const rawAddress = (env.TYPEDB_ADDRESS ?? env.TYPEDB_HOST)?.trim();
-  const database = env.TYPEDB_DATABASE?.trim();
-  if (username && password && rawAddress && database) {
-    const addr = rawAddress.includes("://") ? rawAddress : `https://${rawAddress}`;
-    return { username, password, addresses: [addr], database };
-  }
-  const cs = env.TYPEDB_CONNECTION_STRING?.trim();
-  if (cs) {
-    const parsed = parseTypeDbConnectionString(cs);
-    if (parsed) {
-      const addr = parsed.address.includes("://") ? parsed.address : `https://${parsed.address}`;
-      return {
-        username: parsed.username,
-        password: parsed.password,
-        addresses: [addr],
-        database: parsed.database,
-      };
-    }
-  }
-  return null;
-}
-
-applyDotenvFile(path.join(repoRoot, "product", ".env.local"));
-applyDotenvFile(path.join(repoRoot, ".env.local"));
-
-const cfg = getTypeDbConfig();
+const cfg = getTypeDbConfigFromEnv(repoRoot);
 if (!cfg) {
   console.error(
     "Missing TypeDB config. Set TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS (or TYPEDB_HOST), TYPEDB_DATABASE, or TYPEDB_CONNECTION_STRING in product/.env.local.",

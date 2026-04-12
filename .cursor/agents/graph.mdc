@@ -46,3 +46,25 @@ Own TypeDB schema decisions, graph modeling, retrieval logic, and query authorin
 
 - Runnable app: **`product/`** — graph sync via `typedb-graph-persistence`; runtime schema subset in `product/src/lib/server/graph-persistence/typedb-workbench-schema.ts`.
 - Committed schema snapshot: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`**.
+
+## Connecting to TypeDB
+
+- **Where secrets live:** **Humans / local machines:** **`product/.env.local`** (gitignored). **Cursor Cloud Agents:** **My Secrets** in the Cloud Agents dashboard — use identical **`TYPEDB_*`** / **`TYPEDB_CONNECTION_STRING`** names so they can populate **`process.env`** when the job injects them (no file in clone required).
+- **Config source of truth**: `product/src/lib/server/config.ts` — `getTypeDbConfig()` merges **`product/.env.local`** (and monorepo fallbacks: repo `.env.local`, parent `.env.local`) with `process.env`, same key names as **`scripts/lib/typedb-env.mjs`** used by maintenance scripts.
+- **Env variables**: `TYPEDB_USERNAME`, `TYPEDB_PASSWORD`, `TYPEDB_ADDRESS` or `TYPEDB_HOST`, `TYPEDB_DATABASE` **or** `TYPEDB_CONNECTION_STRING` (see `config.ts` for delimited `typedb://…@https://…?name=…` parsing).
+- **Server access pattern**: Bracket `process.env["TYPEDB_*"]` for TypeDB secrets — see **`docs/SESSION_PATTERNS_AND_ANTIPATTERNS.md`** (“Bracket access for secrets”, Next + disk map).
+- **Operational**: Restart the dev server after changing `.env.local`; never commit secrets.
+- **Driver**: `@typedb/driver-http` `TypeDBHttpDriver` — vendor entry [TypeDB HTTP drivers](https://typedb.com/docs/reference/typedb-http-drivers/).
+
+## TypeQL and query discipline
+
+- **Transactions**: Use **read** transactions for `match` / reads; **write** for mutations. **`typedb-graph-persistence.ts`** sets `transactionTimeoutMillis`: **60_000** (read), **120_000** (write).
+- **Schema vs data**: Prefer the committed snapshot **`docs/DB-Schema-Export.typeql`** for type names; use **`npm run dump:typedb-schema`** after live schema changes. Runtime ensure-schema lines live in **`typedb-workbench-schema.ts`**.
+- **Strings**: Follow `escapeTypeqlString` in **`product/src/lib/server/graph-persistence/helpers.ts`** for interpolated user or external text.
+- **Leaf types**: Use `isa!` when matching exact entity types (see existing queries in `typedb-graph-persistence.ts`).
+- **Inventory (reproducible)**: `node scripts/typedb-entity-relation-inventory.mjs` — default: markdown table with **one row per leaf entity type** (aggregate). **Number of relationships** for type `T`: `match $e isa! T; $r links ($e); reduce $n = count;` (sum of **`links`** edges over all instances of `T`). **Per instance:** `node scripts/typedb-entity-relation-inventory.mjs --per-instance` — three columns: entity type, **instance iid**, relationship count for that instance (`reduce $rel_n = count groupby $e` after `match $e isa! T; $r links ($e);`, merged with a full `match $e isa! T;` so instances with **0** links appear). Types with more than **`--max-per-type`** instances (default 5000) are skipped with a stderr note. When connected, the script also prints **Total entity instances** via `match $e isa entity; reduce $total = count;`.
+
+## Rules and skills
+
+- **`.cursor/rules/engineering/typedb-query-standards.mdc`** and **`typedb-connection-and-typeql.mdc`**
+- **`.cursor/skills/graph/typedb-query-author/SKILL.md`**, **`typedb-schema-update/SKILL.md`**, **`result-mapping/SKILL.md`**

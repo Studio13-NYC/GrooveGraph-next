@@ -23,3 +23,18 @@ Keep TypeDB schema and query work explicit, semantically correct, and maintainab
 - designing or modifying TypeDB schema
 - writing or debugging queries
 - mapping TypeDB results into application types
+
+## Connection (summary)
+
+Use the same env contract as `product/src/lib/server/config.ts`: `product/.env.local` first, then `TYPEDB_*` / `TYPEDB_CONNECTION_STRING`, bracket access for secrets on the server, restart dev after env edits, never commit credentials. HTTP driver: `@typedb/driver-http` — see **`typedb-connection-and-typeql.mdc`** in this folder for full rules and vendor links.
+
+## TypeQL (summary)
+
+Separate **schema** (`define` / `undefine`, schema transactions) from **data** (`match` / `insert` / `delete`, read vs write tx). Prefer `isa!` for leaf entity types when precision matters; mind **aggregation duplication** when a `match` multiplies rows. Destructive schema changes are out of scope for agents unless explicitly requested.
+
+Committed schema reference: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`**.
+
+## See also
+
+- **`.cursor/rules/engineering/typedb-connection-and-typeql.mdc`** — connection, transactions, TypeQL pitfalls, inventory script.
+- **`product/src/lib/server/typedb-graph-persistence.ts`** — timeouts, `runInTx`, concept row handling.

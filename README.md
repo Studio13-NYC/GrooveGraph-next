@@ -35,6 +35,7 @@ When you adopt or merge from **`cursor-agent-baseline`**, replace stubs and plac
 
 ## Local development
 
+- **Secrets:** use **`product/.env.local`** for local work (see [`product/.env.example`](product/.env.example)). For **Cursor Cloud Agents**, use **My Secrets** with the same names so they can populate `process.env` when the cloud job injects them — see **`AGENTS.mdc`** §Secrets and environment.
 - **`npm run dev`** — Product app ([`product/`](product/)), **http://localhost:3000**
 - **`npm run build:product`** / **`npm run start:product`** — production build and serve
 

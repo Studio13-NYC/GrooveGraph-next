@@ -12,6 +12,7 @@ Concise notes from debugging TypeDB env, graph status, and related work. No secr
 - **When `process.env` is empty or unwritable**: Parse `product/.env.local` into an in-memory map (same line rules as `scripts/`) and merge with `process.env` for reads; do not rely on `process.env[key] = value` alone if the runtime behaves like a frozen proxy.
 - **User-facing diagnostics**: Prefer a single boolean (e.g. `connectionStringEmpty`) and a clear `message` over shipping large diagnostic payloads to the client.
 - **`.env.example` contract**: Document `TYPEDB_CONNECTION_STRING` **or** `TYPEDB_USERNAME` / `TYPEDB_PASSWORD` / `TYPEDB_ADDRESS` / `TYPEDB_DATABASE`; one-line URL must be non-empty after `=`.
+- **Local vs cloud secrets**: Developers use **`product/.env.local`** (not committed). **Cursor Cloud Agents** should use **dashboard “My Secrets”** with the **same variable names** so they appear on `process.env` when the cloud runtime injects them; scripts under `scripts/` merge disk env then `process.env` per `scripts/lib/typedb-env.mjs`.
 
 ## Antipatterns (what burned time)
 
@@ -22,6 +23,7 @@ Concise notes from debugging TypeDB env, graph status, and related work. No secr
 - **Commenting out** the only valid `TYPEDB_CONNECTION_STRING` while leaving a duplicate under a non-standard key.
 - **Leaving debug instrumentation** (ingest URLs, verbose NDJSON) in route handlers after the fix is verified.
 - **Over-instrumenting before a minimal read**: curl `/api/graph-backend-status` and reading `message` + shape often narrows the problem faster than many hypotheses.
+- **Assuming Cloud Agent secrets reached the shell**: If `TYPEDB_*` are unset in `process.env` and `product/.env.local` is absent, tools will report “not configured” even when secrets exist in the Cursor UI—verify the cloud job type and injection behavior before debugging TypeDB itself.
 
 ## Quick checks
 

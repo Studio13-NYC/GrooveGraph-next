@@ -1,6 +1,7 @@
 /**
- * Quick entity counts per type (TypeDB 3). Loads product/.env.local.
- * Usage: node scripts/typedb-count-by-type.mjs [comma-separated types]
+ * Session-local connectivity: graph-entities included in a research-session but with no
+ * graph-relationship in that session (workbench viz would show them as isolates).
+ * Loads product/.env.local. TypeDB 3 TypeQL (reduce).
  */
 import fs from "fs";
 import path from "path";
@@ -73,30 +74,76 @@ if (!cfg) {
   process.exit(1);
 }
 
-const types =
-  process.argv[2]?.split(",").map((s) => s.trim()).filter(Boolean) ??
-  [
-    "graph-entity",
-    "research-session",
-    "graph-relationship",
-    "session-includes-entity",
-  ];
-
 const driver = new TypeDBHttpDriver({
   username: cfg.username,
   password: cfg.password,
   addresses: cfg.addresses,
 });
 
-for (const t of types) {
-  const q = `
-match $x isa ${t};
-reduce $c = count;
+/** Entities in session with no incident graph-relationship for that session */
+const isolatedQuery = `
+match
+$s isa! research-session, has session-id $sid;
+$l isa! session-includes-entity,
+  links (container-session: $s, member-entity: $e);
+$e isa! graph-entity;
+not {
+  $r isa graph-relationship,
+    links (source-entity: $e, target-entity: $any);
+  $r has rel-session-id $rs;
+  $rs == $sid;
+};
+not {
+  $r2 isa graph-relationship,
+    links (source-entity: $any2, target-entity: $e);
+  $r2 has rel-session-id $rs2;
+  $rs2 == $sid;
+};
+reduce $iso = count;
 `.trim();
+
+/** graph-entity with no session-includes-entity at all */
+const globalOrphanQuery = `
+match
+$e isa! graph-entity;
+not {
+  $l isa session-includes-entity,
+    links (member-entity: $e);
+};
+reduce $orph = count;
+`.trim();
+
+for (const [label, q] of [
+  ["isolated_in_session", isolatedQuery],
+  ["graph_entity_without_session_link", globalOrphanQuery],
+]) {
   const res = await driver.oneShotQuery(q, false, cfg.database, "read");
   if (isApiErrorResponse(res)) {
-    console.log(`${t}: error ${res.err?.message}`);
+    console.log(label, "ERROR", res.err?.message);
     continue;
   }
-  console.log(`${t}:`, JSON.stringify(res.ok).slice(0, 200));
+  const row = res.ok?.answers?.[0]?.data;
+  const val =
+    row && typeof row === "object"
+      ? Object.values(row).find((c) => c?.kind === "value" && typeof c.value === "number")
+      : null;
+  console.log(label, val?.value ?? JSON.stringify(res.ok).slice(0, 400));
+}
+
+const kindDist = `
+match
+$e isa! graph-entity, has provisional-entity-kind $k;
+reduce $c = count groupby $k;
+`.trim();
+const kd = await driver.oneShotQuery(kindDist, false, cfg.database, "read");
+if (isApiErrorResponse(kd)) {
+  console.log("provisional_kind_groupby ERROR", kd.err?.message);
+} else {
+  console.log("provisional_entity_kind_distribution");
+  for (const ans of kd.ok?.answers ?? []) {
+    const d = ans.data;
+    const k = d?.k?.value ?? d?.k;
+    const c = Object.values(d).find((x) => x?.kind === "value" && typeof x.value === "number");
+    console.log(" ", typeof k === "string" ? k : JSON.stringify(k), "->", c?.value);
+  }
 }

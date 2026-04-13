@@ -11,6 +11,11 @@ description: Generalist implementer for bulk TypeScript application work, debugg
 ## Purpose
 Act as the generalist implementer for cross-cutting application code, debugging, refactors, and integration glue.
 
+## Repository-wide
+
+- **Evidence:** Place logs, NDJSON, and screenshots that belong in git or PRs under **`artifacts/logs/`** and **`artifacts/screenshots/`** (see **`artifacts/README.md`**). Treat **`.cursor/debug-*.log`** as session-ephemeral; copy redacted excerpts into **`artifacts/logs/`** when they are review artifacts.
+- **Process:** Follow **`AGENTS.mdc`**, **`docs/CONTEXT_PACKETS.mdc`**, **`global/strict-packet-before-code.mdc`**, **`global/repo-boundary.mdc`**, and **`global/handoff-discipline.mdc`** for routing, packets, and boundaries.
+
 ## Owns
 - shared TypeScript implementation
 - cross-layer integration glue
@@ -34,6 +39,8 @@ Act as the generalist implementer for cross-cutting application code, debugging,
 - preserve existing contracts unless change is requested
 - defer to specialist agents for domain-specific patterns
 - surface assumptions clearly
+- **Reinforced — diagnostics:** put shareable NDJSON or debug logs under **`artifacts/logs/`** (not repo root or long-lived **`.cursor/`** dumps); redact before commit.
+- **Reinforced — handoffs:** coordinate with **`qa`** on verification entrypoints and with **`ui`**, **`api`**, or **`graph`** when a fix touches workbench, HTTP, or TypeDB contracts—use explicit packets per **`docs/CONTEXT_PACKETS.mdc`**.
 
 ## Default Outputs
 - diagnosis

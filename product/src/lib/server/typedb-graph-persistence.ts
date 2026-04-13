@@ -650,6 +650,129 @@ async function persistResearchSessionToTypeDb(
   };
 }
 
+async function fetchGlobalVizGraphFromTypeDb(options?: { focusNodeId?: string }): Promise<WorkbenchVizGraph> {
+  const config = getTypeDbConfig();
+  if (!config) {
+    throw new Error(
+      "TypeDB is not configured. Set TYPEDB_USERNAME, TYPEDB_PASSWORD, TYPEDB_ADDRESS (or TYPEDB_HOST), TYPEDB_DATABASE, or TYPEDB_CONNECTION_STRING (see product/.env.example and product/README.md).",
+    );
+  }
+
+  const driver = getDriver(config);
+  await ensureWorkbenchSchema(driver, config.database);
+  const txId = await openReadTx(driver, config.database);
+
+  try {
+    const nodesQuery = `
+match
+$e isa! graph-entity,
+  has display-name $dn,
+  has provisional-entity-kind $pk,
+  has review-status $st;
+`.trim();
+
+    const nodesQueryRelaxed = `
+match
+$e isa! graph-entity,
+  has display-name $dn,
+  has provisional-entity-kind $pk;
+`.trim();
+
+    let nodesRes = await runInTx(driver, txId, nodesQuery, "vizGlobalEntities");
+    if (nodesRes.answerType !== "conceptRows" || !nodesRes.answers?.length) {
+      nodesRes = await runInTx(driver, txId, nodesQueryRelaxed, "vizGlobalEntitiesRelaxed");
+    }
+    const nodeMap = new Map<string, WorkbenchVizNode>();
+    if (nodesRes.answerType === "conceptRows" && nodesRes.answers?.length) {
+      for (const { data: row } of nodesRes.answers) {
+        const iid = entityIidFromRow(row, "e");
+        if (!iid) {
+          continue;
+        }
+        const label = attributeValue(row, "dn")?.trim() || "Entity";
+        const pk = attributeValue(row, "pk");
+        const st = attributeValue(row, "st");
+        const reviewStatus = parseReviewStatus(st);
+        nodeMap.set(iid, {
+          id: iid,
+          label,
+          subtitle: pk ?? undefined,
+          reviewStatus,
+        });
+      }
+    }
+
+    const edgesQuery = `
+match
+$r isa! graph-relationship,
+  has graph-rel-edge-key $gk,
+  has rel-verb $verb,
+  has rel-review-status $rst;
+$r links (source-entity: $src, target-entity: $tgt);
+$src isa! graph-entity;
+$tgt isa! graph-entity;
+`.trim();
+
+    const edgesQueryRelaxed = `
+match
+$r isa! graph-relationship,
+  has graph-rel-edge-key $gk,
+  has rel-verb $verb;
+$r links (source-entity: $src, target-entity: $tgt);
+$src isa! graph-entity;
+$tgt isa! graph-entity;
+`.trim();
+
+    let edgesRes = await runInTx(driver, txId, edgesQuery, "vizGlobalRels");
+    if (edgesRes.answerType !== "conceptRows" || !edgesRes.answers?.length) {
+      edgesRes = await runInTx(driver, txId, edgesQueryRelaxed, "vizGlobalRelsRelaxed");
+    }
+    const edges: WorkbenchVizEdge[] = [];
+    if (edgesRes.answerType === "conceptRows" && edgesRes.answers?.length) {
+      for (const { data: row } of edgesRes.answers) {
+        const src = entityIidFromRow(row, "src");
+        const tgt = entityIidFromRow(row, "tgt");
+        const edgeId = attributeValue(row, "gk");
+        const verb = attributeValue(row, "verb");
+        const rst = attributeValue(row, "rst");
+        if (!src || !tgt || !edgeId) {
+          continue;
+        }
+        edges.push({
+          id: edgeId,
+          source: src,
+          target: tgt,
+          label: verb ?? undefined,
+          reviewStatus: parseReviewStatus(rst),
+        });
+        if (!nodeMap.has(src)) {
+          nodeMap.set(src, { id: src, label: "Entity", reviewStatus: "proposed" });
+        }
+        if (!nodeMap.has(tgt)) {
+          nodeMap.set(tgt, { id: tgt, label: "Entity", reviewStatus: "proposed" });
+        }
+      }
+    }
+
+    await rollbackTx(driver, txId);
+    const full: WorkbenchVizGraph = {
+      nodes: [...nodeMap.values()],
+      edges,
+    };
+    const focus = options?.focusNodeId?.trim();
+    if (focus) {
+      const sub = extractWorkbenchVizNeighborhood(full, focus);
+      if (sub) {
+        return sub;
+      }
+    }
+    return full;
+  } catch (err) {
+    await rollbackTx(driver, txId);
+    throw err;
+  }
+}
+
 async function fetchSessionVizGraphFromTypeDb(
   sessionId: string,
   options?: { focusNodeId?: string },
@@ -793,5 +916,6 @@ export function createTypeDbGraphPersistence(): GraphPersistence {
   return {
     persistResearchSession: (session, opts) => persistResearchSessionToTypeDb(session, opts ?? {}),
     fetchSessionVizGraph: (sessionId, opts) => fetchSessionVizGraphFromTypeDb(sessionId, opts),
+    fetchGlobalVizGraph: (opts) => fetchGlobalVizGraphFromTypeDb(opts),
   };
 }

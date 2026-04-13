@@ -1,0 +1,747 @@
+/**
+ * Lineage explorer (D3 prototype) — route-scoped styles only.
+ * Root: .gg-atlas-lineage — no unscoped selectors.
+ *
+ * Token map:
+ * - Reused from globals / NYCTA: --gg-font-sans, --gg-tracking-label, --gg-ink, --gg-slate,
+ *   --gg-accent-directional, --paper, --ink, --slate (when present on :root).
+ * - Route-only: --atlas-* (defined under .gg-atlas-lineage).
+ */
+
+.gg-atlas-lineage {
+  /* —— Base (dark-first; light via .gg-atlas-lineage--light) —— */
+  --atlas-bg-deep: #0c0c0e;
+  --atlas-bg-elevated: color-mix(in srgb, var(--atlas-bg-deep) 88%, #1a1a22 12%);
+  --atlas-glass: color-mix(in srgb, #12121a 75%, transparent);
+  --atlas-border-subtle: color-mix(in srgb, var(--atlas-fg-muted) 22%, transparent);
+  --atlas-fg: #e8e8ec;
+  --atlas-fg-muted: #9ca3af;
+  --atlas-fg-dim: #6b7280;
+  /* Warm accent (extends NYCTA orange route idea without copying external brand) */
+  --atlas-accent: #e8943c;
+  --atlas-accent-soft: color-mix(in srgb, var(--atlas-accent) 22%, transparent);
+  --atlas-accent-fg: #0a0a0a;
+  --atlas-danger: #f87171;
+  --atlas-graph-bg: #08080a;
+  --atlas-edge: color-mix(in srgb, var(--atlas-fg-muted) 55%, transparent);
+  --atlas-edge-hover: color-mix(in srgb, var(--atlas-accent) 70%, var(--atlas-fg) 30%);
+  --atlas-lane-divider: color-mix(in srgb, var(--atlas-fg-muted) 35%, transparent);
+  --atlas-label-stroke: var(--atlas-bg-deep);
+  --atlas-mono: ui-monospace, "JetBrains Mono", "Cascadia Code", monospace;
+
+  --atlas-radius-sm: 10px;
+  --atlas-radius-md: 14px;
+  --atlas-radius-lg: 20px;
+  --atlas-shadow-pop: 0 24px 48px rgba(0, 0, 0, 0.45);
+  --atlas-blur: 12px;
+  --atlas-duration-fast: 150ms;
+  --atlas-duration-med: 280ms;
+  --atlas-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--atlas-bg-deep);
+  color: var(--atlas-fg);
+  font-family: var(--gg-font-sans, system-ui, sans-serif);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gg-atlas-lineage--light {
+  --atlas-bg-deep: #f4f4f5;
+  --atlas-bg-elevated: #ffffff;
+  --atlas-glass: color-mix(in srgb, #ffffff 82%, transparent);
+  --atlas-border-subtle: color-mix(in srgb, #111827 12%, transparent);
+  --atlas-fg: #111827;
+  --atlas-fg-muted: #4b5563;
+  --atlas-fg-dim: #6b7280;
+  --atlas-accent: #c2410c;
+  --atlas-accent-soft: color-mix(in srgb, var(--atlas-accent) 18%, transparent);
+  --atlas-accent-fg: #fffaf5;
+  --atlas-graph-bg: #ececee;
+  --atlas-edge: color-mix(in srgb, var(--atlas-fg-muted) 40%, transparent);
+  --atlas-label-stroke: #f4f4f5;
+  --atlas-shadow-pop: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* —— Shell —— */
+.gg-atlas-lineage__header {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 48px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-glass);
+  backdrop-filter: blur(var(--atlas-blur));
+  -webkit-backdrop-filter: blur(var(--atlas-blur));
+}
+
+.gg-atlas-lineage__brand {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.gg-atlas-lineage__kicker {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label, 0.08em);
+  text-transform: uppercase;
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.gg-atlas-lineage__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  flex: 1;
+  min-width: 0;
+}
+
+.gg-atlas-lineage__pill {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--atlas-accent-soft);
+  background: transparent;
+  color: var(--atlas-accent);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background var(--atlas-duration-fast) var(--atlas-ease-out),
+    border-color var(--atlas-duration-fast) var(--atlas-ease-out),
+    color var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__pill:hover {
+  background: var(--atlas-accent-soft);
+  border-color: color-mix(in srgb, var(--atlas-accent) 45%, transparent);
+  color: var(--atlas-accent);
+}
+
+/* Session / demo source selector — sits under header */
+.gg-atlas-lineage__data-strip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 48px;
+  z-index: 41;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--atlas-border-subtle);
+  background: color-mix(in srgb, var(--atlas-glass) 92%, transparent);
+  backdrop-filter: blur(var(--atlas-blur));
+  -webkit-backdrop-filter: blur(var(--atlas-blur));
+}
+
+.gg-atlas-lineage__select--data {
+  min-width: 200px;
+}
+
+.gg-atlas-lineage__select--session {
+  flex: 1 1 180px;
+  max-width: min(420px, 100%);
+}
+
+.gg-atlas-lineage__source-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--atlas-accent);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--atlas-accent-soft);
+  background: var(--atlas-accent-soft);
+}
+
+.gg-atlas-lineage__status {
+  font-size: 12px;
+  color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__status--error {
+  color: var(--atlas-danger);
+  max-width: min(360px, 100%);
+}
+
+.gg-atlas-lineage__focus-clear {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--atlas-duration-fast) var(--atlas-ease-out),
+    border-color var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__focus-clear:hover {
+  border-color: var(--atlas-accent);
+  color: var(--atlas-accent);
+}
+
+.gg-atlas-lineage__focus-clear:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+/* New research session (seed query) — between data source and filters */
+.gg-atlas-lineage__new-session-strip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 88px;
+  z-index: 41;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 16px;
+  border-bottom: 1px solid var(--atlas-border-subtle);
+  background: color-mix(in srgb, var(--atlas-glass) 94%, transparent);
+  backdrop-filter: blur(var(--atlas-blur));
+  -webkit-backdrop-filter: blur(var(--atlas-blur));
+}
+
+.gg-atlas-lineage__new-session-kicker {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: var(--gg-tracking-label, 0.08em);
+  text-transform: uppercase;
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__new-session-input {
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: min(560px, 100%);
+  padding: 8px 12px;
+  border-radius: var(--atlas-radius-sm);
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+  font-size: 13px;
+  outline: none;
+}
+
+.gg-atlas-lineage__new-session-input::placeholder {
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__new-session-input:focus-visible {
+  border-color: var(--atlas-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--atlas-accent) 35%, transparent);
+}
+
+.gg-atlas-lineage__btn-create-session {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border: none;
+  border-radius: var(--atlas-radius-sm);
+  background: var(--atlas-accent);
+  color: var(--atlas-accent-fg);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__btn-create-session:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+.gg-atlas-lineage__btn-create-session:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+.gg-atlas-lineage__btn-create-session:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.gg-atlas-lineage__new-session-link {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--atlas-accent);
+  text-decoration: none;
+  padding: 4px 4px;
+  border-radius: 6px;
+}
+
+.gg-atlas-lineage__new-session-link:hover {
+  text-decoration: underline;
+}
+
+.gg-atlas-lineage__new-session-link:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+.gg-atlas-lineage__new-session-error {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 12px;
+  color: var(--atlas-danger);
+}
+
+/* Above .gg-atlas-lineage__new-session-strip (z-index 41): that row can grow with wrap/errors
+   and would otherwise sit on top of this bar and eat pointer events. */
+.gg-atlas-lineage__filter-strip {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 132px;
+  z-index: 45;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  row-gap: 8px;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-glass);
+  backdrop-filter: blur(var(--atlas-blur));
+  -webkit-backdrop-filter: blur(var(--atlas-blur));
+  overflow: visible;
+}
+
+.gg-atlas-lineage__select {
+  border-radius: 999px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+  padding: 6px 12px;
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.gg-atlas-lineage__select:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+/* Stack above sibling chips/search so the open panel is not painted under them. */
+.gg-atlas-lineage__kind-filter {
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.gg-atlas-lineage__kind-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 140px;
+  max-width: min(280px, 42vw);
+  border-radius: 999px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+
+.gg-atlas-lineage__kind-filter-trigger:hover {
+  border-color: color-mix(in srgb, var(--atlas-accent) 40%, var(--atlas-border-subtle));
+}
+
+.gg-atlas-lineage__kind-filter-trigger-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gg-atlas-lineage__kind-filter-chevron {
+  flex-shrink: 0;
+  font-size: 10px;
+  line-height: 1;
+  opacity: 0.75;
+}
+
+.gg-atlas-lineage__kind-filter-trigger:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+.gg-atlas-lineage__kind-filter-panel {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 4px);
+  min-width: 220px;
+  max-height: min(320px, 55vh);
+  overflow-y: auto;
+  padding: 8px 0;
+  border-radius: var(--atlas-radius-md);
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  box-shadow: var(--atlas-shadow-pop);
+  z-index: 55;
+}
+
+.gg-atlas-lineage__kind-filter-actions {
+  padding: 0 12px 8px;
+  border-bottom: 1px solid var(--atlas-border-subtle);
+  margin-bottom: 4px;
+}
+
+.gg-atlas-lineage__kind-filter-link {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--atlas-accent);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.gg-atlas-lineage__kind-filter-link:hover {
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__kind-filter-link:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.gg-atlas-lineage__kind-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__kind-filter-row:hover {
+  background: color-mix(in srgb, var(--atlas-accent) 12%, transparent);
+}
+
+.gg-atlas-lineage__kind-filter-check {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  accent-color: var(--atlas-accent);
+  cursor: pointer;
+}
+
+.gg-atlas-lineage__chip {
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg-muted);
+  cursor: pointer;
+  transition:
+    background var(--atlas-duration-fast) var(--atlas-ease-out),
+    color var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__chip--on {
+  background: var(--atlas-accent-soft);
+  color: var(--atlas-accent);
+  border-color: color-mix(in srgb, var(--atlas-accent) 35%, transparent);
+}
+
+.gg-atlas-lineage__search-icon {
+  flex-shrink: 0;
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  min-width: 140px;
+  flex: 0 1 240px;
+}
+
+.gg-atlas-lineage__search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--atlas-fg);
+  font-size: 12px;
+  outline: none;
+}
+
+.gg-atlas-lineage__search-input::placeholder {
+  color: var(--atlas-fg-dim);
+}
+
+/* —— Main + graph stage —— */
+.gg-atlas-lineage__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* header 48 + data strip 40 + new session strip 44 + filter ~44 */
+  padding-top: 176px;
+}
+
+.gg-atlas-lineage__stage-wrap {
+  flex: 1;
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gg-atlas-lineage__toolbar {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--atlas-radius-sm);
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-glass);
+  backdrop-filter: blur(8px);
+}
+
+.gg-atlas-lineage__tool-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--atlas-bg-elevated) 90%, transparent);
+  color: var(--atlas-fg-muted);
+  cursor: pointer;
+  transition:
+    background var(--atlas-duration-fast) var(--atlas-ease-out),
+    color var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__tool-btn:hover {
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__tool-btn:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+.gg-atlas-lineage__graph-host {
+  flex: 1;
+  min-height: 0;
+  background: var(--atlas-graph-bg);
+  position: relative;
+}
+
+.gg-atlas-lineage__graph-host svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gg-atlas-lineage__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: var(--atlas-fg-muted);
+  font-size: 13px;
+}
+
+/* —— Onboarding modal —— */
+.gg-atlas-lineage__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: color-mix(in srgb, #000000 45%, transparent);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--atlas-duration-med) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__backdrop--open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gg-atlas-lineage__modal {
+  width: 100%;
+  max-width: 420px;
+  padding: 28px;
+  border-radius: var(--atlas-radius-lg);
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  box-shadow: var(--atlas-shadow-pop);
+  transform: translateY(8px);
+  opacity: 0;
+  transition:
+    opacity var(--atlas-duration-med) var(--atlas-ease-out),
+    transform var(--atlas-duration-med) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__backdrop--open .gg-atlas-lineage__modal {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.gg-atlas-lineage__modal-title {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.gg-atlas-lineage__modal-body {
+  margin: 0 0 20px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__modal-hint {
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__modal-tag {
+  font-weight: 600;
+  color: var(--atlas-accent);
+}
+
+.gg-atlas-lineage__modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .gg-atlas-lineage__modal-actions {
+    flex-direction: row;
+  }
+}
+
+.gg-atlas-lineage__btn-primary {
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  border-radius: var(--atlas-radius-md);
+  background: var(--atlas-accent);
+  color: var(--atlas-accent-fg);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__btn-primary:hover {
+  filter: brightness(1.06);
+}
+
+.gg-atlas-lineage__btn-primary:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 3px;
+}
+
+.gg-atlas-lineage__btn-secondary {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--atlas-border-subtle);
+  border-radius: var(--atlas-radius-md);
+  background: var(--atlas-bg-deep);
+  color: var(--atlas-fg);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color var(--atlas-duration-fast) var(--atlas-ease-out),
+    background var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__btn-secondary:hover {
+  border-color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__btn-secondary:focus-visible {
+  outline: 2px solid var(--atlas-accent);
+  outline-offset: 2px;
+}
+
+.gg-atlas-lineage__btn-caption {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.85;
+}
+
+.gg-atlas-lineage .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

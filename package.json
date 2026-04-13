@@ -10,6 +10,8 @@
     "validate:visual-system": "node -e \"const fs=require('fs'); ['product/src/visual-system/tokens.ts','product/src/visual-system/nycta-groovegraph-tokens.css'].forEach(p=>{if(!fs.existsSync(p)) throw new Error('Missing '+p)}); console.log('visual system tokens present')\"",
     "dump:typedb-schema": "node scripts/dump-typedb-schema.mjs",
     "report:typedb-entity-relations": "node scripts/typedb-entity-relation-table.mjs",
+    "report:typedb-db-snapshot": "node scripts/typedb-db-snapshot-counts.mjs",
+    "import:neo4j-dump": "npm run import:neo4j-dump -w @groovegraph-next/product",
     "migrate:typedb-strip-aura-prefix": "node scripts/migrate-typedb-strip-aura-prefix.mjs",
     "promote:typedb-migrate-temp": "node scripts/typedb-promote-migrate-temp.mjs",
     "cleanup:check": "npm prune && npx knip",

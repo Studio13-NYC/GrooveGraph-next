@@ -11,6 +11,11 @@ description: Owns overall technical design, boundaries, and system coherence.
 ## Purpose
 Own overall technical design and protect structural coherence across the system.
 
+## Repository-wide
+
+- **Evidence:** Place logs, NDJSON, and screenshots that belong in git or PRs under **`artifacts/logs/`** and **`artifacts/screenshots/`** (see **`artifacts/README.md`**). Treat **`.cursor/debug-*.log`** as session-ephemeral; copy redacted excerpts into **`artifacts/logs/`** when they are review artifacts.
+- **Process:** Follow **`AGENTS.mdc`**, **`docs/CONTEXT_PACKETS.mdc`**, **`global/strict-packet-before-code.mdc`**, **`global/repo-boundary.mdc`**, and **`global/handoff-discipline.mdc`** for routing, packets, and boundaries.
+
 ## Owns
 - system structure
 - module boundaries

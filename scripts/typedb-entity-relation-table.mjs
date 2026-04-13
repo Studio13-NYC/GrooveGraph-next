@@ -15,6 +15,7 @@ import {
   applyDotenvFile,
   parseTypeDbConnectionString,
   conceptBinding,
+  conceptIidFromBinding,
 } from "./lib/typedb-database-copy.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -117,6 +118,8 @@ const driver = new TypeDBHttpDriver({
   addresses: cfg.addresses,
 });
 
+const PAGE = 500;
+
 /** @type {Map<string, { label: string, typeLabel: string }>} */
 const entities = new Map();
 /** @type {Map<string, Set<string>>} */
@@ -128,7 +131,12 @@ function ensureEntity(iid, typeLabel, label) {
     relsByEntity.set(iid, new Set());
   } else if (label) {
     const cur = entities.get(iid);
-    const placeholder = cur.typeLabel === "unknown" || /^\S+\|[0-9a-f-]{20,}$/i.test(cur.label);
+    // Replace synthetic `type|iid` labels (IIDs are `0x…` hex; older regex omitted `x` and blocked upgrades).
+    const synthetic =
+      cur.label === `${cur.typeLabel}|${iid}` ||
+      cur.label === `${typeLabel}|${iid}` ||
+      /^\S+\|0x[0-9a-f]+$/i.test(cur.label);
+    const placeholder = cur.typeLabel === "unknown" || synthetic;
     if (placeholder) {
       cur.label = label;
       if (typeLabel && typeLabel !== "unknown") cur.typeLabel = typeLabel;
@@ -136,46 +144,92 @@ function ensureEntity(iid, typeLabel, label) {
   }
 }
 
+/** Returns `null` when this database has no such type/relation (workbench-only DBs). */
 async function runQuery(q, label) {
   const res = await driver.oneShotQuery(q.trim(), false, cfg.database, "read");
   if (isApiErrorResponse(res)) {
-    throw new Error(`${label}: ${res.err?.message ?? JSON.stringify(res)}`);
+    const msg = String(res.err?.message ?? "");
+    if (msg.includes("not found") && (msg.includes("Type label") || msg.includes("type label"))) {
+      return null;
+    }
+    throw new Error(`${label}: ${msg}`);
   }
   return res.ok;
 }
 
-// 1) Load entities + names
-for (const [typeLabel, attrs] of ENTITY_NAME_ATTRS) {
-  const attrList = attrs.join(", ");
-  const q = `
-match $e isa! ${typeLabel};
-fetch $e: ${attrList};
-`.trim();
-  const ok = await runQuery(q, `fetch-${typeLabel}`);
-  if (ok.answerType !== "conceptDocuments" || !ok.answers?.length) {
-    continue;
+/** @param {Record<string, unknown>} row */
+function attributeStringFromRow(row, varName) {
+  const base = varName.replace(/^\$/, "");
+  const c = row[varName] ?? row[base] ?? row[`$${base}`];
+  if (c && typeof c === "object" && "kind" in c && c.kind === "attribute" && "value" in c) {
+    const v = c.value;
+    return v === undefined || v === null ? "" : String(v).trim();
   }
-  for (const doc of ok.answers) {
-    const eDoc = doc?.e;
-    if (!eDoc || typeof eDoc !== "object") continue;
-    const iid = eDoc.iid;
-    if (!iid) continue;
-    let label = "";
-    for (const a of attrs) {
-      const v = eDoc[a];
-      if (v == null) continue;
-      const s =
-        typeof v === "object" && "value" in v ? String(v.value ?? "").trim() : String(v).trim();
-      if (s) {
-        label = s;
-        break;
-      }
-    }
-    ensureEntity(String(iid), typeLabel, label || `${typeLabel}|${iid}`);
-  }
+  return "";
 }
 
-const PAGE = 500;
+// 1) Load entities (conceptRows) + names via `has` rows — TypeDB 3 fetch does not support `$e.iid` / old `fetch $e: a, b` syntax.
+for (const [typeLabel, attrs] of ENTITY_NAME_ATTRS) {
+  let skipType = false;
+  let offset = 0;
+  for (;;) {
+    const q = `
+match $e isa! ${typeLabel};
+offset ${offset};
+limit ${PAGE};
+`.trim();
+    const ok = await runQuery(q, `list-${typeLabel}-${offset}`);
+    if (ok === null) {
+      skipType = true;
+      break;
+    }
+    if (ok.answerType !== "conceptRows" || !ok.answers?.length) {
+      break;
+    }
+    for (const ans of ok.answers) {
+      const row = ans.data;
+      if (!row) continue;
+      const iid = conceptIidFromBinding(row, "e");
+      if (!iid) continue;
+      ensureEntity(iid, typeLabel, "");
+    }
+    if (ok.answers.length < PAGE) break;
+    offset += PAGE;
+  }
+
+  if (skipType) {
+    continue;
+  }
+
+  for (const a of attrs) {
+    let aOff = 0;
+    for (;;) {
+      const q = `
+match $e isa! ${typeLabel}, has ${a} $v;
+offset ${aOff};
+limit ${PAGE};
+`.trim();
+      const ok = await runQuery(q, `label-${typeLabel}-${a}-${aOff}`);
+      if (ok === null) {
+        break;
+      }
+      if (ok.answerType !== "conceptRows" || !ok.answers?.length) {
+        break;
+      }
+      for (const ans of ok.answers) {
+        const row = ans.data;
+        if (!row) continue;
+        const iid = conceptIidFromBinding(row, "e");
+        const s = attributeStringFromRow(row, "v");
+        if (iid && s) {
+          ensureEntity(iid, typeLabel, s);
+        }
+      }
+      if (ok.answers.length < PAGE) break;
+      aOff += PAGE;
+    }
+  }
+}
 
 // 2) Count relation instances per entity (distinct relation IID)
 for (const [relType, roles] of RELATION_ROLE_SPECS) {
@@ -188,6 +242,9 @@ offset ${offset};
 limit ${PAGE};
 `.trim();
       const ok = await runQuery(q, `links-${relType}-${role}-${offset}`);
+      if (ok === null) {
+        break;
+      }
       if (ok.answerType !== "conceptRows" || !ok.answers?.length) {
         break;
       }

@@ -11,6 +11,11 @@ description: Owns design system, stylesheet direction, and translation between F
 ## Purpose
 Own the visual system, design stylesheet discipline, and translation between design tools and implementation.
 
+## Repository-wide
+
+- **Evidence:** Place logs, NDJSON, and screenshots that belong in git or PRs under **`artifacts/logs/`** and **`artifacts/screenshots/`** (see **`artifacts/README.md`**). Treat **`.cursor/debug-*.log`** as session-ephemeral; copy redacted excerpts into **`artifacts/logs/`** when they are review artifacts.
+- **Process:** Follow **`AGENTS.mdc`**, **`docs/CONTEXT_PACKETS.mdc`**, **`global/strict-packet-before-code.mdc`**, **`global/repo-boundary.mdc`**, and **`global/handoff-discipline.mdc`** for routing, packets, and boundaries.
+
 ## Owns
 - design tokens
 - stylesheet structure
@@ -36,6 +41,8 @@ Own the visual system, design stylesheet discipline, and translation between des
 - reduce ad hoc styling
 - align implementation with the source design language
 - keep the stylesheet predictable and composable
+- **Reinforced — visuals:** store before/after or design-QA captures under **`artifacts/screenshots/`** with descriptive filenames; pair them with token or CSS recommendations for **`ui`** and **`qa`**.
+- **Reinforced — scope:** own tokens, stylesheet architecture, and Figma alignment; hand off workbench layout, Sigma/canvas behavior, and structural UI wiring to **`ui`** (and cross-check with **`qa`** when acceptance is visual).
 
 ## Default Outputs
 - style guidance

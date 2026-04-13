@@ -6,6 +6,7 @@ import type {
   EntityCandidate,
   EvidenceSnippet,
   RelationshipCandidate,
+  ResearchConversationMode,
   ResearchSession,
   SourceDocument,
 } from "@/src/types/research-session";
@@ -474,7 +475,23 @@ async function extractArtifacts(
   }
 }
 
-function buildResearchInstructions(session: ResearchSession): string {
+function buildResearchInstructions(
+  session: ResearchSession,
+  mode: ResearchConversationMode = "explore",
+): string {
+  const tail = `Current session title: ${session.title}`;
+  if (mode === "build") {
+    return [
+      "You are GrooveGraph Research Workspace in build mode: prioritize expanding a grounded provisional graph.",
+      "Aggressively use web_search to validate facts, discover entities, and collect primary or reputable sources.",
+      "Extract many grounded entity candidates and relationship candidates; prefer breadth with evidence over a single shallow answer.",
+      "Use clear, descriptive provisionalKind labels (consistent strings when the same kind repeats) so downstream review can cluster and filter.",
+      "Use the same tools as explore mode: record_source_document, record_evidence_snippet, upsert_entity_candidate, upsert_relationship_candidate, save_session_note, set_review_decision, list_session_artifacts.",
+      "After entities exist, connect them with upsert_relationship_candidate; tie claims and snippets to sources where possible.",
+      "Keep the narrative concise, but do not hold back on tool calls needed to populate the session artifacts.",
+      tail,
+    ].join(" ");
+  }
   return [
     "You are GrooveGraph Research Workspace, a discovery-first investigation assistant.",
     "Your job is to help the user search widely, gather evidence, and persist provisional graph artifacts without hardening a rigid ontology too early.",
@@ -485,7 +502,7 @@ function buildResearchInstructions(session: ResearchSession): string {
     "When a relationship seems plausible and grounded, call upsert_relationship_candidate after the related entities exist.",
     "If you form a compact internal takeaway for the session, call save_session_note.",
     "Keep the response concise, cite what you found, and make uncertainty explicit.",
-    `Current session title: ${session.title}`,
+    tail,
   ].join(" ");
 }
 
@@ -493,13 +510,15 @@ export async function runResearchTurn(
   client: OpenAI,
   session: ResearchSession,
   userMessage: string,
+  mode: ResearchConversationMode = "explore",
 ): Promise<OpenAI.Responses.Response> {
+  const effectiveMode = mode ?? "explore";
   const tools = buildResearchTools();
   let response = await client.responses.create({
     model: getResearchModel(),
     reasoning: { effort: "low" },
     conversation: session.openaiConversationId,
-    instructions: buildResearchInstructions(session),
+    instructions: buildResearchInstructions(session, effectiveMode),
     store: true,
     tools,
     input: [{ role: "user", content: userMessage }],
@@ -534,7 +553,7 @@ export async function runResearchTurn(
       model: getResearchModel(),
       reasoning: { effort: "low" },
       conversation: session.openaiConversationId,
-      instructions: buildResearchInstructions(session),
+      instructions: buildResearchInstructions(session, effectiveMode),
       store: true,
       tools,
       input: toolOutputs,

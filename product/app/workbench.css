@@ -1232,6 +1232,10 @@
   box-shadow: none !important;
 }
 
+.gg-next-graph-filter-status-swatch--solid {
+  box-shadow: none;
+}
+
 .gg-next-graph-filter-table-meta-icon {
   width: 14px;
   flex-shrink: 0;
@@ -1397,7 +1401,8 @@
 .gg-next-graph-filter-table-body--types {
   overflow-y: auto;
   overflow-x: hidden;
-  max-height: 8.5rem;
+  /* Seven fixed rows; rem cap clipped when root font is small (e.g. 10px). */
+  max-height: 180px;
   min-height: 0;
   scrollbar-gutter: stable;
 }

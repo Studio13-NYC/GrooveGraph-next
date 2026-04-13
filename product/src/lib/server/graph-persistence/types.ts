@@ -42,4 +42,6 @@ export type GraphPersistence = {
     sessionId: string,
     options?: { focusNodeId?: string },
   ): Promise<WorkbenchVizGraph>;
+  /** All `graph-entity` + `graph-relationship` rows in the database (any session). TypeDB only. */
+  fetchGlobalVizGraph(options?: { focusNodeId?: string }): Promise<WorkbenchVizGraph>;
 };

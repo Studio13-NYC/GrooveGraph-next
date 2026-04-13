@@ -29,7 +29,7 @@ export async function POST(
 
   try {
     const client = getOpenAIClient();
-    const response = await runResearchTurn(client, session, body.message);
+    const response = await runResearchTurn(client, session, body.message, body.mode ?? "explore");
     const assistantText = response.output_text?.trim() || "No text output returned.";
     appendMessage(session, {
       role: "assistant",

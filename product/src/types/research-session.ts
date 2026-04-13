@@ -109,8 +109,19 @@ export interface CreateSessionRequest {
   seedQuery: string;
 }
 
+/** Conversation style for `/api/sessions/:id/turn` (LLM instructions). */
+export type ResearchConversationMode = "explore" | "build";
+
 export interface TurnRequest {
   message: string;
+  /** Default `explore` when omitted (backward compatible). */
+  mode?: ResearchConversationMode;
+}
+
+/** Bulk rename of `provisionalKind` on all **proposed** entity candidates. */
+export interface RenameProposedKindRequest {
+  from: string;
+  to: string;
 }
 
 export interface ReviewDecisionRequest {

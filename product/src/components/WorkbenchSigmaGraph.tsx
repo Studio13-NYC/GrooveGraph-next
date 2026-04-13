@@ -24,7 +24,6 @@ import {
   kindFamilyLabel,
   kindToFillColor,
   passesKindFilters,
-  statusToBorderColor,
   statusToGraphNodeRingStroke,
   type KindFamily,
 } from "@/src/lib/workbench-viz/graph-viz-styles";
@@ -44,22 +43,20 @@ const MAX_EDGE_LABELS = 14;
 const NARROW_RAIL_MQ = "(max-width: 980px)";
 const GRAPH_FILTER_RAIL_COLLAPSED_KEY = "gg-workbench-graph-filter-collapsed";
 
-/** Legend dot for status filters. Accepted = no dot/ring (matches graph: no status ring). */
+/** Legend dot for status filters — solid fills (no hollow rings that read as broken UI). */
 function StatusFilterSwatch({ status }: { status: ReviewStatus }) {
   if (status === "accepted") {
     return <span className="gg-next-graph-filter-status-swatch gg-next-graph-filter-status-swatch--none" aria-hidden />;
   }
-  const ring = statusToBorderColor(status, FILTER_STATUS_NEUTRAL_FILL);
-  return (
-    <span
-      className="gg-next-graph-filter-status-swatch"
-      aria-hidden
-      style={{
-        background: FILTER_STATUS_NEUTRAL_FILL,
-        boxShadow: ring ? `inset 0 0 0 2px ${ring}` : undefined,
-      }}
-    />
-  );
+  const bg =
+    status === "proposed"
+      ? "#111111"
+      : status === "deferred"
+        ? "#5a5654"
+        : status === "rejected"
+          ? "#ee352e"
+          : FILTER_STATUS_NEUTRAL_FILL;
+  return <span className="gg-next-graph-filter-status-swatch gg-next-graph-filter-status-swatch--solid" aria-hidden style={{ background: bg }} />;
 }
 
 function KindFilterSwatch({ family }: { family: KindFamily }) {
@@ -125,15 +122,10 @@ function derivedEdgeReviewStatus(
   return fromEndpoints();
 }
 
-/** Caps NDJSON debug posts (session ee8b37). */
-let debugGraphFilterLogN = 0;
-let debugRingNearCenterLogN = 0;
-
 /**
- * Intersects nodes by status + entity kind, then keeps edges whose both endpoints survive and
- * whose effective review status passes the status filter.
+ * Global view: every node must pass status + kind; edges need both endpoints visible.
  */
-function filterGraph(
+function filterGraphGlobal(
   input: WorkbenchVizGraph,
   allowed: Set<ReviewStatus>,
   includeDeferred: boolean,
@@ -157,53 +149,87 @@ function filterGraph(
     const es = derivedEdgeReviewStatus(e, nodeById);
     return effectiveAllowed.has(es);
   });
+  return { nodes, edges };
+}
 
-  if (typeof window !== "undefined" && debugGraphFilterLogN < 5) {
-    let bothEndpointsVisibleDropped = 0;
-    let sample: { edgeId: string; derived: ReviewStatus; rawEdgeRs?: ReviewStatus } | null = null;
-    for (const e of raw.edges) {
-      if (!ids.has(e.source) || !ids.has(e.target)) {
-        continue;
-      }
-      const es = derivedEdgeReviewStatus(e, nodeById);
-      if (!effectiveAllowed.has(es)) {
-        bothEndpointsVisibleDropped += 1;
-        if (!sample) {
-          sample = { edgeId: e.id, derived: es, rawEdgeRs: e.reviewStatus };
-        }
-      }
-    }
-    const kindsOn = KIND_FILTER_KEYS.filter((k) => kindFilters[k]).length;
-    debugGraphFilterLogN += 1;
-    // #region agent log
-    fetch("http://127.0.0.1:7442/ingest/07c8a0f5-e3ad-4622-9f7f-59e2840edd49", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Debug-Session-Id": "ee8b37",
-      },
-      body: JSON.stringify({
-        sessionId: "ee8b37",
-        runId: "edge-filter-v1",
-        hypothesisId: "H1-edge-rs",
-        location: "WorkbenchSigmaGraph.tsx:filterGraph",
-        message: "filtered graph counts; both-visible edges dropped by status",
-        data: {
-          rawEdgeCount: raw.edges.length,
-          outNodeCount: nodes.length,
-          outEdgeCount: edges.length,
-          bothEndpointsVisibleDropped,
-          allowedStatuses: [...effectiveAllowed],
-          kindsOn,
-          sample,
-        },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
+/**
+ * When a node is focused: that node **always** stays visible (ignores status/kind filters).
+ * Status, kind, and edge-status filters apply only to **next hops** (immediate neighbors).
+ * Edges shown are only those between focus and a neighbor that passed filters.
+ */
+function filterGraphFocusNeighbors(
+  input: WorkbenchVizGraph,
+  allowed: Set<ReviewStatus>,
+  includeDeferred: boolean,
+  kindFilters: Record<KindFamily, boolean>,
+  focusId: string,
+): WorkbenchVizGraph {
+  const raw = normalizeVizGraph(input);
+  const nodeById = new Map(raw.nodes.map((n) => [n.id, n]));
+  if (!nodeById.has(focusId)) {
+    return filterGraphGlobal(input, allowed, includeDeferred, kindFilters);
   }
 
+  const effectiveAllowed = new Set(allowed);
+  if (!includeDeferred) {
+    effectiveAllowed.delete("deferred");
+  }
+
+  const neighborIds = new Set<string>();
+  for (const e of raw.edges) {
+    if (e.source === focusId) {
+      neighborIds.add(e.target);
+    }
+    if (e.target === focusId) {
+      neighborIds.add(e.source);
+    }
+  }
+
+  const neighborPassesFilters = (id: string): boolean => {
+    const n = nodeById.get(id);
+    if (!n) {
+      return false;
+    }
+    const st = n.reviewStatus ?? "proposed";
+    if (!effectiveAllowed.has(st)) {
+      return false;
+    }
+    return passesKindFilters(n.subtitle, kindFilters);
+  };
+
+  const visibleNeighborIds = new Set([...neighborIds].filter(neighborPassesFilters));
+  const visibleIds = new Set<string>([focusId, ...visibleNeighborIds]);
+
+  const nodes = raw.nodes.filter((n) => visibleIds.has(n.id));
+  const edges = raw.edges.filter((e) => {
+    const incident =
+      (e.source === focusId && visibleNeighborIds.has(e.target)) ||
+      (e.target === focusId && visibleNeighborIds.has(e.source));
+    if (!incident) {
+      return false;
+    }
+    const es = derivedEdgeReviewStatus(e, nodeById);
+    return effectiveAllowed.has(es);
+  });
+
   return { nodes, edges };
+}
+
+function filterGraphForView(
+  input: WorkbenchVizGraph,
+  allowed: Set<ReviewStatus>,
+  includeDeferred: boolean,
+  kindFilters: Record<KindFamily, boolean>,
+  focusId: string | null,
+): WorkbenchVizGraph {
+  if (!focusId) {
+    return filterGraphGlobal(input, allowed, includeDeferred, kindFilters);
+  }
+  const raw = normalizeVizGraph(input);
+  if (!raw.nodes.some((n) => n.id === focusId)) {
+    return filterGraphGlobal(input, allowed, includeDeferred, kindFilters);
+  }
+  return filterGraphFocusNeighbors(input, allowed, includeDeferred, kindFilters, focusId);
 }
 
 function circlePositions(count: number, radius: number) {
@@ -310,30 +336,6 @@ function drawStatusRings(
     }
     const pos = sigma.graphToViewport({ x: disp.x, y: disp.y });
     const r = sigma.scaleSize(disp.size);
-    const cx = w / 2;
-    const cy = h / 2;
-    const dist = Math.hypot(pos.x - cx, pos.y - cy);
-    if (typeof window !== "undefined" && dist < 52 && debugRingNearCenterLogN < 4) {
-      debugRingNearCenterLogN += 1;
-      // #region agent log
-      fetch("http://127.0.0.1:7442/ingest/07c8a0f5-e3ad-4622-9f7f-59e2840edd49", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Debug-Session-Id": "ee8b37",
-        },
-        body: JSON.stringify({
-          sessionId: "ee8b37",
-          runId: "ring-near-center-v1",
-          hypothesisId: "H3-ring",
-          location: "WorkbenchSigmaGraph.tsx:drawStatusRings",
-          message: "non-proposed status ring stroke near viewport center",
-          data: { nodeId: id, dist: Math.round(dist * 10) / 10, border, skipRingNodeId },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
-    }
     ctx.strokeStyle = border;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
@@ -435,35 +437,39 @@ export const WorkbenchSigmaGraph = forwardRef<WorkbenchSigmaGraphHandle, Workben
       return new Set(ALL_REVIEW_STATUSES.filter((s) => statusFilter[s]));
     }, [statusFilter]);
 
+    const normalizedGraph = useMemo(() => (graph ? normalizeVizGraph(graph) : null), [graph]);
+
     const filteredGraph = useMemo(() => {
       if (!graph) {
         return null;
       }
-      return filterGraph(graph, allowedStatuses, includeDeferred, kindFilters);
-    }, [graph, allowedStatuses, includeDeferred, kindFilters]);
+      return filterGraphForView(graph, allowedStatuses, includeDeferred, kindFilters, focusedNodeId);
+    }, [graph, allowedStatuses, includeDeferred, kindFilters, focusedNodeId]);
 
     const filteredGraphRef = useRef(filteredGraph);
     filteredGraphRef.current = filteredGraph;
 
     const effectiveFocusedNodeId = useMemo(() => {
-      if (!focusedNodeId || !filteredGraph) {
+      if (!focusedNodeId || !normalizedGraph) {
         return null;
       }
-      return filteredGraph.nodes.some((n) => n.id === focusedNodeId) ? focusedNodeId : null;
-    }, [focusedNodeId, filteredGraph]);
+      return normalizedGraph.nodes.some((n) => n.id === focusedNodeId) ? focusedNodeId : null;
+    }, [focusedNodeId, normalizedGraph]);
 
     focusedNodeIdRef.current = effectiveFocusedNodeId;
 
+    /** Drop selection/focus only when the id disappears from the payload (session/history), not when filters change. */
     useEffect(() => {
-      if (!filteredGraph) {
+      if (!graph) {
         setSelectedNodeId(null);
         setFocusedNodeId(null);
         return;
       }
-      const ids = new Set(filteredGraph.nodes.map((n) => n.id));
+      const raw = normalizeVizGraph(graph);
+      const ids = new Set(raw.nodes.map((n) => n.id));
       setSelectedNodeId((prev) => (prev && ids.has(prev) ? prev : null));
       setFocusedNodeId((prev) => (prev && ids.has(prev) ? prev : null));
-    }, [filteredGraph, historyResetKey]);
+    }, [graph, historyResetKey]);
 
     const graphBuildKey = useMemo(() => {
       if (!filteredGraph) {

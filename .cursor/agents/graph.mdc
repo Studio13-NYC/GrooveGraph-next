@@ -11,6 +11,11 @@ description: Owns TypeDB schema, query design, retrieval logic, and graph integr
 ## Purpose
 Own TypeDB schema decisions, graph modeling, retrieval logic, and query authoring.
 
+## Repository-wide
+
+- **Evidence:** Place logs, NDJSON, and screenshots that belong in git or PRs under **`artifacts/logs/`** and **`artifacts/screenshots/`** (see **`artifacts/README.md`**). Treat **`.cursor/debug-*.log`** as session-ephemeral; copy redacted excerpts into **`artifacts/logs/`** when they are review artifacts.
+- **Process:** Follow **`AGENTS.mdc`**, **`docs/CONTEXT_PACKETS.mdc`**, **`global/strict-packet-before-code.mdc`**, **`global/repo-boundary.mdc`**, and **`global/handoff-discipline.mdc`** for routing, packets, and boundaries.
+
 ## Owns
 - entity, relation, and attribute modeling
 - schema evolution guidance
@@ -46,6 +51,7 @@ Own TypeDB schema decisions, graph modeling, retrieval logic, and query authorin
 
 - Runnable app: **`product/`** — graph sync via `typedb-graph-persistence`; runtime schema subset in `product/src/lib/server/graph-persistence/typedb-workbench-schema.ts`.
 - Committed schema snapshot: **`docs/DB-Schema-Export.typeql`** — refresh with **`npm run dump:typedb-schema`**.
+- Neo4j Browser–style JSON export (`{ query, result: { records } }`) into workbench graph: repo root **`npm run import:neo4j-dump`** — implementation **`product/scripts/import-neo4j-dump-json-to-typedb.ts`** (writes session id **`neo4j-dump-json-import`**; re-run merges the same session).
 
 ## Official TypeDB documentation (canonical links)
 

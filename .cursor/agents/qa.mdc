@@ -11,6 +11,11 @@ description: Validates behavior end to end with tests, regression checks, and ac
 ## Purpose
 Validate the system end to end and protect against regressions, contract breakage, and incomplete behavior.
 
+## Repository-wide
+
+- **Evidence:** Place logs, NDJSON, and screenshots that belong in git or PRs under **`artifacts/logs/`** and **`artifacts/screenshots/`** (see **`artifacts/README.md`**). Treat **`.cursor/debug-*.log`** as session-ephemeral; copy redacted excerpts into **`artifacts/logs/`** when they are review artifacts.
+- **Process:** Follow **`AGENTS.mdc`**, **`docs/CONTEXT_PACKETS.mdc`**, **`global/strict-packet-before-code.mdc`**, **`global/repo-boundary.mdc`**, and **`global/handoff-discipline.mdc`** for routing, packets, and boundaries.
+
 ## Owns
 - test planning
 - acceptance checks
@@ -35,6 +40,8 @@ Validate the system end to end and protect against regressions, contract breakag
 - include negative and edge cases
 - verify cross-layer assumptions
 - convert fixed bugs into regression coverage where appropriate
+- **Reinforced — skills:** shape work using **`.cursor/skills/qa/test-plan`**, **`regression-check`**, and **`e2e-scenario`** (priorities, harness availability, layer transitions); cite concrete commands and paths from this agent’s **GrooveGraph Next context** and **`docs/research-workbench-validation.md`**.
+- **Reinforced — evidence:** attach or reference **`artifacts/`** outputs (logs, screenshots) for acceptance and regression notes so **`development`** and specialists can reproduce.
 
 ## Default Outputs
 - test plan

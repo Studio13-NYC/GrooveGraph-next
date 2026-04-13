@@ -7,9 +7,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test src/lib/server/graph-persistence/helpers.test.ts"
+    "test": "tsx --test src/lib/server/graph-persistence/helpers.test.ts",
+    "import:neo4j-dump": "tsx scripts/import-neo4j-dump-json-to-typedb.ts",
+    "typedb:graph-taxonomy": "tsx scripts/typedb-graph-taxonomy-audit.ts"
   },
   "devDependencies": {
+    "@types/d3": "^7.4.3",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -18,6 +21,7 @@
   },
   "dependencies": {
     "@typedb/driver-http": "^3.8.2-rc0",
+    "d3": "^7.9.0",
     "graphology": "^0.26.0",
     "graphology-layout-forceatlas2": "^0.10.1",
     "next": "^16.2.0",

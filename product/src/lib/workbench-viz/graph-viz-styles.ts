@@ -109,6 +109,28 @@ export function provisionalKindToFamily(kind: string | undefined): KindFamily {
   return "other";
 }
 
+/** Labels that map to {@link KindFamily} `"other"` but are still treated as established session kinds. */
+const KINDS_KNOWN_IN_OTHER_FAMILY = new Set(["organization", "claim", "component"]);
+
+/**
+ * True when a provisional kind string is unfamiliar: it maps to the `"other"` family
+ * in {@link provisionalKindToFamily} but is not one of the small known `"other"` labels.
+ * Used to show "new type" review UI only when the model proposes a genuinely new kind name.
+ */
+export function isNovelProvisionalKind(kind: string): boolean {
+  const raw = (kind ?? "").trim();
+  if (raw === "(empty)") {
+    return true;
+  }
+  if (!raw) {
+    return false;
+  }
+  if (provisionalKindToFamily(kind) !== "other") {
+    return false;
+  }
+  return !KINDS_KNOWN_IN_OTHER_FAMILY.has(raw.toLowerCase());
+}
+
 function hashHue(input: string): string {
   let h = 0;
   for (let i = 0; i < input.length; i++) {

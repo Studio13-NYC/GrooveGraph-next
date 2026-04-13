@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { WorkspaceResponse } from "@/src/components/research-workbench-model";
 import { fetchJson, normalizeAliases } from "@/src/components/research-workbench-utils";
 import { publishToDbProgressForElapsed } from "@/src/lib/research-turn-progress-ui";
+import { isNovelProvisionalKind } from "@/src/lib/workbench-viz/graph-viz-styles";
 import type { EntityCandidate, RelationshipCandidate, ResearchSession } from "@/src/types/research-session";
 
 export type AtlasLineageProposalReviewProps = {
@@ -80,6 +81,9 @@ export function AtlasLineageProposalReview({
   const [relEditingId, setRelEditingId] = useState<string | null>(null);
   const [relEditVerb, setRelEditVerb] = useState("");
 
+  /** Provisional kind string key (same as kindRows) being renamed via table row. */
+  const [kindRowEditing, setKindRowEditing] = useState<string | null>(null);
+
   const proposedEntities = useMemo(
     () => session?.entityCandidates.filter((e) => e.status === "proposed") ?? [],
     [session],
@@ -107,6 +111,22 @@ export function AtlasLineageProposalReview({
     return [...counts.entries()].sort(([a], [b]) => a.localeCompare(b));
   }, [proposedEntities]);
 
+  const novelKindRows = useMemo(
+    () => kindRows.filter(([kind]) => isNovelProvisionalKind(kind)),
+    [kindRows],
+  );
+
+  const representativeEntityIdByKind = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const e of proposedEntities) {
+      const k = e.provisionalKind.trim() || "(empty)";
+      if (!m.has(k)) {
+        m.set(k, e.id);
+      }
+    }
+    return m;
+  }, [proposedEntities]);
+
   useEffect(() => {
     setRenameDrafts((prev) => {
       const next: Record<string, string> = {};
@@ -118,9 +138,19 @@ export function AtlasLineageProposalReview({
   }, [kindRows]);
 
   useEffect(() => {
+    if (kindRowEditing === null) {
+      return;
+    }
+    if (!novelKindRows.some(([k]) => k === kindRowEditing)) {
+      setKindRowEditing(null);
+    }
+  }, [kindRowEditing, novelKindRows]);
+
+  useEffect(() => {
     if (!sessionId) {
       setEntityEditingId(null);
       setRelEditingId(null);
+      setKindRowEditing(null);
       setRowError(null);
       setRowBusyKey(null);
     }
@@ -166,6 +196,7 @@ export function AtlasLineageProposalReview({
         );
         onSessionUpdated(data.session);
         setRenameDrafts((prev) => ({ ...prev, [from]: "" }));
+        setKindRowEditing((cur) => (cur === from ? null : cur));
       } catch (err: unknown) {
         setRenameError(err instanceof Error ? err.message : "Rename failed.");
       } finally {
@@ -303,7 +334,54 @@ export function AtlasLineageProposalReview({
     setRelEditVerb(r.verb);
   }, []);
 
+  const startKindRowEdit = useCallback((kind: string) => {
+    setRowError(null);
+    setRenameError(null);
+    setKindRowEditing(kind);
+  }, []);
+
+  const rejectAllProposedOfKind = useCallback(
+    async (kindKey: string) => {
+      if (!sessionId) {
+        return;
+      }
+      const targets = proposedEntities.filter((e) => (e.provisionalKind.trim() || "(empty)") === kindKey);
+      if (targets.length === 0) {
+        return;
+      }
+      if (
+        !window.confirm(
+          `Remove ${targets.length} proposed entit${targets.length === 1 ? "y" : "ies"} with type “${kindKey}”?`,
+        )
+      ) {
+        return;
+      }
+      setRowError(null);
+      setRowBusyKey(`reject-kind-${kindKey}`);
+      try {
+        for (const e of targets) {
+          const data = await fetchJson<SessionPayload>(`/api/sessions/${encodeURIComponent(sessionId)}/decisions`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ itemType: "entity", itemId: e.id, decision: "rejected" }),
+          });
+          onSessionUpdated(data.session);
+          if (entityEditingId === e.id) {
+            setEntityEditingId(null);
+          }
+        }
+        setKindRowEditing((cur) => (cur === kindKey ? null : cur));
+      } catch (err: unknown) {
+        setRowError(err instanceof Error ? err.message : "Could not remove entities for this type.");
+      } finally {
+        setRowBusyKey(null);
+      }
+    },
+    [sessionId, proposedEntities, onSessionUpdated, entityEditingId],
+  );
+
   const rowBusy = rowBusyKey !== null;
+  const kindTableLocksUi = kindRowEditing !== null;
 
   if (!session) {
     return null;
@@ -315,51 +393,156 @@ export function AtlasLineageProposalReview({
     <section className="gg-atlas-lineage__proposal-panel" aria-label="Proposal review">
       <h2 className="gg-atlas-lineage__proposal-title">Proposal review</h2>
 
-      <div className="gg-atlas-lineage__proposal-block">
-        <h3 className="gg-atlas-lineage__proposal-subtitle">Proposed kinds</h3>
-        {kindRows.length === 0 ? (
-          <p className="gg-atlas-lineage__proposal-muted">No proposed entity kinds.</p>
-        ) : (
-          <ul className="gg-atlas-lineage__proposal-kind-list">
-            {kindRows.map(([kind, count], index) => (
-              <li key={kind} className="gg-atlas-lineage__proposal-kind-row">
-                <span className="gg-atlas-lineage__proposal-kind-label">
-                  {kind} <span className="gg-atlas-lineage__proposal-count">({count})</span>
-                </span>
-                <label className="sr-only" htmlFor={`atlas-rename-kind-${index}`}>
-                  Rename {kind} to
-                </label>
-                <input
-                  id={`atlas-rename-kind-${index}`}
-                  className="gg-atlas-lineage__proposal-input"
-                  value={renameDrafts[kind] ?? ""}
-                  onChange={(e) =>
-                    setRenameDrafts((prev) => ({
-                      ...prev,
-                      [kind]: e.target.value,
-                    }))
-                  }
-                  placeholder="Rename to…"
-                  disabled={!sessionId || renameBusyKind !== null || publishBusy || rowBusy}
-                />
-                <button
-                  type="button"
-                  className="gg-atlas-lineage__btn-secondary gg-atlas-lineage__proposal-apply"
-                  disabled={!sessionId || renameBusyKind !== null || publishBusy || rowBusy}
-                  onClick={() => void applyRename(kind)}
-                >
-                  {renameBusyKind === kind ? "Applying…" : "Apply"}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-        {renameError ? (
-          <p className="gg-atlas-lineage__proposal-inline-error" role="alert">
-            {renameError}
+      {novelKindRows.length > 0 ? (
+        <div className="gg-atlas-lineage__proposal-block">
+          <h3 className="gg-atlas-lineage__proposal-subtitle">Proposed new types</h3>
+          <p className="gg-atlas-lineage__proposal-muted gg-atlas-lineage__proposal-block-hint">
+            Unfamiliar provisional kinds only. Rename to match your schema (e.g. person, album), or remove all
+            proposed entities that use this label.
           </p>
-        ) : null}
-      </div>
+          <div className="gg-atlas-lineage__proposal-table-wrap">
+            <table className="gg-atlas-lineage__proposal-table">
+              <caption className="sr-only">Proposed new entity types</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Id</th>
+                  <th scope="col" className="gg-atlas-lineage__proposal-th-actions">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {novelKindRows.map(([kind, count]) => {
+                  const editing = kindRowEditing === kind;
+                  const repId = representativeEntityIdByKind.get(kind) ?? "—";
+                  const idShort = repId.length > 22 ? `${repId.slice(0, 22)}…` : repId;
+                  const kindBusy = renameBusyKind === kind;
+                  const rejectKindBusy = rowBusyKey === `reject-kind-${kind}`;
+                  const busyThis = kindBusy || rejectKindBusy;
+                  const anotherKindRowEditing = kindRowEditing !== null && kindRowEditing !== kind;
+                  return (
+                    <tr
+                      key={kind}
+                      className={editing ? "gg-atlas-lineage__proposal-row--active" : undefined}
+                    >
+                      <td>
+                        {editing ? (
+                          <input
+                            className="gg-atlas-lineage__proposal-cell-input"
+                            value={renameDrafts[kind] ?? ""}
+                            onChange={(ev) =>
+                              setRenameDrafts((prev) => ({
+                                ...prev,
+                                [kind]: ev.target.value,
+                              }))
+                            }
+                            placeholder="Rename to…"
+                            aria-label={`Rename type ${kind} to`}
+                            disabled={busyThis || publishBusy}
+                          />
+                        ) : (
+                          <>
+                            {kind}{" "}
+                            <span className="gg-atlas-lineage__proposal-count">({count})</span>
+                          </>
+                        )}
+                      </td>
+                      <td>
+                        <span className="gg-atlas-lineage__proposal-row-mini">New type</span>
+                      </td>
+                      <td className="gg-atlas-lineage__proposal-mono" title={repId}>
+                        {idShort}
+                      </td>
+                      <td>
+                        <div
+                          className={
+                            editing
+                              ? "gg-atlas-lineage__proposal-row-actions gg-atlas-lineage__proposal-row-actions--edit"
+                              : "gg-atlas-lineage__proposal-row-actions"
+                          }
+                        >
+                          {editing ? (
+                            <>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Apply rename"
+                                aria-label={`Apply rename for type ${kind}`}
+                                disabled={
+                                  !sessionId || busyThis || publishBusy || entityEditingId !== null || relEditingId !== null
+                                }
+                                onClick={() => void applyRename(kind)}
+                              >
+                                {kindBusy ? <span aria-hidden>…</span> : <IconCheck />}
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Cancel"
+                                aria-label="Cancel rename"
+                                disabled={busyThis || publishBusy}
+                                onClick={() => setKindRowEditing(null)}
+                              >
+                                <IconX />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Rename type"
+                                aria-label={`Rename type ${kind}`}
+                                disabled={
+                                  !sessionId ||
+                                  renameBusyKind !== null ||
+                                  publishBusy ||
+                                  rowBusy ||
+                                  entityEditingId !== null ||
+                                  relEditingId !== null ||
+                                  anotherKindRowEditing
+                                }
+                                onClick={() => startKindRowEdit(kind)}
+                              >
+                                <IconPencil />
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn gg-atlas-lineage__proposal-icon-btn--danger"
+                                title="Remove all proposed entities with this type"
+                                aria-label={`Remove all entities with type ${kind}`}
+                                disabled={
+                                  !sessionId ||
+                                  renameBusyKind !== null ||
+                                  publishBusy ||
+                                  rowBusy ||
+                                  entityEditingId !== null ||
+                                  relEditingId !== null ||
+                                  anotherKindRowEditing
+                                }
+                                onClick={() => void rejectAllProposedOfKind(kind)}
+                              >
+                                <IconTrash />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {renameError ? (
+            <p className="gg-atlas-lineage__proposal-inline-error" role="alert">
+              {renameError}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="gg-atlas-lineage__proposal-block">
         <h3 className="gg-atlas-lineage__proposal-subtitle">Proposed instances</h3>
@@ -391,11 +574,16 @@ export function AtlasLineageProposalReview({
                     rowBusyKey === `rej-entity-${e.id}` || rowBusyKey === `save-ent-${e.id}`;
                   const busyThis = entityBusyKey;
                   const anotherEntityEditing =
-                    entityEditingId !== null && entityEditingId !== e.id;
+                    (entityEditingId !== null && entityEditingId !== e.id) || kindTableLocksUi;
                   return (
                     <tr
                       key={e.id}
-                      className={onHighlightCandidate && !editing ? "gg-atlas-lineage__proposal-row--clickable" : undefined}
+                      className={[
+                        onHighlightCandidate && !editing ? "gg-atlas-lineage__proposal-row--clickable" : "",
+                        editing ? "gg-atlas-lineage__proposal-row--active" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || undefined}
                       tabIndex={onHighlightCandidate && !editing ? 0 : undefined}
                       onKeyDown={
                         onHighlightCandidate && !editing
@@ -476,7 +664,7 @@ export function AtlasLineageProposalReview({
                                 className="gg-atlas-lineage__proposal-icon-btn"
                                 title="Save"
                                 aria-label="Save entity"
-                                disabled={busyThis || publishBusy}
+                                disabled={busyThis || publishBusy || kindTableLocksUi}
                                 onClick={() => void saveEntityEdit()}
                               >
                                 <IconCheck />
@@ -486,7 +674,7 @@ export function AtlasLineageProposalReview({
                                 className="gg-atlas-lineage__proposal-icon-btn"
                                 title="Cancel"
                                 aria-label="Cancel edit"
-                                disabled={busyThis || publishBusy}
+                                disabled={busyThis || publishBusy || kindTableLocksUi}
                                 onClick={() => setEntityEditingId(null)}
                               >
                                 <IconX />
@@ -500,7 +688,11 @@ export function AtlasLineageProposalReview({
                                 title="Edit"
                                 aria-label={`Edit ${e.displayName}`}
                                 disabled={
-                                  busyThis || publishBusy || relEditingId !== null || anotherEntityEditing
+                                  busyThis ||
+                                  publishBusy ||
+                                  relEditingId !== null ||
+                                  anotherEntityEditing ||
+                                  renameBusyKind !== null
                                 }
                                 onClick={() => startEntityEdit(e)}
                               >
@@ -512,7 +704,11 @@ export function AtlasLineageProposalReview({
                                 title="Remove from proposals"
                                 aria-label={`Remove ${e.displayName}`}
                                 disabled={
-                                  busyThis || publishBusy || relEditingId !== null || anotherEntityEditing
+                                  busyThis ||
+                                  publishBusy ||
+                                  relEditingId !== null ||
+                                  anotherEntityEditing ||
+                                  renameBusyKind !== null
                                 }
                                 onClick={() => void rejectCandidate("entity", e.id, e.displayName)}
                               >
@@ -555,12 +751,18 @@ export function AtlasLineageProposalReview({
                   const relBusyKey =
                     rowBusyKey === `rej-relationship-${r.id}` || rowBusyKey === `save-rel-${r.id}`;
                   const busyThis = relBusyKey;
-                  const anotherRelEditing = relEditingId !== null && relEditingId !== r.id;
+                  const anotherRelEditing =
+                    (relEditingId !== null && relEditingId !== r.id) || kindTableLocksUi;
                   const relLabel = `${r.verb}: ${srcLabel} → ${tgtLabel}`;
                   return (
                     <tr
                       key={r.id}
-                      className={onHighlightCandidate && !editing ? "gg-atlas-lineage__proposal-row--clickable" : undefined}
+                      className={[
+                        onHighlightCandidate && !editing ? "gg-atlas-lineage__proposal-row--clickable" : "",
+                        editing ? "gg-atlas-lineage__proposal-row--active" : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ") || undefined}
                       tabIndex={onHighlightCandidate && !editing ? 0 : undefined}
                       onKeyDown={
                         onHighlightCandidate && !editing
@@ -610,7 +812,7 @@ export function AtlasLineageProposalReview({
                                 className="gg-atlas-lineage__proposal-icon-btn"
                                 title="Save"
                                 aria-label="Save relationship"
-                                disabled={busyThis || publishBusy}
+                                disabled={busyThis || publishBusy || kindTableLocksUi}
                                 onClick={() => void saveRelEdit()}
                               >
                                 <IconCheck />
@@ -620,7 +822,7 @@ export function AtlasLineageProposalReview({
                                 className="gg-atlas-lineage__proposal-icon-btn"
                                 title="Cancel"
                                 aria-label="Cancel edit"
-                                disabled={busyThis || publishBusy}
+                                disabled={busyThis || publishBusy || kindTableLocksUi}
                                 onClick={() => setRelEditingId(null)}
                               >
                                 <IconX />
@@ -634,7 +836,11 @@ export function AtlasLineageProposalReview({
                                 title="Edit verb"
                                 aria-label={`Edit ${relLabel}`}
                                 disabled={
-                                  busyThis || publishBusy || entityEditingId !== null || anotherRelEditing
+                                  busyThis ||
+                                  publishBusy ||
+                                  entityEditingId !== null ||
+                                  anotherRelEditing ||
+                                  renameBusyKind !== null
                                 }
                                 onClick={() => startRelEdit(r)}
                               >
@@ -646,7 +852,11 @@ export function AtlasLineageProposalReview({
                                 title="Remove from proposals"
                                 aria-label={`Remove ${relLabel}`}
                                 disabled={
-                                  busyThis || publishBusy || entityEditingId !== null || anotherRelEditing
+                                  busyThis ||
+                                  publishBusy ||
+                                  entityEditingId !== null ||
+                                  anotherRelEditing ||
+                                  renameBusyKind !== null
                                 }
                                 onClick={() => void rejectCandidate("relationship", r.id, relLabel)}
                               >
@@ -681,7 +891,7 @@ export function AtlasLineageProposalReview({
         <button
           type="button"
           className="gg-atlas-lineage__btn-primary"
-          disabled={!sessionId || !hasProposals || publishBusy || rowBusy}
+          disabled={!sessionId || !hasProposals || publishBusy || rowBusy || kindTableLocksUi}
           onClick={() => void publish()}
         >
           {publishBusy && publishProgressUi ? `${publishProgressUi.phaseLabel}…` : publishBusy ? "Publishing…" : "Publish to TypeDB"}

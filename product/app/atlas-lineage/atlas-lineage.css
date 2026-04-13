@@ -930,6 +930,11 @@
   color: var(--atlas-fg-muted);
 }
 
+.gg-atlas-lineage__proposal-block-hint {
+  margin: 0 0 8px;
+  max-width: 52ch;
+}
+
 .gg-atlas-lineage__proposal-kind-list {
   list-style: none;
   margin: 0;
@@ -1091,6 +1096,14 @@
 
 .gg-atlas-lineage__proposal-row--clickable:hover {
   background: var(--atlas-accent-soft);
+}
+
+.gg-atlas-lineage__proposal-table tbody tr.gg-atlas-lineage__proposal-row--active > td {
+  background: color-mix(in srgb, var(--atlas-viz-people, #996633) 24%, var(--atlas-bg-elevated));
+}
+
+.gg-atlas-lineage--light .gg-atlas-lineage__proposal-table tbody tr.gg-atlas-lineage__proposal-row--active > td {
+  background: color-mix(in srgb, #996633 16%, var(--atlas-bg-elevated));
 }
 
 .gg-atlas-lineage__proposal-actions {

@@ -11,6 +11,11 @@ import type {
   SourceDocument,
 } from "@/src/types/research-session";
 import { getExtractionModel, getResearchModel } from "./config";
+import {
+  logResearchInteraction,
+  summarizeResponseOutput,
+  truncateForLog,
+} from "./research-interaction-log";
 import { createEvent, createId } from "./session-store";
 
 const confidenceSchema = z.enum(["low", "medium", "high"]);
@@ -111,7 +116,8 @@ function buildResearchTools() {
     }),
     zodResponsesFunction({
       name: "upsert_entity_candidate",
-      description: "Create or update a provisional entity candidate.",
+      description:
+        "Create or update a provisional entity candidate. Reuses an existing candidate when the display name or aliases match (case-insensitive, trimmed) or when any externalIds overlap (e.g. same Wikipedia URL or Wikidata id). Prefer updating the same node over creating a near-duplicate.",
       parameters: entityParamsSchema,
     }),
     zodResponsesFunction({
@@ -144,10 +150,83 @@ function findSnippetByText(session: ResearchSession, text: string): EvidenceSnip
   return session.evidenceSnippets.find((snippet) => snippet.text === text);
 }
 
-function findEntityByName(session: ResearchSession, displayName: string): EntityCandidate | undefined {
-  return session.entityCandidates.find(
-    (entity) => entity.displayName.toLowerCase() === displayName.toLowerCase(),
+/** Normalize for identity checks: trim, collapse whitespace, lowercase. */
+function normalizeEntityMatchKey(name: string): string {
+  return name.trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+function findEntityByExternalIdOverlap(
+  session: ResearchSession,
+  externalIds: string[],
+): EntityCandidate | undefined {
+  const keys = new Set(
+    externalIds.map((id) => id.trim().toLowerCase()).filter((id) => id.length > 0),
   );
+  if (keys.size === 0) {
+    return undefined;
+  }
+  for (const entity of session.entityCandidates) {
+    for (const ext of entity.externalIds) {
+      if (keys.has(ext.trim().toLowerCase())) {
+        return entity;
+      }
+    }
+  }
+  return undefined;
+}
+
+function findEntityByName(session: ResearchSession, displayName: string): EntityCandidate | undefined {
+  const key = normalizeEntityMatchKey(displayName);
+  if (!key) {
+    return undefined;
+  }
+  for (const entity of session.entityCandidates) {
+    if (normalizeEntityMatchKey(entity.displayName) === key) {
+      return entity;
+    }
+    for (const alias of entity.aliases) {
+      if (normalizeEntityMatchKey(alias) === key) {
+        return entity;
+      }
+    }
+  }
+  return undefined;
+}
+
+function resolveEntityCandidate(
+  session: ResearchSession,
+  displayName: string,
+  externalIds: string[],
+): EntityCandidate | undefined {
+  return (
+    findEntityByName(session, displayName) ?? findEntityByExternalIdOverlap(session, externalIds)
+  );
+}
+
+function mergeEntityCandidateFields(
+  entity: EntityCandidate,
+  patch: {
+    displayName: string;
+    provisionalKind: string;
+    aliases: string[];
+    externalIds: string[];
+    attributes: Record<string, string>;
+  },
+): void {
+  entity.provisionalKind = patch.provisionalKind;
+  entity.aliases = Array.from(
+    new Set([...entity.aliases, ...patch.aliases].map((a) => a.trim()).filter(Boolean)),
+  );
+  entity.externalIds = Array.from(
+    new Set([...entity.externalIds, ...patch.externalIds].map((id) => id.trim()).filter(Boolean)),
+  );
+  entity.attributes = { ...entity.attributes, ...patch.attributes };
+  const patchName = patch.displayName.trim();
+  if (patchName && normalizeEntityMatchKey(entity.displayName) !== normalizeEntityMatchKey(patchName)) {
+    if (!entity.aliases.some((a) => normalizeEntityMatchKey(a) === normalizeEntityMatchKey(patchName))) {
+      entity.aliases.push(patchName);
+    }
+  }
 }
 
 function findRelationship(
@@ -228,7 +307,14 @@ async function handleToolCall(
   session: ResearchSession,
   toolCall: OpenAI.Responses.ResponseFunctionToolCall,
 ): Promise<string> {
-  const rawArguments = JSON.parse(toolCall.arguments);
+  let rawArguments: unknown;
+  try {
+    const s = toolCall.arguments;
+    const raw = typeof s === "string" && s.trim().length > 0 ? s : "{}";
+    rawArguments = JSON.parse(raw);
+  } catch {
+    return JSON.stringify({ error: "Tool arguments were not valid JSON; retry with valid JSON only." });
+  }
 
   session.events.push(
     createEvent("tool_called", "success", "/api/sessions/[sessionId]/turn", "Tool called by model.", {
@@ -282,28 +368,29 @@ async function handleToolCall(
 
   if (toolCall.name === "upsert_entity_candidate") {
     const args = entityParamsSchema.parse(rawArguments);
-    let entity = findEntityByName(session, args.displayName);
+    const attrRecord = attributePairsToRecord(args.attributes);
+    let entity = resolveEntityCandidate(session, args.displayName, args.externalIds);
     if (!entity) {
       entity = {
         id: createId("ent"),
-        displayName: args.displayName,
+        displayName: args.displayName.trim(),
         provisionalKind: args.provisionalKind,
-        aliases: args.aliases,
-        externalIds: args.externalIds,
-        attributes: attributePairsToRecord(args.attributes),
+        aliases: args.aliases.map((a) => a.trim()).filter(Boolean),
+        externalIds: args.externalIds.map((id) => id.trim()).filter(Boolean),
+        attributes: attrRecord,
         evidenceSnippetIds: [],
         status: "proposed",
         createdAt: new Date().toISOString(),
       };
       session.entityCandidates.push(entity);
     } else {
-      entity.provisionalKind = args.provisionalKind;
-      entity.aliases = Array.from(new Set([...entity.aliases, ...args.aliases]));
-      entity.externalIds = Array.from(new Set([...entity.externalIds, ...args.externalIds]));
-      entity.attributes = {
-        ...entity.attributes,
-        ...attributePairsToRecord(args.attributes),
-      };
+      mergeEntityCandidateFields(entity, {
+        displayName: args.displayName,
+        provisionalKind: args.provisionalKind,
+        aliases: args.aliases,
+        externalIds: args.externalIds,
+        attributes: attrRecord,
+      });
     }
 
     return JSON.stringify({ entityId: entity.id, displayName: entity.displayName });
@@ -311,8 +398,8 @@ async function handleToolCall(
 
   if (toolCall.name === "upsert_relationship_candidate") {
     const args = relationshipParamsSchema.parse(rawArguments);
-    const source = findEntityByName(session, args.sourceEntityName);
-    const target = findEntityByName(session, args.targetEntityName);
+    const source = resolveEntityCandidate(session, args.sourceEntityName, []);
+    const target = resolveEntityCandidate(session, args.targetEntityName, []);
     if (!source || !target) {
       return JSON.stringify({
         error: "Both source and target entities must exist before creating a relationship candidate.",
@@ -436,25 +523,39 @@ async function extractArtifacts(
   }
 
   for (const extractedEntity of parsed.entityCandidates) {
-    if (!findEntityByName(session, extractedEntity.displayName)) {
-      const entity: EntityCandidate = {
-        id: createId("ent"),
+    const attrRecord = attributePairsToRecord(extractedEntity.attributes);
+    const existing = resolveEntityCandidate(
+      session,
+      extractedEntity.displayName,
+      extractedEntity.externalIds,
+    );
+    if (existing) {
+      mergeEntityCandidateFields(existing, {
         displayName: extractedEntity.displayName,
         provisionalKind: extractedEntity.provisionalKind,
         aliases: extractedEntity.aliases,
         externalIds: extractedEntity.externalIds,
-        attributes: attributePairsToRecord(extractedEntity.attributes),
-        evidenceSnippetIds: [],
-        status: "proposed",
-        createdAt: new Date().toISOString(),
-      };
-      session.entityCandidates.push(entity);
+        attributes: attrRecord,
+      });
+      continue;
     }
+    const entity: EntityCandidate = {
+      id: createId("ent"),
+      displayName: extractedEntity.displayName.trim(),
+      provisionalKind: extractedEntity.provisionalKind,
+      aliases: extractedEntity.aliases.map((a) => a.trim()).filter(Boolean),
+      externalIds: extractedEntity.externalIds.map((id) => id.trim()).filter(Boolean),
+      attributes: attrRecord,
+      evidenceSnippetIds: [],
+      status: "proposed",
+      createdAt: new Date().toISOString(),
+    };
+    session.entityCandidates.push(entity);
   }
 
   for (const extractedRelationship of parsed.relationshipCandidates) {
-    const source = findEntityByName(session, extractedRelationship.sourceEntityName);
-    const target = findEntityByName(session, extractedRelationship.targetEntityName);
+    const source = resolveEntityCandidate(session, extractedRelationship.sourceEntityName, []);
+    const target = resolveEntityCandidate(session, extractedRelationship.targetEntityName, []);
     if (!source || !target) {
       continue;
     }
@@ -484,6 +585,8 @@ function buildResearchInstructions(
     return [
       "You are GrooveGraph Research Workspace in build mode: prioritize expanding a grounded provisional graph.",
       "Aggressively use web_search to validate facts, discover entities, and collect primary or reputable sources.",
+      "Before adding entities for a subject the user already named, call list_session_artifacts and reuse those candidate ids via upsert_entity_candidate (merge attributes and aliases) instead of creating parallel copies.",
+      "When mining sources (e.g. Wikipedia), put stable URLs or Wikidata-style ids into externalIds so the same real-world entity collapses to one candidate.",
       "Extract many grounded entity candidates and relationship candidates; prefer breadth with evidence over a single shallow answer.",
       "Use clear, descriptive provisionalKind labels (consistent strings when the same kind repeats) so downstream review can cluster and filter.",
       "Use the same tools as explore mode: record_source_document, record_evidence_snippet, upsert_entity_candidate, upsert_relationship_candidate, save_session_note, set_review_decision, list_session_artifacts.",
@@ -498,12 +601,20 @@ function buildResearchInstructions(
     "Use web_search when current or sourced information is needed.",
     "When you identify a useful source, call record_source_document.",
     "When you identify a strong supporting quote or summary, call record_evidence_snippet.",
-    "When an entity seems worth keeping, call upsert_entity_candidate with a conservative provisional kind.",
+    "When an entity seems worth keeping, call upsert_entity_candidate with a conservative provisional kind; if the session already has that person or band under a slightly different label, merge via upsert_entity_candidate (same tools) rather than introducing a second node.",
     "When a relationship seems plausible and grounded, call upsert_relationship_candidate after the related entities exist.",
     "If you form a compact internal takeaway for the session, call save_session_note.",
     "Keep the response concise, cite what you found, and make uncertainty explicit.",
     tail,
   ].join(" ");
+}
+
+function responsesConversationOption(session: ResearchSession): { conversation: string } | Record<string, never> {
+  const id = session.openaiConversationId?.trim();
+  if (!id) {
+    return {};
+  }
+  return { conversation: id };
 }
 
 export async function runResearchTurn(
@@ -512,12 +623,33 @@ export async function runResearchTurn(
   userMessage: string,
   mode: ResearchConversationMode = "explore",
 ): Promise<OpenAI.Responses.Response> {
-  const effectiveMode = mode ?? "explore";
+  const effectiveMode = mode === "build" ? "build" : "explore";
   const tools = buildResearchTools();
+  const conv = responsesConversationOption(session);
+  const researchModel = getResearchModel();
+
+  logResearchInteraction(session.id, "turn_runtime_start", {
+    mode: effectiveMode,
+    model: researchModel,
+    hasConversationId: Boolean(session.openaiConversationId?.trim()),
+    sessionTitle: truncateForLog(session.title, 160),
+    seedQueryPreview: truncateForLog(session.seedQuery, 200),
+    entityCandidateCount: session.entityCandidates.length,
+    relationshipCandidateCount: session.relationshipCandidates.length,
+    priorMessageCount: session.messages.length,
+    userMessagePreview: truncateForLog(userMessage, 500),
+  });
+
+  logResearchInteraction(session.id, "model_request", {
+    modelRound: 0,
+    inputKind: "user_message",
+    model: researchModel,
+  });
+
   let response = await client.responses.create({
-    model: getResearchModel(),
+    model: researchModel,
     reasoning: { effort: "low" },
-    conversation: session.openaiConversationId,
+    ...conv,
     instructions: buildResearchInstructions(session, effectiveMode),
     store: true,
     tools,
@@ -525,34 +657,94 @@ export async function runResearchTurn(
   });
 
   addCitationSources(session, response);
+  logResearchInteraction(session.id, "model_response", {
+    modelRound: 0,
+    ...summarizeResponseOutput(response),
+  });
 
+  let modelRound = 0;
   while (response.output.some((item) => item.type === "function_call")) {
+    modelRound += 1;
+    const calls = response.output.filter((item) => item.type === "function_call");
+    logResearchInteraction(session.id, "tool_cycle_start", {
+      modelRound,
+      pendingFunctionCalls: calls.length,
+      callNames: calls.map((c) => (c as { name?: string }).name).filter(Boolean),
+    });
+
     const toolOutputs = [];
     for (const item of response.output) {
       if (item.type !== "function_call") {
         continue;
       }
 
-      const output = await handleToolCall(session, item);
+      const fc = item as OpenAI.Responses.ResponseFunctionToolCall;
+      logResearchInteraction(session.id, "tool_call", {
+        modelRound,
+        tool: fc.name,
+        callId: fc.call_id,
+        argsPreview: truncateForLog(typeof fc.arguments === "string" ? fc.arguments : "", 500),
+      });
+
+      let output: string;
+      try {
+        output = await handleToolCall(session, fc);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Tool handler failed.";
+        output = JSON.stringify({
+          error: message,
+          hint: "Check argument types and required fields, then call the tool again if appropriate.",
+        });
+        logResearchInteraction(session.id, "tool_handler_threw", {
+          modelRound,
+          tool: fc.name,
+          callId: fc.call_id,
+          error: message,
+        });
+        session.events.push(
+          createEvent("workflow_failed", "failure", "/api/sessions/[sessionId]/turn", "Tool handler threw.", {
+            session_id: session.id,
+            tool_name: fc.name,
+            call_id: fc.call_id,
+            error: message,
+          }),
+        );
+      }
+
+      logResearchInteraction(session.id, "tool_result", {
+        modelRound,
+        tool: fc.name,
+        callId: fc.call_id,
+        outputChars: output.length,
+        outputPreview: truncateForLog(output, 400),
+      });
+
       session.events.push(
         createEvent("tool_completed", "success", "/api/sessions/[sessionId]/turn", "Tool output returned to model.", {
           session_id: session.id,
-          tool_name: item.name,
-          call_id: item.call_id,
+          tool_name: fc.name,
+          call_id: fc.call_id,
         }),
       );
 
       toolOutputs.push({
         type: "function_call_output" as const,
-        call_id: item.call_id,
+        call_id: fc.call_id,
         output,
       });
     }
 
+    logResearchInteraction(session.id, "model_request", {
+      modelRound,
+      inputKind: "function_call_outputs",
+      toolOutputCount: toolOutputs.length,
+      model: researchModel,
+    });
+
     response = await client.responses.create({
-      model: getResearchModel(),
+      model: researchModel,
       reasoning: { effort: "low" },
-      conversation: session.openaiConversationId,
+      ...conv,
       instructions: buildResearchInstructions(session, effectiveMode),
       store: true,
       tools,
@@ -560,8 +752,44 @@ export async function runResearchTurn(
     });
 
     addCitationSources(session, response);
+    logResearchInteraction(session.id, "model_response", {
+      modelRound,
+      ...summarizeResponseOutput(response),
+    });
   }
 
-  await extractArtifacts(client, session, response);
+  const assistantLen = (response.output_text ?? "").length;
+  logResearchInteraction(session.id, "extract_artifacts_start", {
+    assistantTextChars: assistantLen,
+    extractionModel: getExtractionModel(),
+  });
+  try {
+    await extractArtifacts(client, session, response);
+    logResearchInteraction(session.id, "extract_artifacts_ok", {
+      entityCandidateCount: session.entityCandidates.length,
+      relationshipCandidateCount: session.relationshipCandidates.length,
+    });
+  } catch (err) {
+    logResearchInteraction(session.id, "extract_artifacts_error", {
+      error: err instanceof Error ? err.message : "unknown",
+    });
+    session.events.push(
+      createEvent(
+        "workflow_failed",
+        "failure",
+        "/api/sessions/[sessionId]/turn",
+        "Post-turn artifact extraction failed; assistant reply is still saved.",
+        {
+          session_id: session.id,
+          error: err instanceof Error ? err.message : "unknown",
+        },
+      ),
+    );
+  }
+
+  logResearchInteraction(session.id, "turn_runtime_complete", {
+    lastResponseId: response.id,
+    assistantTextChars: (response.output_text ?? "").length,
+  });
   return response;
 }

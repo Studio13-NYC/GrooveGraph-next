@@ -4,6 +4,10 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { WorkspaceResponse } from "@/src/components/research-workbench-model";
 import { fetchJson } from "@/src/components/research-workbench-utils";
+import {
+  mergeAtlasLineageWithProposals,
+  sessionHasProposedGraphCandidates,
+} from "@/src/lib/workbench-viz/atlas-lineage-proposal-graph";
 import { workbenchVizToAtlasLineageGraph } from "@/src/lib/workbench-viz/workbench-viz-to-atlas-lineage";
 import type { ResearchSession } from "@/src/types/research-session";
 import type { AtlasDemoNode, AtlasSchemaKind } from "@/src/types/atlas-lineage";
@@ -16,10 +20,12 @@ import {
   type AtlasViewMode,
 } from "./atlas-lineage-demo-data";
 import { AtlasKindMultiselect } from "./AtlasKindMultiselect";
+import { AtlasLineageChatRail } from "./AtlasLineageChatRail";
 import {
   AtlasLineageGraph,
   type AtlasLineageGraphHandle,
 } from "./AtlasLineageGraph";
+import { AtlasLineageProposalReview } from "./AtlasLineageProposalReview";
 
 function IconZoomIn() {
   return (
@@ -86,6 +92,10 @@ export function AtlasLineagePage() {
   const [vizRaw, setVizRaw] = useState<WorkbenchVizApiResponse["graph"] | null>(null);
   /** One-hop neighborhood focus (server-side for session/TypeDB, client-side for demo). */
   const [focusNodeId, setFocusNodeId] = useState<string | null>(null);
+  const [detailSession, setDetailSession] = useState<ResearchSession | null>(null);
+  const [vizReloadToken, setVizReloadToken] = useState(0);
+  /** Visual-only focus for proposal overlay nodes (`cand:*`); never sent to viz API. */
+  const [graphHighlightId, setGraphHighlightId] = useState<string | null>(null);
 
   const [newSessionSeed, setNewSessionSeed] = useState("");
   const [createSessionBusy, setCreateSessionBusy] = useState(false);
@@ -109,6 +119,44 @@ export function AtlasLineagePage() {
     void loadSessions();
   }, [loadSessions]);
 
+  const bumpViz = useCallback(() => {
+    setVizReloadToken((n) => n + 1);
+  }, []);
+
+  useEffect(() => {
+    if (dataMode !== "session" || !sessionId) {
+      setDetailSession(null);
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      try {
+        const data = await fetchJson<{ session: ResearchSession }>(
+          `/api/sessions/${encodeURIComponent(sessionId)}`,
+        );
+        if (!cancelled) {
+          setDetailSession(data.session);
+        }
+      } catch {
+        if (!cancelled) {
+          setDetailSession(null);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [dataMode, sessionId]);
+
+  const handleSessionUpdated = useCallback(
+    (s: ResearchSession) => {
+      setDetailSession(s);
+      setSessions((prev) => prev.map((x) => (x.id === s.id ? s : x)));
+      bumpViz();
+    },
+    [bumpViz],
+  );
+
   const handleCreateSession = useCallback(
     async (e?: FormEvent) => {
       e?.preventDefault();
@@ -126,6 +174,7 @@ export function AtlasLineagePage() {
         });
         const created = data.session;
         setSessions((prev) => [created, ...prev.filter((s) => s.id !== created.id)]);
+        setDetailSession(created);
         setNewSessionSeed("");
         setSessionId(created.id);
         setDataMode("session");
@@ -142,7 +191,12 @@ export function AtlasLineagePage() {
 
   useEffect(() => {
     setFocusNodeId(null);
+    setGraphHighlightId(null);
   }, [dataMode, sessionId]);
+
+  useEffect(() => {
+    setGraphHighlightId(null);
+  }, [focusNodeId]);
 
   useEffect(() => {
     if (dataMode === "demo") {
@@ -209,9 +263,9 @@ export function AtlasLineagePage() {
     return () => {
       cancelled = true;
     };
-  }, [dataMode, sessionId, focusNodeId]);
+  }, [dataMode, sessionId, focusNodeId, vizReloadToken]);
 
-  const baseGraph = useMemo(() => {
+  const vizAtlasGraph = useMemo(() => {
     if (dataMode === "demo") {
       if (!focusNodeId) {
         return ATLAS_LINEAGE_FULL;
@@ -224,7 +278,23 @@ export function AtlasLineagePage() {
     return workbenchVizToAtlasLineageGraph(vizRaw);
   }, [dataMode, vizRaw, focusNodeId]);
 
+  const baseGraph = useMemo(() => {
+    if (dataMode !== "session" || !detailSession || !sessionHasProposedGraphCandidates(detailSession)) {
+      return vizAtlasGraph;
+    }
+    return mergeAtlasLineageWithProposals(vizAtlasGraph, detailSession);
+  }, [dataMode, detailSession, vizAtlasGraph]);
+
+  const resolvedSession =
+    detailSession ??
+    (sessionId ? (sessions.find((s) => s.id === sessionId) ?? null) : null);
+
   const handleNodeClick = useCallback((node: AtlasDemoNode) => {
+    if (node.id.startsWith("cand:")) {
+      setGraphHighlightId(node.id);
+      return;
+    }
+    setGraphHighlightId(null);
     setFocusNodeId(node.id);
   }, []);
 
@@ -513,71 +583,90 @@ export function AtlasLineagePage() {
       </div>
 
       <main className="gg-atlas-lineage__main">
-        <div className="gg-atlas-lineage__stage-wrap">
-          {graphStagePickSession ? (
-            <div className="gg-atlas-lineage__empty" role="status">
-              Select a research session above, or choose <strong>Entire database</strong> to load all workbench entities
-              from TypeDB.
+        <div className="gg-atlas-lineage__work-area">
+          <AtlasLineageChatRail
+            sessionId={sessionId}
+            session={resolvedSession}
+            dataMode={dataMode}
+            onSessionUpdated={handleSessionUpdated}
+          />
+          <div className="gg-atlas-lineage__work-column">
+            {dataMode === "session" && sessionId ? (
+              <AtlasLineageProposalReview
+                session={detailSession}
+                sessionId={sessionId}
+                onSessionUpdated={handleSessionUpdated}
+                onHighlightCandidate={(id) => setGraphHighlightId(`cand:${id}`)}
+              />
+            ) : null}
+            <div className="gg-atlas-lineage__stage-wrap">
+              {graphStagePickSession ? (
+                <div className="gg-atlas-lineage__empty" role="status">
+                  Select a research session above, or choose <strong>Entire database</strong> to load all workbench
+                  entities from TypeDB.
+                </div>
+              ) : graphStageLoading ? (
+                <div className="gg-atlas-lineage__empty" role="status">
+                  Loading graph…
+                </div>
+              ) : graphStageError ? (
+                <div
+                  className="gg-atlas-lineage__empty gg-atlas-lineage__status--error"
+                  role="alert"
+                >
+                  {vizError}
+                </div>
+              ) : (
+                <AtlasLineageGraph
+                  ref={graphRef}
+                  graph={filtered}
+                  onNodeClick={handleNodeClick}
+                  emptyGraphMessage={emptyLiveGraphMessage}
+                  highlightNodeId={graphHighlightId}
+                />
+              )}
+              <div className="gg-atlas-lineage__toolbar" role="toolbar" aria-label="Graph view">
+                <button
+                  type="button"
+                  className="gg-atlas-lineage__tool-btn"
+                  title="Zoom in"
+                  aria-label="Zoom in"
+                  onClick={() => graphRef.current?.zoomIn()}
+                >
+                  <IconZoomIn />
+                </button>
+                <button
+                  type="button"
+                  className="gg-atlas-lineage__tool-btn"
+                  title="Zoom out"
+                  aria-label="Zoom out"
+                  onClick={() => graphRef.current?.zoomOut()}
+                >
+                  <IconZoomOut />
+                </button>
+                <button
+                  type="button"
+                  className="gg-atlas-lineage__tool-btn"
+                  title="Reset pan and zoom"
+                  aria-label="Reset pan and zoom"
+                  onClick={() => graphRef.current?.resetView()}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                    <path d="M3 3v5h5" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  className="gg-atlas-lineage__tool-btn"
+                  title={lightTheme ? "Switch to dark" : "Switch to light"}
+                  aria-label={lightTheme ? "Switch to dark theme" : "Switch to light theme"}
+                  onClick={() => setLightTheme((v) => !v)}
+                >
+                  {lightTheme ? <IconMoon /> : <IconSun />}
+                </button>
+              </div>
             </div>
-          ) : graphStageLoading ? (
-            <div className="gg-atlas-lineage__empty" role="status">
-              Loading graph…
-            </div>
-          ) : graphStageError ? (
-            <div
-              className="gg-atlas-lineage__empty gg-atlas-lineage__status--error"
-              role="alert"
-            >
-              {vizError}
-            </div>
-          ) : (
-            <AtlasLineageGraph
-              ref={graphRef}
-              graph={filtered}
-              onNodeClick={handleNodeClick}
-              emptyGraphMessage={emptyLiveGraphMessage}
-            />
-          )}
-          <div className="gg-atlas-lineage__toolbar" role="toolbar" aria-label="Graph view">
-            <button
-              type="button"
-              className="gg-atlas-lineage__tool-btn"
-              title="Zoom in"
-              aria-label="Zoom in"
-              onClick={() => graphRef.current?.zoomIn()}
-            >
-              <IconZoomIn />
-            </button>
-            <button
-              type="button"
-              className="gg-atlas-lineage__tool-btn"
-              title="Zoom out"
-              aria-label="Zoom out"
-              onClick={() => graphRef.current?.zoomOut()}
-            >
-              <IconZoomOut />
-            </button>
-            <button
-              type="button"
-              className="gg-atlas-lineage__tool-btn"
-              title="Reset pan and zoom"
-              aria-label="Reset pan and zoom"
-              onClick={() => graphRef.current?.resetView()}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-                <path d="M3 3v5h5" />
-              </svg>
-            </button>
-            <button
-              type="button"
-              className="gg-atlas-lineage__tool-btn"
-              title={lightTheme ? "Switch to dark" : "Switch to light"}
-              aria-label={lightTheme ? "Switch to dark theme" : "Switch to light theme"}
-              onClick={() => setLightTheme((v) => !v)}
-            >
-              {lightTheme ? <IconMoon /> : <IconSun />}
-            </button>
           </div>
         </div>
       </main>

@@ -357,7 +357,7 @@ $e isa! graph-entity,
   has entity-candidate-keys-json $jk;
 `.trim();
     const res = await runInTx(driver, readTx, q, "listGraphEntities");
-    entities = parseEntityRows(res);
+    entities = parseEntityRows(res as { answerType?: string; answers?: { data: ConceptRow }[] });
   } finally {
     await rollbackTx(driver, readTx);
   }

@@ -38,6 +38,7 @@ type SimLink = {
   target: SimNode | string;
   verb: string;
   ended?: boolean;
+  pending?: boolean;
 };
 
 const MIN_ZOOM = 0.25;
@@ -50,6 +51,7 @@ function toSimLinks(edges: AtlasDemoEdge[], nodeById: Map<string, SimNode>): Sim
     target: nodeById.get(e.target)!,
     verb: e.verb,
     ended: e.ended,
+    pending: e.pending,
   }));
 }
 
@@ -90,8 +92,10 @@ export const AtlasLineageGraph = forwardRef<
     onNodeClick?: (node: AtlasDemoNode) => void;
     /** Shown when `graph.nodes` is empty (e.g. API returned no entities). Overrides filter-empty copy. */
     emptyGraphMessage?: string;
+    /** When set, dims non-neighbors like hover (e.g. proposal row focus). */
+    highlightNodeId?: string | null;
   }
->(function AtlasLineageGraph({ graph, onNodeClick, emptyGraphMessage }, ref) {
+>(function AtlasLineageGraph({ graph, onNodeClick, emptyGraphMessage, highlightNodeId = null }, ref) {
   const hostRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const simRef = useRef<ReturnType<typeof forceSimulation<SimNode>> | null>(null);
@@ -215,7 +219,10 @@ export const AtlasLineageGraph = forwardRef<
         "y",
         forceY<SimNode>((d) => laneCenters[d.lane] ?? laneCenters[0]!).strength(0.18),
       )
-      .force("collide", forceCollide<SimNode>().radius(36));
+      .force(
+        "collide",
+        forceCollide<SimNode>().radius((d) => (d.pending ? 30 : 36)),
+      );
 
     simRef.current = sim;
 
@@ -232,8 +239,12 @@ export const AtlasLineageGraph = forwardRef<
       .join("line")
       .attr("stroke", vars.edge)
       .attr("stroke-width", 1)
-      .attr("stroke-opacity", 0.55)
-      .attr("stroke-dasharray", (d) => (d.ended ? "4,4" : "none"));
+      .attr("stroke-opacity", (d) => {
+        if (d.pending) return 0.38;
+        if (d.ended) return 0.48;
+        return 0.55;
+      })
+      .attr("stroke-dasharray", (d) => (d.ended || d.pending ? "4,4" : "none"));
 
     const nodesG = g.append("g").attr("class", "atlas-nodes");
     const nodeG = nodesG
@@ -284,14 +295,21 @@ export const AtlasLineageGraph = forwardRef<
 
     nodeG
       .append("circle")
-      .attr("r", (d) => (d.essential ? 14 : 11))
+      .attr("r", (d) => {
+        if (d.pending) return 9;
+        return d.essential ? 14 : 11;
+      })
       .attr("fill", (d) => atlasKindColor(d.kind))
-      .attr("stroke", "none")
+      .attr("stroke", (d) => (d.pending ? vars.muted : "none"))
+      .attr("stroke-width", (d) => (d.pending ? 1.25 : 0))
       .attr("title", "Click (without dragging) to show this entity and its connections");
 
     nodeG
       .append("text")
-      .attr("x", (d) => (d.essential ? 18 : 15))
+      .attr("x", (d) => {
+        if (d.pending) return 13;
+        return d.essential ? 18 : 15;
+      })
       .attr("y", 4)
       .attr("font-size", (d) => (d.essential ? 13 : 12))
       .attr("font-weight", 700)
@@ -327,7 +345,9 @@ export const AtlasLineageGraph = forwardRef<
           const s = typeof d.source === "object" ? d.source.id : d.source;
           const t = typeof d.target === "object" ? d.target.id : d.target;
           const hit = id && (s === id || t === id);
-          return hit ? 0.95 : 0.35;
+          if (hit) return 0.95;
+          if (d.pending) return 0.28;
+          return 0.35;
         })
         .attr("stroke-width", (d) => {
           const s = typeof d.source === "object" ? d.source.id : d.source;
@@ -339,7 +359,11 @@ export const AtlasLineageGraph = forwardRef<
 
     nodeG
       .on("mouseenter", (_e, d) => applyHover(d.id))
-      .on("mouseleave", () => applyHover(null));
+      .on("mouseleave", () => applyHover(highlightNodeId ?? null));
+
+    if (highlightNodeId && nodeById.has(highlightNodeId)) {
+      applyHover(highlightNodeId);
+    }
 
     sim.on("tick", () => {
       edgeSel
@@ -349,7 +373,7 @@ export const AtlasLineageGraph = forwardRef<
         .attr("y2", (d) => (typeof d.target === "object" ? d.target.y! : 0));
       nodeG.attr("transform", (d) => `translate(${d.x ?? 0},${d.y ?? 0})`);
     });
-  }, [graph]);
+  }, [graph, highlightNodeId]);
 
   useImperativeHandle(ref, () => ({
     zoomIn: () => {

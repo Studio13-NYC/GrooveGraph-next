@@ -165,6 +165,71 @@ export function appendReviewDecision(
   return decision;
 }
 
+export function acceptAllProposedGraphCandidates(session: ResearchSession): {
+  entitiesAccepted: number;
+  relationshipsAccepted: number;
+} {
+  let entitiesAccepted = 0;
+  for (const entity of session.entityCandidates) {
+    if (entity.status !== "proposed") {
+      continue;
+    }
+    appendReviewDecision(session, {
+      itemType: "entity",
+      itemId: entity.id,
+      decision: "accepted",
+    });
+    entitiesAccepted += 1;
+  }
+
+  let relationshipsAccepted = 0;
+  for (const relationship of session.relationshipCandidates) {
+    if (relationship.status !== "proposed") {
+      continue;
+    }
+    appendReviewDecision(session, {
+      itemType: "relationship",
+      itemId: relationship.id,
+      decision: "accepted",
+    });
+    relationshipsAccepted += 1;
+  }
+
+  return { entitiesAccepted, relationshipsAccepted };
+}
+
+export function renameProposedEntityKind(session: ResearchSession, from: string, to: string): number {
+  const fromTrimmed = from.trim();
+  const toTrimmed = to.trim();
+  if (!fromTrimmed || !toTrimmed || fromTrimmed === toTrimmed) {
+    return 0;
+  }
+
+  let renamed = 0;
+  for (const entity of session.entityCandidates) {
+    if (entity.status !== "proposed" || entity.provisionalKind.trim() !== fromTrimmed) {
+      continue;
+    }
+    entity.provisionalKind = toTrimmed;
+    renamed += 1;
+    session.events.push(
+      createEvent(
+        "candidate_updated",
+        "success",
+        "/api/sessions/[sessionId]/candidates/rename-kind",
+        "Renamed provisional kind for proposed entities.",
+        {
+          session_id: session.id,
+          from: fromTrimmed,
+          to: toTrimmed,
+        },
+      ),
+    );
+  }
+
+  return renamed;
+}
+
 export function applyGraphCandidateUpdate(
   session: ResearchSession,
   request: UpdateGraphCandidateRequest,

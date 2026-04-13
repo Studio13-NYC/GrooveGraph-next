@@ -150,6 +150,7 @@ function buildSession(dumpPath: string, dump: DumpJson): ResearchSession {
         confidence: "high",
         evidenceSnippetIds: [],
         status: "accepted",
+        createdAt: nowIso(),
       });
     }
   }

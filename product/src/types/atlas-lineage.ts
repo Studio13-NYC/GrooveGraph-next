@@ -21,6 +21,8 @@ export type AtlasDemoNode = {
   lane: number;
   /** Highlight in “essential” curated view */
   essential?: boolean;
+  /** Provisional / not yet committed in the graph model */
+  pending?: boolean;
 };
 
 export type AtlasDemoEdge = {
@@ -30,6 +32,7 @@ export type AtlasDemoEdge = {
   verb: string;
   /** dashed styling when terminal */
   ended?: boolean;
+  pending?: boolean;
 };
 
 export type AtlasPhase = {

@@ -126,7 +126,9 @@ function passesSessionChips(
 
 /** Nodes and edges for “essential” curated subset. */
 export function atlasEssentialSubgraph(full: AtlasDemoGraph): AtlasDemoGraph {
-  const ids = new Set(full.nodes.filter((n) => n.essential).map((n) => n.id));
+  const ids = new Set(
+    full.nodes.filter((n) => n.essential === true || n.pending === true).map((n) => n.id),
+  );
   if (ids.size === 0) {
     return full;
   }

@@ -20,6 +20,7 @@ import {
 } from "@/src/lib/server/graph-persistence/helpers";
 import { WORKBENCH_TYPEDB3_SCHEMA_LINES } from "@/src/lib/server/graph-persistence/typedb-workbench-schema";
 import type { GraphPersistence, GraphSyncResult } from "@/src/lib/server/graph-persistence/types";
+import { pruneWorkbenchVizIsolatedNodes } from "@/src/lib/workbench-viz/filter-viz-isolated-nodes";
 import { extractWorkbenchVizNeighborhood } from "@/src/lib/workbench-viz/viz-neighborhood";
 import type { WorkbenchVizEdge, WorkbenchVizGraph, WorkbenchVizNode } from "@/src/types/workbench-viz-graph";
 import type {
@@ -70,8 +71,7 @@ async function iidIsWorkbenchGraphEntity(
 ): Promise<boolean> {
   const q = `
 match
-$e iid ${iid};
-$e isa! graph-entity;
+$e isa! graph-entity, iid ${iid};
 `.trim();
   const r = await runInTx(driver, txId, q, "verifyWorkbenchGraphEntity");
   return firstEntityIid(r) !== null;
@@ -302,8 +302,7 @@ async function readEntityJsonFieldsByIid(
 } | null> {
   const q = `
 match
-$e iid ${iid};
-$e isa! graph-entity;
+$e isa! graph-entity, iid ${iid};
 $e has entity-aliases-json $aliases;
 $e has entity-external-ids-json $ext;
 $e has entity-attributes-json $attrs;
@@ -406,7 +405,7 @@ async function upsertGraphEntity(
 
     const q = `
 match
-$e iid ${existingIid};
+$e isa! graph-entity, iid ${existingIid};
 update
 $e has display-name "${display}",
   has normalized-name "${nn}",
@@ -755,15 +754,15 @@ $tgt isa! graph-entity;
     }
 
     await rollbackTx(driver, txId);
-    const full: WorkbenchVizGraph = {
+    const full = pruneWorkbenchVizIsolatedNodes({
       nodes: [...nodeMap.values()],
       edges,
-    };
+    });
     const focus = options?.focusNodeId?.trim();
     if (focus) {
       const sub = extractWorkbenchVizNeighborhood(full, focus);
       if (sub) {
-        return sub;
+        return pruneWorkbenchVizIsolatedNodes(sub);
       }
     }
     return full;
@@ -894,15 +893,15 @@ $tgt isa! graph-entity;
     }
 
     await rollbackTx(driver, txId);
-    const full: WorkbenchVizGraph = {
+    const full = pruneWorkbenchVizIsolatedNodes({
       nodes: [...nodeMap.values()],
       edges,
-    };
+    });
     const focus = options?.focusNodeId?.trim();
     if (focus) {
       const sub = extractWorkbenchVizNeighborhood(full, focus);
       if (sub) {
-        return sub;
+        return pruneWorkbenchVizIsolatedNodes(sub);
       }
     }
     return full;

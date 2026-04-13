@@ -25,7 +25,8 @@ export async function POST(request: Request) {
       },
     });
 
-    const session = await createSession(body.seedQuery, conversation.id);
+    const title = typeof body.title === "string" ? body.title.trim() : "";
+    const session = await createSession(body.seedQuery, conversation.id, title || undefined);
     return NextResponse.json({ session }, { status: 201 });
   } catch (error) {
     return NextResponse.json(

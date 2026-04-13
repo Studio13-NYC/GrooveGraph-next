@@ -1,0 +1,150 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.dialog {
+  width: min(420px, 100%);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(18, 18, 20, 0.98);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+  color: #f4f4f5;
+}
+
+.dialogLight {
+  border-color: rgba(24, 24, 27, 0.12);
+  background: #fafafa;
+  color: #18181b;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.header {
+  padding: 16px 20px 0;
+}
+
+.title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.body {
+  padding: 12px 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(244, 244, 245, 0.72);
+}
+
+.dialogLight .label {
+  color: rgba(24, 24, 27, 0.65);
+}
+
+.input,
+.textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+  color: inherit;
+  font-size: 14px;
+  padding: 8px 10px;
+  outline: none;
+}
+
+.dialogLight .input,
+.dialogLight .textarea {
+  border-color: rgba(24, 24, 27, 0.14);
+  background: #fff;
+}
+
+.input:focus,
+.textarea:focus {
+  border-color: rgba(129, 140, 248, 0.85);
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.35);
+}
+
+.textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.hint {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: rgba(244, 244, 245, 0.55);
+}
+
+.dialogLight .hint {
+  color: rgba(24, 24, 27, 0.5);
+}
+
+.error {
+  margin: 0;
+  font-size: 12px;
+  color: #fca5a5;
+}
+
+.dialogLight .error {
+  color: #b91c1c;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 0 20px 16px;
+}
+
+.btn {
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btnSecondary {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+  color: inherit;
+}
+
+.dialogLight .btnSecondary {
+  border-color: rgba(24, 24, 27, 0.18);
+}
+
+.btnPrimary {
+  background: #6366f1;
+  color: #fff;
+}
+
+.btnPrimary:hover:not(:disabled) {
+  background: #4f46e5;
+}

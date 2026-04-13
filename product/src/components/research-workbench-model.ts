@@ -7,6 +7,11 @@ import type {
   UpdateGraphCandidateRequest,
 } from "@/src/types/research-session";
 
+/** Shown while naming / confirming a new session from the seed field. */
+export type SessionCreateDialogState = {
+  titleDraft: string;
+};
+
 export type GraphBackendStatusPayload = {
   configured: boolean;
   reachable: boolean;
@@ -61,7 +66,13 @@ export type ResearchWorkbenchModel = {
   tripletCandidates: TripletCandidate[];
   availableKindLabels: string[];
   latestAssistantMessageId: string | null;
+  sessionCreateDialog: SessionCreateDialogState | null;
+  sessionCreateNamingBusy: boolean;
+  sessionCreateConfirmBusy: boolean;
   createSession: () => Promise<void>;
+  confirmSessionCreate: () => Promise<void>;
+  cancelSessionCreateDialog: () => void;
+  setSessionCreateTitleDraft: (value: string) => void;
   sendTurn: () => Promise<void>;
   recordDecision: (request: ReviewDecisionRequest) => Promise<void>;
   updateGraphCandidate: (request: UpdateGraphCandidateRequest) => Promise<boolean>;

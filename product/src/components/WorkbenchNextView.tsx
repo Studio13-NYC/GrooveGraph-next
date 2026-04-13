@@ -14,6 +14,7 @@ import { buildVizGraphFromSession } from "@/src/lib/workbench-viz/build-from-ses
 import { useSessionVizHistory } from "@/src/hooks/useSessionVizHistory";
 import type { WorkbenchGraphFooterSlice, WorkbenchVizApiResponse } from "@/src/types/workbench-viz-graph";
 import type { GraphBackendStatusPayload, ResearchWorkbenchModel } from "./research-workbench-model";
+import { SessionCreateNameDialog } from "./SessionCreateNameDialog";
 import { formatTimestamp } from "./research-workbench-utils";
 import {
   DecisionRow,
@@ -75,7 +76,13 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     tripletCandidates,
     availableKindLabels,
     latestAssistantMessageId,
+    sessionCreateDialog,
+    sessionCreateNamingBusy,
+    sessionCreateConfirmBusy,
     createSession,
+    confirmSessionCreate,
+    cancelSessionCreateDialog,
+    setSessionCreateTitleDraft,
     sendTurn,
     recordDecision,
     beginTripletEdit,
@@ -183,6 +190,19 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
   const canCollapseIndex = !isNarrowWorkspaceLayout;
   const indexCollapsed = canCollapseIndex && indexNavCollapsed;
 
+  const openSessionBusy =
+    isBusy ||
+    sessionCreateNamingBusy ||
+    sessionCreateConfirmBusy ||
+    sessionCreateDialog !== null;
+  const openSessionLabel = sessionCreateConfirmBusy
+    ? "Creating…"
+    : sessionCreateNamingBusy
+      ? "Preparing…"
+      : isBusy
+        ? "Working…"
+        : "Open session";
+
   return (
     <main className="gg-next-root">
       <header className="gg-next-masthead">
@@ -236,11 +256,11 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                 type="button"
                 className="gg-next-cta gg-next-cta--rail-icon"
                 onClick={() => void createSession()}
-                disabled={isBusy}
+                disabled={openSessionBusy}
                 title="Open session (expand index to edit seed)"
                 aria-label="Open session"
               >
-                {isBusy ? "…" : "+"}
+                {openSessionBusy ? "…" : "+"}
               </button>
               <ul className="gg-next-index-collapsed-list" aria-label="Past sessions">
                 {sessions.map((session) => {
@@ -307,9 +327,9 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                       type="button"
                       className="gg-next-cta"
                       onClick={() => void createSession()}
-                      disabled={isBusy}
+                      disabled={openSessionBusy}
                     >
-                      {isBusy ? "Opening…" : "Open session"}
+                      {openSessionLabel}
                     </button>
                   </div>
                 </div>
@@ -864,6 +884,18 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
         </div>
       </footer>
 
+      <SessionCreateNameDialog
+        open={sessionCreateDialog !== null}
+        mode="name-only"
+        nameValue={sessionCreateDialog?.titleDraft ?? ""}
+        onNameChange={setSessionCreateTitleDraft}
+        suggestBusy={sessionCreateNamingBusy}
+        confirmBusy={sessionCreateConfirmBusy}
+        error={sessionCreateDialog ? error : null}
+        onCancel={cancelSessionCreateDialog}
+        onConfirm={() => void confirmSessionCreate()}
+        variant="dark"
+      />
     </main>
   );
 }

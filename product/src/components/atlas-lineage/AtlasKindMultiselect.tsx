@@ -37,9 +37,30 @@ export type AtlasKindMultiselectProps = {
   value: readonly AtlasSchemaKind[];
   onChange: (next: AtlasSchemaKind[]) => void;
   "aria-labelledby"?: string;
+  /**
+   * **Atlas lineage:** pass this prop to drive the list only from TypeDB/viz data (distinct `KindFamily` from node subtitles).
+   * - `null`: graph not loaded yet → **no** type rows (panel is empty except “All types”).
+   * - `[]`: graph loaded with no nodes (or no resolvable kinds) → same empty list.
+   * - Non-empty: one checkbox per kind from the graph.
+   *
+   * **When this prop is omitted:** the legacy static lists apply — demo uses {@link ATLAS_DEMO_SELECTABLE_KINDS};
+   * live uses `KIND_FILTER_KEYS` from `@/src/lib/workbench-viz/graph-viz-styles` (People, Recordings, …).
+   */
+  kindFamiliesFromGraph?: readonly KindFamily[] | null;
 };
 
-export function AtlasKindMultiselect({ variant, value, onChange, "aria-labelledby": ariaLabelledBy }: AtlasKindMultiselectProps) {
+function capitalizeKindLabel(k: string): string {
+  if (!k) return k;
+  return k.charAt(0).toUpperCase() + k.slice(1);
+}
+
+export function AtlasKindMultiselect({
+  variant,
+  value,
+  onChange,
+  "aria-labelledby": ariaLabelledBy,
+  kindFamiliesFromGraph,
+}: AtlasKindMultiselectProps) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const listId = useId();
@@ -65,14 +86,19 @@ export function AtlasKindMultiselect({ variant, value, onChange, "aria-labelledb
     };
   }, [open]);
 
-  const universe = variant === "demo" ? ATLAS_DEMO_SELECTABLE_KINDS : LIVE_UNIVERSE;
+  const graphKindFilter = kindFamiliesFromGraph !== undefined;
+  const universe: readonly KindFamily[] | readonly (typeof ATLAS_DEMO_SELECTABLE_KINDS)[number][] = graphKindFilter
+    ? (kindFamiliesFromGraph ?? [])
+    : variant === "demo"
+      ? ATLAS_DEMO_SELECTABLE_KINDS
+      : LIVE_UNIVERSE;
 
   const toggle = useCallback(
     (k: AtlasSchemaKind) => {
       const has = value.includes(k);
       let next: AtlasSchemaKind[] = has ? value.filter((x) => x !== k) : [...value, k];
       const set = new Set(next);
-      if (universe.every((u) => set.has(u))) {
+      if (universe.length > 0 && universe.every((u) => set.has(u))) {
         next = [];
       }
       onChange(next);
@@ -83,7 +109,11 @@ export function AtlasKindMultiselect({ variant, value, onChange, "aria-labelledb
   const rows =
     variant === "demo"
       ? ATLAS_DEMO_SELECTABLE_KINDS.map((k) => ({ key: k, kind: k as AtlasSchemaKind, label: labelForKind("demo", k) }))
-      : LIVE_UNIVERSE.map((k) => ({ key: k, kind: k as AtlasSchemaKind, label: labelForKind("live", k) }));
+      : (universe as readonly KindFamily[]).map((k) => ({
+          key: k,
+          kind: k as AtlasSchemaKind,
+          label: graphKindFilter ? capitalizeKindLabel(k) : labelForKind("live", k),
+        }));
 
   return (
     <div ref={rootRef} className="gg-atlas-lineage__kind-filter" aria-labelledby={ariaLabelledBy}>

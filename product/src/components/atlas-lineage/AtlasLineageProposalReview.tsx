@@ -1,8 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { WorkspaceResponse } from "@/src/components/research-workbench-model";
-import { fetchJson } from "@/src/components/research-workbench-utils";
+import { fetchJson, normalizeAliases } from "@/src/components/research-workbench-utils";
+import { publishToDbProgressForElapsed } from "@/src/lib/research-turn-progress-ui";
 import type { EntityCandidate, RelationshipCandidate, ResearchSession } from "@/src/types/research-session";
 
 export type AtlasLineageProposalReviewProps = {
@@ -22,6 +23,40 @@ type PublishResponse = WorkspaceResponse & {
   };
 };
 
+type SessionPayload = { session: ResearchSession };
+
+function IconPencil() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+function IconTrash() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M3 6h18M8 6V4h8v2m2 0v14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V6h12zM10 11v6M14 11v6" />
+    </svg>
+  );
+}
+
+function IconCheck() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
+  );
+}
+
+function IconX() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  );
+}
+
 export function AtlasLineageProposalReview({
   session,
   sessionId,
@@ -33,7 +68,17 @@ export function AtlasLineageProposalReview({
   const [renameBusyKind, setRenameBusyKind] = useState<string | null>(null);
   const [renameError, setRenameError] = useState<string | null>(null);
   const [publishBusy, setPublishBusy] = useState(false);
+  const [publishProgressTick, setPublishProgressTick] = useState(0);
+  const publishStartedAtRef = useRef<number | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
+  const [rowError, setRowError] = useState<string | null>(null);
+  const [rowBusyKey, setRowBusyKey] = useState<string | null>(null);
+
+  const [entityEditingId, setEntityEditingId] = useState<string | null>(null);
+  const [entityEditForm, setEntityEditForm] = useState({ displayName: "", provisionalKind: "", aliasesText: "" });
+
+  const [relEditingId, setRelEditingId] = useState<string | null>(null);
+  const [relEditVerb, setRelEditVerb] = useState("");
 
   const proposedEntities = useMemo(
     () => session?.entityCandidates.filter((e) => e.status === "proposed") ?? [],
@@ -72,6 +117,34 @@ export function AtlasLineageProposalReview({
     });
   }, [kindRows]);
 
+  useEffect(() => {
+    if (!sessionId) {
+      setEntityEditingId(null);
+      setRelEditingId(null);
+      setRowError(null);
+      setRowBusyKey(null);
+    }
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (!publishBusy) {
+      publishStartedAtRef.current = null;
+      return;
+    }
+    const id = window.setInterval(() => {
+      setPublishProgressTick((n) => n + 1);
+    }, 400);
+    return () => window.clearInterval(id);
+  }, [publishBusy]);
+
+  const publishProgressUi = useMemo(() => {
+    if (!publishBusy || publishStartedAtRef.current === null) {
+      return null;
+    }
+    void publishProgressTick;
+    return publishToDbProgressForElapsed(Date.now() - publishStartedAtRef.current);
+  }, [publishBusy, publishProgressTick]);
+
   const applyRename = useCallback(
     async (from: string) => {
       if (!sessionId) return;
@@ -105,6 +178,8 @@ export function AtlasLineageProposalReview({
   const publish = useCallback(async () => {
     if (!sessionId) return;
     setPublishError(null);
+    publishStartedAtRef.current = Date.now();
+    setPublishProgressTick(0);
     setPublishBusy(true);
     try {
       const data = await fetchJson<PublishResponse>(
@@ -119,6 +194,116 @@ export function AtlasLineageProposalReview({
       setPublishBusy(false);
     }
   }, [sessionId, onSessionUpdated, onPublished]);
+
+  const rejectCandidate = useCallback(
+    async (itemType: "entity" | "relationship", itemId: string, label: string) => {
+      if (!sessionId) return;
+      if (!window.confirm(`Remove “${label}” from proposals?`)) {
+        return;
+      }
+      setRowError(null);
+      const key = `rej-${itemType}-${itemId}`;
+      setRowBusyKey(key);
+      try {
+        const data = await fetchJson<SessionPayload>(`/api/sessions/${encodeURIComponent(sessionId)}/decisions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemType, itemId, decision: "rejected" }),
+        });
+        onSessionUpdated(data.session);
+        if (entityEditingId === itemId) {
+          setEntityEditingId(null);
+        }
+        if (relEditingId === itemId) {
+          setRelEditingId(null);
+        }
+      } catch (err: unknown) {
+        setRowError(err instanceof Error ? err.message : "Could not remove item.");
+      } finally {
+        setRowBusyKey(null);
+      }
+    },
+    [sessionId, onSessionUpdated, entityEditingId, relEditingId],
+  );
+
+  const saveEntityEdit = useCallback(async () => {
+    if (!sessionId || !entityEditingId) return;
+    const dn = entityEditForm.displayName.trim();
+    const pk = entityEditForm.provisionalKind.trim();
+    if (!dn || !pk) {
+      setRowError("Name and kind are required.");
+      return;
+    }
+    setRowError(null);
+    const key = `save-ent-${entityEditingId}`;
+    setRowBusyKey(key);
+    try {
+      const data = await fetchJson<WorkspaceResponse>(`/api/sessions/${encodeURIComponent(sessionId)}/candidates`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          candidateType: "entity",
+          candidateId: entityEditingId,
+          displayName: dn,
+          provisionalKind: pk,
+          aliases: normalizeAliases(entityEditForm.aliasesText.split(",")),
+        }),
+      });
+      onSessionUpdated(data.session);
+      setEntityEditingId(null);
+    } catch (err: unknown) {
+      setRowError(err instanceof Error ? err.message : "Save failed.");
+    } finally {
+      setRowBusyKey(null);
+    }
+  }, [sessionId, entityEditingId, entityEditForm, onSessionUpdated]);
+
+  const saveRelEdit = useCallback(async () => {
+    if (!sessionId || !relEditingId) return;
+    const v = relEditVerb.trim();
+    if (!v) {
+      setRowError("Relationship verb is required.");
+      return;
+    }
+    setRowError(null);
+    const key = `save-rel-${relEditingId}`;
+    setRowBusyKey(key);
+    try {
+      const data = await fetchJson<WorkspaceResponse>(`/api/sessions/${encodeURIComponent(sessionId)}/candidates`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          candidateType: "relationship",
+          candidateId: relEditingId,
+          verb: v,
+        }),
+      });
+      onSessionUpdated(data.session);
+      setRelEditingId(null);
+    } catch (err: unknown) {
+      setRowError(err instanceof Error ? err.message : "Save failed.");
+    } finally {
+      setRowBusyKey(null);
+    }
+  }, [sessionId, relEditingId, relEditVerb, onSessionUpdated]);
+
+  const startEntityEdit = useCallback((e: EntityCandidate) => {
+    setRowError(null);
+    setEntityEditingId(e.id);
+    setEntityEditForm({
+      displayName: e.displayName,
+      provisionalKind: e.provisionalKind,
+      aliasesText: e.aliases.join(", "),
+    });
+  }, []);
+
+  const startRelEdit = useCallback((r: RelationshipCandidate) => {
+    setRowError(null);
+    setRelEditingId(r.id);
+    setRelEditVerb(r.verb);
+  }, []);
+
+  const rowBusy = rowBusyKey !== null;
 
   if (!session) {
     return null;
@@ -155,12 +340,12 @@ export function AtlasLineageProposalReview({
                     }))
                   }
                   placeholder="Rename to…"
-                  disabled={!sessionId || renameBusyKind !== null || publishBusy}
+                  disabled={!sessionId || renameBusyKind !== null || publishBusy || rowBusy}
                 />
                 <button
                   type="button"
                   className="gg-atlas-lineage__btn-secondary gg-atlas-lineage__proposal-apply"
-                  disabled={!sessionId || renameBusyKind !== null || publishBusy}
+                  disabled={!sessionId || renameBusyKind !== null || publishBusy || rowBusy}
                   onClick={() => void applyRename(kind)}
                 >
                   {renameBusyKind === kind ? "Applying…" : "Apply"}
@@ -178,6 +363,11 @@ export function AtlasLineageProposalReview({
 
       <div className="gg-atlas-lineage__proposal-block">
         <h3 className="gg-atlas-lineage__proposal-subtitle">Proposed instances</h3>
+        {rowError ? (
+          <p className="gg-atlas-lineage__proposal-inline-error" role="alert">
+            {rowError}
+          </p>
+        ) : null}
         {proposedEntities.length === 0 ? (
           <p className="gg-atlas-lineage__proposal-muted">No proposed entities.</p>
         ) : (
@@ -188,38 +378,153 @@ export function AtlasLineageProposalReview({
                 <tr>
                   <th scope="col">Name</th>
                   <th scope="col">Kind</th>
-                  <th scope="col">Id</th>
+                  <th scope="col">Id / aliases</th>
+                  <th scope="col" className="gg-atlas-lineage__proposal-th-actions">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {proposedEntities.map((e) => (
-                  <tr
-                    key={e.id}
-                    className={onHighlightCandidate ? "gg-atlas-lineage__proposal-row--clickable" : undefined}
-                    tabIndex={onHighlightCandidate ? 0 : undefined}
-                    onKeyDown={
-                      onHighlightCandidate
-                        ? (ev) => {
-                            if (ev.key === "Enter" || ev.key === " ") {
-                              ev.preventDefault();
+                {proposedEntities.map((e) => {
+                  const editing = entityEditingId === e.id;
+                  const entityBusyKey =
+                    rowBusyKey === `rej-entity-${e.id}` || rowBusyKey === `save-ent-${e.id}`;
+                  const busyThis = entityBusyKey;
+                  const anotherEntityEditing =
+                    entityEditingId !== null && entityEditingId !== e.id;
+                  return (
+                    <tr
+                      key={e.id}
+                      className={onHighlightCandidate && !editing ? "gg-atlas-lineage__proposal-row--clickable" : undefined}
+                      tabIndex={onHighlightCandidate && !editing ? 0 : undefined}
+                      onKeyDown={
+                        onHighlightCandidate && !editing
+                          ? (ev) => {
+                              if (ev.key === "Enter" || ev.key === " ") {
+                                ev.preventDefault();
+                                onHighlightCandidate(e.id);
+                              }
+                            }
+                          : undefined
+                      }
+                      onClick={
+                        onHighlightCandidate && !editing
+                          ? () => {
                               onHighlightCandidate(e.id);
                             }
+                          : undefined
+                      }
+                    >
+                      <td>
+                        {editing ? (
+                          <input
+                            className="gg-atlas-lineage__proposal-cell-input"
+                            value={entityEditForm.displayName}
+                            onChange={(ev) =>
+                              setEntityEditForm((f) => ({ ...f, displayName: ev.target.value }))
+                            }
+                            aria-label="Display name"
+                            onClick={(ev) => ev.stopPropagation()}
+                          />
+                        ) : (
+                          e.displayName
+                        )}
+                      </td>
+                      <td>
+                        {editing ? (
+                          <input
+                            className="gg-atlas-lineage__proposal-cell-input"
+                            value={entityEditForm.provisionalKind}
+                            onChange={(ev) =>
+                              setEntityEditForm((f) => ({ ...f, provisionalKind: ev.target.value }))
+                            }
+                            aria-label="Provisional kind"
+                            onClick={(ev) => ev.stopPropagation()}
+                          />
+                        ) : (
+                          e.provisionalKind
+                        )}
+                      </td>
+                      <td className="gg-atlas-lineage__proposal-mono" title={e.id}>
+                        {editing ? (
+                          <input
+                            className="gg-atlas-lineage__proposal-cell-input"
+                            value={entityEditForm.aliasesText}
+                            onChange={(ev) =>
+                              setEntityEditForm((f) => ({ ...f, aliasesText: ev.target.value }))
+                            }
+                            placeholder="Aliases, comma-separated"
+                            aria-label="Aliases"
+                            onClick={(ev) => ev.stopPropagation()}
+                          />
+                        ) : (
+                          e.id.slice(0, 18) + (e.id.length > 18 ? "…" : "")
+                        )}
+                      </td>
+                      <td onClick={(ev) => ev.stopPropagation()}>
+                        <div
+                          className={
+                            editing
+                              ? "gg-atlas-lineage__proposal-row-actions gg-atlas-lineage__proposal-row-actions--edit"
+                              : "gg-atlas-lineage__proposal-row-actions"
                           }
-                        : undefined
-                    }
-                    onClick={
-                      onHighlightCandidate
-                        ? () => {
-                            onHighlightCandidate(e.id);
-                          }
-                        : undefined
-                    }
-                  >
-                    <td>{e.displayName}</td>
-                    <td>{e.provisionalKind}</td>
-                    <td className="gg-atlas-lineage__proposal-mono">{e.id}</td>
-                  </tr>
-                ))}
+                        >
+                          {editing ? (
+                            <>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Save"
+                                aria-label="Save entity"
+                                disabled={busyThis || publishBusy}
+                                onClick={() => void saveEntityEdit()}
+                              >
+                                <IconCheck />
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Cancel"
+                                aria-label="Cancel edit"
+                                disabled={busyThis || publishBusy}
+                                onClick={() => setEntityEditingId(null)}
+                              >
+                                <IconX />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Edit"
+                                aria-label={`Edit ${e.displayName}`}
+                                disabled={
+                                  busyThis || publishBusy || relEditingId !== null || anotherEntityEditing
+                                }
+                                onClick={() => startEntityEdit(e)}
+                              >
+                                <IconPencil />
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn gg-atlas-lineage__proposal-icon-btn--danger"
+                                title="Remove from proposals"
+                                aria-label={`Remove ${e.displayName}`}
+                                disabled={
+                                  busyThis || publishBusy || relEditingId !== null || anotherEntityEditing
+                                }
+                                onClick={() => void rejectCandidate("entity", e.id, e.displayName)}
+                              >
+                                <IconTrash />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -235,6 +540,9 @@ export function AtlasLineageProposalReview({
                   <th scope="col">Verb</th>
                   <th scope="col">Source</th>
                   <th scope="col">Target</th>
+                  <th scope="col" className="gg-atlas-lineage__proposal-th-actions">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -243,13 +551,19 @@ export function AtlasLineageProposalReview({
                   const tgt = entityById.get(r.targetEntityId);
                   const srcLabel = src?.displayName ?? r.sourceEntityId;
                   const tgtLabel = tgt?.displayName ?? r.targetEntityId;
+                  const editing = relEditingId === r.id;
+                  const relBusyKey =
+                    rowBusyKey === `rej-relationship-${r.id}` || rowBusyKey === `save-rel-${r.id}`;
+                  const busyThis = relBusyKey;
+                  const anotherRelEditing = relEditingId !== null && relEditingId !== r.id;
+                  const relLabel = `${r.verb}: ${srcLabel} → ${tgtLabel}`;
                   return (
                     <tr
                       key={r.id}
-                      className={onHighlightCandidate ? "gg-atlas-lineage__proposal-row--clickable" : undefined}
-                      tabIndex={onHighlightCandidate ? 0 : undefined}
+                      className={onHighlightCandidate && !editing ? "gg-atlas-lineage__proposal-row--clickable" : undefined}
+                      tabIndex={onHighlightCandidate && !editing ? 0 : undefined}
                       onKeyDown={
-                        onHighlightCandidate
+                        onHighlightCandidate && !editing
                           ? (ev) => {
                               if (ev.key === "Enter" || ev.key === " ") {
                                 ev.preventDefault();
@@ -259,16 +573,89 @@ export function AtlasLineageProposalReview({
                           : undefined
                       }
                       onClick={
-                        onHighlightCandidate
+                        onHighlightCandidate && !editing
                           ? () => {
                               onHighlightCandidate(r.sourceEntityId);
                             }
                           : undefined
                       }
                     >
-                      <td>{r.verb}</td>
+                      <td>
+                        {editing ? (
+                          <input
+                            className="gg-atlas-lineage__proposal-cell-input"
+                            value={relEditVerb}
+                            onChange={(ev) => setRelEditVerb(ev.target.value)}
+                            aria-label="Relationship verb"
+                            onClick={(ev) => ev.stopPropagation()}
+                          />
+                        ) : (
+                          r.verb
+                        )}
+                      </td>
                       <td>{srcLabel}</td>
                       <td>{tgtLabel}</td>
+                      <td onClick={(ev) => ev.stopPropagation()}>
+                        <div
+                          className={
+                            editing
+                              ? "gg-atlas-lineage__proposal-row-actions gg-atlas-lineage__proposal-row-actions--edit"
+                              : "gg-atlas-lineage__proposal-row-actions"
+                          }
+                        >
+                          {editing ? (
+                            <>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Save"
+                                aria-label="Save relationship"
+                                disabled={busyThis || publishBusy}
+                                onClick={() => void saveRelEdit()}
+                              >
+                                <IconCheck />
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Cancel"
+                                aria-label="Cancel edit"
+                                disabled={busyThis || publishBusy}
+                                onClick={() => setRelEditingId(null)}
+                              >
+                                <IconX />
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn"
+                                title="Edit verb"
+                                aria-label={`Edit ${relLabel}`}
+                                disabled={
+                                  busyThis || publishBusy || entityEditingId !== null || anotherRelEditing
+                                }
+                                onClick={() => startRelEdit(r)}
+                              >
+                                <IconPencil />
+                              </button>
+                              <button
+                                type="button"
+                                className="gg-atlas-lineage__proposal-icon-btn gg-atlas-lineage__proposal-icon-btn--danger"
+                                title="Remove from proposals"
+                                aria-label={`Remove ${relLabel}`}
+                                disabled={
+                                  busyThis || publishBusy || entityEditingId !== null || anotherRelEditing
+                                }
+                                onClick={() => void rejectCandidate("relationship", r.id, relLabel)}
+                              >
+                                <IconTrash />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   );
                 })}
@@ -279,13 +666,25 @@ export function AtlasLineageProposalReview({
       </div>
 
       <div className="gg-atlas-lineage__proposal-actions">
+        {publishProgressUi ? (
+          <div
+            className="gg-atlas-lineage__proposal-publish-progress"
+            role="status"
+            aria-live="polite"
+            aria-busy="true"
+          >
+            <p className="gg-atlas-lineage__proposal-publish-progress-title">{publishProgressUi.phaseLabel}</p>
+            <p className="gg-atlas-lineage__proposal-publish-progress-detail">{publishProgressUi.detailLine}</p>
+            <p className="gg-atlas-lineage__proposal-publish-progress-eta">{publishProgressUi.etaLine}</p>
+          </div>
+        ) : null}
         <button
           type="button"
           className="gg-atlas-lineage__btn-primary"
-          disabled={!sessionId || !hasProposals || publishBusy}
+          disabled={!sessionId || !hasProposals || publishBusy || rowBusy}
           onClick={() => void publish()}
         >
-          {publishBusy ? "Publishing…" : "Publish to TypeDB"}
+          {publishBusy && publishProgressUi ? `${publishProgressUi.phaseLabel}…` : publishBusy ? "Publishing…" : "Publish to TypeDB"}
         </button>
         {publishError ? (
           <p className="gg-atlas-lineage__proposal-inline-error" role="alert">

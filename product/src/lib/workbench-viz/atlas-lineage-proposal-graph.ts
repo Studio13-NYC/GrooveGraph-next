@@ -2,6 +2,7 @@ import {
   provisionalKindToFamily,
   type KindFamily,
 } from "@/src/lib/workbench-viz/graph-viz-styles";
+import { pruneAtlasDemoIsolatedNodes } from "@/src/lib/workbench-viz/filter-viz-isolated-nodes";
 import { ATLAS_SESSION_PHASES } from "@/src/lib/workbench-viz/workbench-viz-to-atlas-lineage";
 import type { AtlasDemoEdge, AtlasDemoGraph, AtlasDemoNode } from "@/src/types/atlas-lineage";
 import type { ResearchSession } from "@/src/types/research-session";
@@ -20,23 +21,14 @@ const LANE_BY_FAMILY: Record<KindFamily, number> = {
 /**
  * Atlas-lineage DTOs for **proposed** entity/relationship candidates on a research session
  * (preview graph before acceptance).
+ * Only entities that participate in at least one **proposed** relationship are included —
+ * isolated proposed entities are omitted until the model connects them.
  */
 export function researchSessionProposalsToAtlasGraph(session: ResearchSession): AtlasDemoGraph {
   const proposedEntities = session.entityCandidates.filter((e) => e.status === "proposed");
   const proposedIds = new Set(proposedEntities.map((e) => e.id));
 
-  const nodes: AtlasDemoNode[] = proposedEntities.map((entity) => {
-    const family = provisionalKindToFamily(entity.provisionalKind);
-    return {
-      id: `cand:${entity.id}`,
-      label: entity.displayName,
-      kind: family,
-      lane: LANE_BY_FAMILY[family],
-      pending: true,
-      essential: false,
-    };
-  });
-
+  const connectedEntityIds = new Set<string>();
   const edges: AtlasDemoEdge[] = [];
   for (const rel of session.relationshipCandidates) {
     if (rel.status !== "proposed") {
@@ -45,6 +37,8 @@ export function researchSessionProposalsToAtlasGraph(session: ResearchSession): 
     if (!proposedIds.has(rel.sourceEntityId) || !proposedIds.has(rel.targetEntityId)) {
       continue;
     }
+    connectedEntityIds.add(rel.sourceEntityId);
+    connectedEntityIds.add(rel.targetEntityId);
     edges.push({
       id: `candrel:${rel.id}`,
       source: `cand:${rel.sourceEntityId}`,
@@ -53,6 +47,20 @@ export function researchSessionProposalsToAtlasGraph(session: ResearchSession): 
       pending: true,
     });
   }
+
+  const nodes: AtlasDemoNode[] = proposedEntities
+    .filter((entity) => connectedEntityIds.has(entity.id))
+    .map((entity) => {
+      const family = provisionalKindToFamily(entity.provisionalKind);
+      return {
+        id: `cand:${entity.id}`,
+        label: entity.displayName,
+        kind: family,
+        lane: LANE_BY_FAMILY[family],
+        pending: true,
+        essential: false,
+      };
+    });
 
   return {
     phases: ATLAS_SESSION_PHASES,
@@ -77,7 +85,7 @@ export function mergeAtlasLineageWithProposals(
   session: ResearchSession,
 ): AtlasDemoGraph {
   if (!sessionHasProposedGraphCandidates(session)) {
-    return baseFromViz;
+    return pruneAtlasDemoIsolatedNodes(baseFromViz);
   }
 
   const overlay = researchSessionProposalsToAtlasGraph(session);
@@ -111,9 +119,9 @@ export function mergeAtlasLineageWithProposals(
   const phases =
     baseFromViz.phases.length > 0 ? baseFromViz.phases : overlay.phases.length > 0 ? overlay.phases : ATLAS_SESSION_PHASES;
 
-  return {
+  return pruneAtlasDemoIsolatedNodes({
     phases,
     nodes: nodeOrder.map((id) => nodeById.get(id)!),
     edges: edgeOrder.map((id) => edgeById.get(id)!),
-  };
+  });
 }

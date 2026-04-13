@@ -157,13 +157,53 @@
   -webkit-backdrop-filter: blur(var(--atlas-blur));
 }
 
+.gg-atlas-lineage__data-strip-primary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 min(280px, 100%);
+  min-width: 0;
+}
+
 .gg-atlas-lineage__select--data {
   min-width: 200px;
 }
 
-.gg-atlas-lineage__select--session {
+.gg-atlas-lineage__data-strip-primary .gg-atlas-lineage__select--session {
   flex: 1 1 180px;
   max-width: min(420px, 100%);
+  min-width: 0;
+}
+
+.gg-atlas-lineage__session-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 220px;
+  min-width: 0;
+  max-width: min(480px, 100%);
+}
+
+.gg-atlas-lineage__session-title-input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+  font-size: 13px;
+}
+
+.gg-atlas-lineage__session-title-input:disabled {
+  opacity: 0.65;
+}
+
+.gg-atlas-lineage__session-title-save {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  font-size: 12px;
 }
 
 .gg-atlas-lineage__source-badge {
@@ -317,26 +357,14 @@
   color: var(--atlas-danger);
 }
 
-/* Above .gg-atlas-lineage__new-session-strip (z-index 41): that row can grow with wrap/errors
-   and would otherwise sit on top of this bar and eat pointer events. */
-.gg-atlas-lineage__filter-strip {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 132px;
-  z-index: 45;
+/* Kind multiselect: same strip as session (see .gg-atlas-lineage__data-strip-primary). */
+.gg-atlas-lineage__data-strip-kind {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  row-gap: 8px;
-  min-height: 44px;
-  padding: 8px 16px;
-  border-bottom: 1px solid var(--atlas-border-subtle);
-  background: var(--atlas-glass);
-  backdrop-filter: blur(var(--atlas-blur));
-  -webkit-backdrop-filter: blur(var(--atlas-blur));
-  overflow: visible;
+  flex: 0 0 auto;
+  margin-left: auto;
+  min-width: 0;
+  z-index: 2;
 }
 
 .gg-atlas-lineage__select {
@@ -527,8 +555,8 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  /* header 48 + data strip 40 + new session strip 44 + filter ~44 */
-  padding-top: 176px;
+  /* Fixed header 48px + data strip (session row + kind + optional name row; flex-wrap). */
+  padding-top: 152px;
 }
 
 .gg-atlas-lineage__work-area {
@@ -755,6 +783,119 @@
   color: var(--atlas-fg-dim);
 }
 
+.gg-atlas-lineage__chat-rail-progress {
+  margin: 0 0 8px;
+  padding: 10px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: color-mix(in srgb, var(--atlas-accent) 8%, var(--atlas-bg-elevated));
+}
+
+.gg-atlas-lineage__chat-rail-progress-title {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__chat-rail-progress-detail {
+  margin: 0 0 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__chat-rail-progress-eta {
+  margin: 0;
+  font-size: 11px;
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__viz-strip-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1 1 200px;
+  min-width: 0;
+  max-width: min(420px, 100%);
+  font-size: 11px;
+  line-height: 1.35;
+  color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__viz-strip-phase {
+  font-weight: 600;
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__viz-strip-detail {
+  display: block;
+}
+
+.gg-atlas-lineage__viz-strip-eta {
+  display: block;
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__graph-load-progress {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  max-width: 360px;
+  margin-inline: auto;
+}
+
+.gg-atlas-lineage__graph-load-progress-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__graph-load-progress-detail {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__graph-load-progress-eta {
+  margin: 0;
+  font-size: 12px;
+  color: var(--atlas-fg-dim);
+}
+
+.gg-atlas-lineage__proposal-publish-progress {
+  flex: 1 1 100%;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: color-mix(in srgb, var(--atlas-accent) 6%, var(--atlas-bg-elevated));
+}
+
+.gg-atlas-lineage__proposal-publish-progress-title {
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--atlas-fg);
+}
+
+.gg-atlas-lineage__proposal-publish-progress-detail {
+  margin: 0 0 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--atlas-fg-muted);
+}
+
+.gg-atlas-lineage__proposal-publish-progress-eta {
+  margin: 0;
+  font-size: 11px;
+  color: var(--atlas-fg-dim);
+}
+
 /* —— Proposal review —— */
 .gg-atlas-lineage__proposal-panel {
   flex: 0 0 auto;
@@ -840,7 +981,7 @@
 
 .gg-atlas-lineage__proposal-table-wrap {
   overflow: auto;
-  max-height: 120px;
+  max-height: 220px;
   border-radius: 8px;
   border: 1px solid var(--atlas-border-subtle);
 }
@@ -873,6 +1014,77 @@
   color: var(--atlas-fg-muted);
 }
 
+.gg-atlas-lineage__proposal-th-actions {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.gg-atlas-lineage__proposal-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.gg-atlas-lineage__proposal-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--atlas-fg-muted);
+  cursor: pointer;
+  transition:
+    color var(--atlas-duration-fast) var(--atlas-ease-out),
+    background var(--atlas-duration-fast) var(--atlas-ease-out),
+    border-color var(--atlas-duration-fast) var(--atlas-ease-out);
+}
+
+.gg-atlas-lineage__proposal-icon-btn:hover:not(:disabled) {
+  color: var(--atlas-accent);
+  background: var(--atlas-accent-soft);
+  border-color: var(--atlas-border-subtle);
+}
+
+.gg-atlas-lineage__proposal-icon-btn--danger:hover:not(:disabled) {
+  color: var(--atlas-danger);
+  background: color-mix(in srgb, var(--atlas-danger) 14%, transparent);
+  border-color: color-mix(in srgb, var(--atlas-danger) 28%, transparent);
+}
+
+.gg-atlas-lineage__proposal-icon-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.gg-atlas-lineage__proposal-cell-input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--atlas-border-subtle);
+  background: var(--atlas-bg-elevated);
+  color: var(--atlas-fg);
+  font-size: 11px;
+}
+
+.gg-atlas-lineage__proposal-row-actions--edit {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.gg-atlas-lineage__proposal-row-mini {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
 .gg-atlas-lineage__proposal-row--clickable {
   cursor: pointer;
 }
@@ -883,10 +1095,15 @@
 
 .gg-atlas-lineage__proposal-actions {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: stretch;
   gap: 12px;
   margin-top: 4px;
+}
+
+.gg-atlas-lineage__proposal-actions > .gg-atlas-lineage__btn-primary {
+  align-self: flex-end;
 }
 
 .gg-atlas-lineage__stage-wrap {

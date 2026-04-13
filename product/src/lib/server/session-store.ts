@@ -9,6 +9,7 @@ import type {
   SessionMessage,
   UpdateGraphCandidateRequest,
 } from "@/src/types/research-session";
+import { fallbackDisplayTitleFromSeed } from "@/src/lib/server/session-title-from-prompt";
 
 function workspaceRoot(): string {
   return process.cwd();
@@ -34,6 +35,8 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
+const SESSION_TITLE_MAX_LEN = 200;
+
 export function createId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID()}`;
 }
@@ -56,13 +59,23 @@ export function createEvent(
   };
 }
 
-export async function createSession(seedQuery: string, openaiConversationId?: string): Promise<ResearchSession> {
+export async function createSession(
+  seedQuery: string,
+  openaiConversationId?: string,
+  displayTitle?: string,
+): Promise<ResearchSession> {
   await ensureDirs();
   const id = createId("rs");
   const createdAt = nowIso();
+  const trimmedSeed = seedQuery.trim();
+  const trimmedTitle = displayTitle?.trim();
+  const title =
+    trimmedTitle && trimmedTitle.length > 0
+      ? trimmedTitle.slice(0, SESSION_TITLE_MAX_LEN)
+      : fallbackDisplayTitleFromSeed(trimmedSeed.length > 0 ? trimmedSeed : seedQuery);
   const session: ResearchSession = {
     id,
-    title: seedQuery.slice(0, 80),
+    title,
     seedQuery,
     status: "ready",
     openaiConversationId,
@@ -108,6 +121,23 @@ export async function saveSession(session: ResearchSession): Promise<void> {
   await ensureDirs();
   session.updatedAt = nowIso();
   await writeFile(sessionFile(session.id), JSON.stringify(session, null, 2));
+}
+
+export function updateSessionTitle(session: ResearchSession, title: string): void {
+  const trimmed = title.trim();
+  if (!trimmed) {
+    throw new Error("Title cannot be empty.");
+  }
+  session.title = trimmed.slice(0, SESSION_TITLE_MAX_LEN);
+  session.events.push(
+    createEvent(
+      "session_metadata_updated",
+      "success",
+      "/api/sessions/[sessionId]",
+      "Session title updated.",
+      { session_id: session.id },
+    ),
+  );
 }
 
 export function appendMessage(

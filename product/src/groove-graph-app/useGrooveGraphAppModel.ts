@@ -7,6 +7,7 @@ import type {
   ResearchSession,
   RelationshipCandidate,
   ReviewDecisionRequest,
+  SuggestSessionTitleResponse,
   UpdateGraphCandidateRequest,
 } from "@/src/types/research-session";
 import type {
@@ -42,6 +43,11 @@ export function useGrooveGraphAppModel(): GrooveGraphAppModel {
     null,
   );
   const [graphBackendStatusLoading, setGraphBackendStatusLoading] = useState(true);
+  const [sessionCreateDialog, setSessionCreateDialog] = useState<{
+    titleDraft: string;
+  } | null>(null);
+  const [sessionCreateNamingBusy, setSessionCreateNamingBusy] = useState(false);
+  const [sessionCreateConfirmBusy, setSessionCreateConfirmBusy] = useState(false);
   const latestAssistantMessageRef = useRef<HTMLElement | null>(null);
   const mainGridRef = useRef<HTMLElement | null>(null);
   const splitDragStateRef = useRef<{
@@ -203,22 +209,72 @@ export function useGrooveGraphAppModel(): GrooveGraphAppModel {
     };
   }, [isMainGridResizing]);
 
+  function localTitleFallbackFromSeed(query: string): string {
+    const line = query.trim().split(/\r?\n/)[0]?.trim() ?? "";
+    const collapsed = line.replace(/\s+/g, " ").trim();
+    const base = collapsed.length > 0 ? collapsed : "New session";
+    return base.length <= 200 ? base : `${base.slice(0, 199)}…`;
+  }
+
   async function createSession() {
     setError(null);
-    setIsBusy(true);
+    const trimmedSeed = seedQuery.trim();
+    if (!trimmedSeed) {
+      setError("Enter a seed query first.");
+      return;
+    }
+    setSessionCreateNamingBusy(true);
+    try {
+      let suggested: string;
+      try {
+        const suggestion = await fetchJson<SuggestSessionTitleResponse>("/api/sessions/suggest-title", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ seedQuery: trimmedSeed }),
+        });
+        suggested = suggestion.suggestedTitle.trim() || localTitleFallbackFromSeed(trimmedSeed);
+      } catch {
+        suggested = localTitleFallbackFromSeed(trimmedSeed);
+      }
+      setSessionCreateDialog({ titleDraft: suggested });
+    } finally {
+      setSessionCreateNamingBusy(false);
+    }
+  }
+
+  function cancelSessionCreateDialog() {
+    setSessionCreateDialog(null);
+  }
+
+  function setSessionCreateTitleDraft(value: string) {
+    setSessionCreateDialog((current) => (current ? { titleDraft: value } : current));
+  }
+
+  async function confirmSessionCreate() {
+    if (!sessionCreateDialog) {
+      return;
+    }
+    const title = sessionCreateDialog.titleDraft.trim();
+    const trimmedSeed = seedQuery.trim();
+    if (!title || !trimmedSeed) {
+      return;
+    }
+    setError(null);
+    setSessionCreateConfirmBusy(true);
     try {
       const data = await fetchJson<WorkspaceResponse>("/api/sessions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ seedQuery }),
+        body: JSON.stringify({ seedQuery: trimmedSeed, title }),
       });
+      setSessionCreateDialog(null);
       await refreshSessions(data.session.id);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : "Failed to create session.");
     } finally {
-      setIsBusy(false);
+      setSessionCreateConfirmBusy(false);
     }
   }
 
@@ -543,7 +599,13 @@ export function useGrooveGraphAppModel(): GrooveGraphAppModel {
     tripletCandidates,
     availableKindLabels,
     latestAssistantMessageId,
+    sessionCreateDialog,
+    sessionCreateNamingBusy,
+    sessionCreateConfirmBusy,
     createSession,
+    confirmSessionCreate,
+    cancelSessionCreateDialog,
+    setSessionCreateTitleDraft,
     sendTurn,
     recordDecision,
     updateGraphCandidate,

@@ -1,24 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { WorkspaceResponse } from "@/src/components/research-workbench-model";
 import { fetchJson } from "@/src/components/research-workbench-utils";
 import {
   mergeAtlasLineageWithProposals,
   sessionHasProposedGraphCandidates,
 } from "@/src/lib/workbench-viz/atlas-lineage-proposal-graph";
+import { provisionalKindToFamily, type KindFamily } from "@/src/lib/workbench-viz/graph-viz-styles";
+import { graphVizLoadProgressForElapsed } from "@/src/lib/research-turn-progress-ui";
 import { workbenchVizToAtlasLineageGraph } from "@/src/lib/workbench-viz/workbench-viz-to-atlas-lineage";
 import type { ResearchSession } from "@/src/types/research-session";
 import type { AtlasDemoNode, AtlasSchemaKind } from "@/src/types/atlas-lineage";
 import type { WorkbenchVizApiResponse } from "@/src/types/workbench-viz-graph";
-import {
-  ATLAS_LINEAGE_FULL,
-  applyAtlasFilters,
-  extractAtlasLineageNeighborhood,
-  type AtlasDataMode,
-  type AtlasViewMode,
-} from "./atlas-lineage-demo-data";
+import { applyAtlasFilters, type AtlasViewMode } from "./atlas-lineage-demo-data";
 import { AtlasKindMultiselect } from "./AtlasKindMultiselect";
 import { AtlasLineageChatRail } from "./AtlasLineageChatRail";
 import {
@@ -26,6 +22,10 @@ import {
   type AtlasLineageGraphHandle,
 } from "./AtlasLineageGraph";
 import { AtlasLineageProposalReview } from "./AtlasLineageProposalReview";
+import { SessionCreateNameDialog } from "@/src/components/SessionCreateNameDialog";
+
+/** `select` value that triggers `POST /api/sessions` instead of selecting an id. */
+const NEW_SESSION_SELECT_VALUE = "__gg_atlas_new_session__";
 
 function IconZoomIn() {
   return (
@@ -62,44 +62,42 @@ function IconMoon() {
   );
 }
 
-function IconSearch() {
-  return (
-    <svg className="gg-atlas-lineage__search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden>
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-
 export function AtlasLineagePage() {
   const graphRef = useRef<AtlasLineageGraphHandle>(null);
-  const primaryModalBtnRef = useRef<HTMLButtonElement>(null);
 
-  const [onboarding, setOnboarding] = useState(false);
   const [viewMode, setViewMode] = useState<AtlasViewMode>("full");
   const [kinds, setKinds] = useState<AtlasSchemaKind[]>([]);
-  const [search, setSearch] = useState("");
-  const [showOrganizations, setShowOrganizations] = useState(true);
-  const [showSources, setShowSources] = useState(true);
   const [lightTheme, setLightTheme] = useState(false);
 
-  const [dataMode, setDataMode] = useState<AtlasDataMode>("typedb_global");
+  /** Graph canvas always loads TypeDB global workbench entities; session is for chat / proposals only. */
   const [sessions, setSessions] = useState<ResearchSession[]>([]);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [vizLoading, setVizLoading] = useState(false);
   const [vizError, setVizError] = useState<string | null>(null);
-  const [vizSource, setVizSource] = useState<"typedb" | "session" | null>(null);
   const [vizRaw, setVizRaw] = useState<WorkbenchVizApiResponse["graph"] | null>(null);
+  const [newSessionBusy, setNewSessionBusy] = useState(false);
+  const [newSessionSuggestBusy, setNewSessionSuggestBusy] = useState(false);
+  const [newSessionError, setNewSessionError] = useState<string | null>(null);
+  const [newSessionDialog, setNewSessionDialog] = useState<{
+    seedDraft: string;
+    titleDraft: string;
+    titleTouched: boolean;
+  } | null>(null);
+  const sessionBeforeNewRef = useRef<string | null>(null);
+  const [sessionTitleDraft, setSessionTitleDraft] = useState("");
+  const [sessionTitleBusy, setSessionTitleBusy] = useState(false);
+  const [sessionTitleError, setSessionTitleError] = useState<string | null>(null);
+  /** True after the user edits the session name field; cleared on session switch / successful save. */
+  const sessionTitleDirtyRef = useRef(false);
   /** One-hop neighborhood focus (server-side for session/TypeDB, client-side for demo). */
   const [focusNodeId, setFocusNodeId] = useState<string | null>(null);
   const [detailSession, setDetailSession] = useState<ResearchSession | null>(null);
   const [vizReloadToken, setVizReloadToken] = useState(0);
+  /** Drives elapsed-time labels while `/api/graph/viz` is in flight. */
+  const [vizProgressTick, setVizProgressTick] = useState(0);
+  const vizLoadStartedAtRef = useRef(0);
   /** Visual-only focus for proposal overlay nodes (`cand:*`); never sent to viz API. */
   const [graphHighlightId, setGraphHighlightId] = useState<string | null>(null);
-
-  const [newSessionSeed, setNewSessionSeed] = useState("");
-  const [createSessionBusy, setCreateSessionBusy] = useState(false);
-  const [createSessionError, setCreateSessionError] = useState<string | null>(null);
 
   const loadSessions = useCallback(async () => {
     try {
@@ -124,7 +122,16 @@ export function AtlasLineagePage() {
   }, []);
 
   useEffect(() => {
-    if (dataMode !== "session" || !sessionId) {
+    if (!sessionId || !detailSession || detailSession.id !== sessionId) {
+      return;
+    }
+    if (!sessionTitleDirtyRef.current) {
+      setSessionTitleDraft(detailSession.title);
+    }
+  }, [sessionId, detailSession]);
+
+  useEffect(() => {
+    if (!sessionId) {
       setDetailSession(null);
       return;
     }
@@ -146,7 +153,7 @@ export function AtlasLineagePage() {
     return () => {
       cancelled = true;
     };
-  }, [dataMode, sessionId]);
+  }, [sessionId]);
 
   const handleSessionUpdated = useCallback(
     (s: ResearchSession) => {
@@ -157,73 +164,168 @@ export function AtlasLineagePage() {
     [bumpViz],
   );
 
-  const handleCreateSession = useCallback(
-    async (e?: FormEvent) => {
-      e?.preventDefault();
-      const trimmed = newSessionSeed.trim();
-      if (!trimmed || createSessionBusy) {
+  useEffect(() => {
+    if (!newSessionDialog || newSessionDialog.titleTouched) {
+      return;
+    }
+    const seed = newSessionDialog.seedDraft.trim();
+    if (seed.length < 2) {
+      return;
+    }
+    let cancelled = false;
+    const tid = window.setTimeout(() => {
+      void (async () => {
+        setNewSessionSuggestBusy(true);
+        try {
+          const res = await fetch("/api/sessions/suggest-title", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ seedQuery: seed }),
+          });
+          if (cancelled || !res.ok) {
+            return;
+          }
+          const body = (await res.json()) as { suggestedTitle?: string };
+          if (cancelled) {
+            return;
+          }
+          const suggested = typeof body.suggestedTitle === "string" ? body.suggestedTitle.trim() : "";
+          if (!suggested) {
+            return;
+          }
+          setNewSessionDialog((d) => (d && !d.titleTouched ? { ...d, titleDraft: suggested } : d));
+        } catch {
+          /* network */
+        } finally {
+          if (!cancelled) {
+            setNewSessionSuggestBusy(false);
+          }
+        }
+      })();
+    }, 480);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(tid);
+    };
+  }, [newSessionDialog?.seedDraft, newSessionDialog?.titleTouched]);
+
+  const confirmNewSessionDialog = useCallback(async () => {
+    if (!newSessionDialog) {
+      return;
+    }
+    const seedQuery = newSessionDialog.seedDraft.trim();
+    const title = newSessionDialog.titleDraft.trim();
+    if (!seedQuery || !title) {
+      return;
+    }
+    setNewSessionError(null);
+    setNewSessionBusy(true);
+    try {
+      const data = await fetchJson<WorkspaceResponse>("/api/sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ seedQuery, title }),
+      });
+      const created = data.session;
+      setNewSessionDialog(null);
+      setSessions((prev) => [created, ...prev.filter((s) => s.id !== created.id)]);
+      setDetailSession(created);
+      sessionTitleDirtyRef.current = false;
+      setSessionTitleDraft(created.title);
+      setSessionTitleError(null);
+      setSessionId(created.id);
+      setKinds([]);
+      setFocusNodeId(null);
+      void loadSessions();
+    } catch (err: unknown) {
+      setNewSessionError(err instanceof Error ? err.message : "Could not create session.");
+    } finally {
+      setNewSessionBusy(false);
+    }
+  }, [loadSessions, newSessionDialog]);
+
+  const cancelNewSessionDialog = useCallback(() => {
+    setNewSessionDialog(null);
+    setNewSessionError(null);
+  }, []);
+
+  const onSessionSelectChange = useCallback(
+    (value: string) => {
+      setNewSessionError(null);
+      if (value === NEW_SESSION_SELECT_VALUE) {
+        sessionBeforeNewRef.current = sessionId;
+        setNewSessionDialog({ seedDraft: "", titleDraft: "", titleTouched: false });
         return;
       }
-      setCreateSessionBusy(true);
-      setCreateSessionError(null);
-      try {
-        const data = await fetchJson<WorkspaceResponse>("/api/sessions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ seedQuery: trimmed }),
-        });
-        const created = data.session;
-        setSessions((prev) => [created, ...prev.filter((s) => s.id !== created.id)]);
-        setDetailSession(created);
-        setNewSessionSeed("");
-        setSessionId(created.id);
-        setDataMode("session");
-        setKinds([]);
-        setFocusNodeId(null);
-      } catch (err: unknown) {
-        setCreateSessionError(err instanceof Error ? err.message : "Failed to create session.");
-      } finally {
-        setCreateSessionBusy(false);
+      sessionTitleDirtyRef.current = false;
+      setSessionTitleError(null);
+      if (!value) {
+        setSessionTitleDraft("");
+        setSessionId(null);
+        return;
       }
+      setSessionId(value);
+      const picked = sessions.find((s) => s.id === value);
+      setSessionTitleDraft(picked?.title ?? "");
     },
-    [newSessionSeed, createSessionBusy],
+    [sessions, sessionId],
   );
+
+  const saveSessionTitle = useCallback(async () => {
+    if (!sessionId || !detailSession || detailSession.id !== sessionId) {
+      return;
+    }
+    const next = sessionTitleDraft.trim();
+    if (!next || next === detailSession.title.trim()) {
+      return;
+    }
+    setSessionTitleError(null);
+    setSessionTitleBusy(true);
+    try {
+      const data = await fetchJson<WorkspaceResponse>(
+        `/api/sessions/${encodeURIComponent(sessionId)}`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: next }),
+        },
+      );
+      sessionTitleDirtyRef.current = false;
+      handleSessionUpdated(data.session);
+    } catch (err: unknown) {
+      setSessionTitleError(err instanceof Error ? err.message : "Could not save session name.");
+    } finally {
+      setSessionTitleBusy(false);
+    }
+  }, [sessionId, detailSession, sessionTitleDraft, handleSessionUpdated]);
+
+  const sessionTitleDirty =
+    sessionId !== null &&
+    detailSession !== null &&
+    detailSession.id === sessionId &&
+    sessionTitleDraft.trim() !== detailSession.title.trim();
 
   useEffect(() => {
     setFocusNodeId(null);
     setGraphHighlightId(null);
-  }, [dataMode, sessionId]);
+  }, [sessionId]);
 
   useEffect(() => {
     setGraphHighlightId(null);
   }, [focusNodeId]);
 
   useEffect(() => {
-    if (dataMode === "demo") {
-      setVizRaw(null);
-      setVizError(null);
-      setVizSource(null);
-      setVizLoading(false);
-      return;
-    }
-
-    if (dataMode === "session" && !sessionId) {
-      setVizRaw(null);
-      setVizError(null);
-      setVizSource(null);
-      setVizLoading(false);
-      return;
-    }
-
     let cancelled = false;
+    vizLoadStartedAtRef.current = Date.now();
+    setVizProgressTick(0);
+    const progressInterval = window.setInterval(() => {
+      setVizProgressTick((n) => n + 1);
+    }, 450);
     setVizLoading(true);
     setVizError(null);
 
     const focusQs = focusNodeId ? `?focusNodeId=${encodeURIComponent(focusNodeId)}` : "";
-    const vizUrl =
-      dataMode === "typedb_global"
-        ? `/api/graph/viz${focusQs}`
-        : `/api/sessions/${encodeURIComponent(sessionId as string)}/graph/viz${focusQs}`;
+    const vizUrl = `/api/graph/viz${focusQs}`;
 
     async function parseVizError(res: Response): Promise<string> {
       const text = await res.text();
@@ -247,12 +349,10 @@ export function AtlasLineagePage() {
       .then((body) => {
         if (cancelled) return;
         setVizRaw(body.graph);
-        setVizSource(body.source);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
         setVizRaw(null);
-        setVizSource(null);
         setVizError(err instanceof Error ? err.message : "Failed to load graph");
       })
       .finally(() => {
@@ -262,28 +362,47 @@ export function AtlasLineagePage() {
       });
     return () => {
       cancelled = true;
+      window.clearInterval(progressInterval);
     };
-  }, [dataMode, sessionId, focusNodeId, vizReloadToken]);
+  }, [focusNodeId, vizReloadToken]);
+
+  /** `null` until first viz payload; then distinct kind families from graph (or empty if no nodes). */
+  const kindFamiliesFromGraph = useMemo((): KindFamily[] | null => {
+    if (vizRaw === null) {
+      return null;
+    }
+    if (!vizRaw.nodes?.length) {
+      return [];
+    }
+    const set = new Set<KindFamily>();
+    for (const n of vizRaw.nodes) {
+      set.add(provisionalKindToFamily(n.subtitle));
+    }
+    return [...set].sort((a, b) => a.localeCompare(b));
+  }, [vizRaw]);
+
+  useEffect(() => {
+    if (kindFamiliesFromGraph === null) {
+      return;
+    }
+    setKinds((prev) =>
+      prev.filter((k) => kindFamiliesFromGraph.length === 0 || kindFamiliesFromGraph.includes(k as KindFamily)),
+    );
+  }, [kindFamiliesFromGraph]);
 
   const vizAtlasGraph = useMemo(() => {
-    if (dataMode === "demo") {
-      if (!focusNodeId) {
-        return ATLAS_LINEAGE_FULL;
-      }
-      return extractAtlasLineageNeighborhood(ATLAS_LINEAGE_FULL, focusNodeId) ?? ATLAS_LINEAGE_FULL;
-    }
     if (!vizRaw) {
       return workbenchVizToAtlasLineageGraph({ nodes: [], edges: [] });
     }
     return workbenchVizToAtlasLineageGraph(vizRaw);
-  }, [dataMode, vizRaw, focusNodeId]);
+  }, [vizRaw]);
 
   const baseGraph = useMemo(() => {
-    if (dataMode !== "session" || !detailSession || !sessionHasProposedGraphCandidates(detailSession)) {
+    if (!detailSession || !sessionHasProposedGraphCandidates(detailSession)) {
       return vizAtlasGraph;
     }
     return mergeAtlasLineageWithProposals(vizAtlasGraph, detailSession);
-  }, [dataMode, detailSession, vizAtlasGraph]);
+  }, [detailSession, vizAtlasGraph]);
 
   const resolvedSession =
     detailSession ??
@@ -303,61 +422,31 @@ export function AtlasLineagePage() {
       applyAtlasFilters(baseGraph, {
         viewMode,
         kinds,
-        search,
-        showOrganizations,
-        showSources,
-        dataMode,
+        search: "",
+        showOrganizations: true,
+        showSources: true,
+        dataMode: "typedb_global",
       }),
-    [baseGraph, viewMode, kinds, search, showOrganizations, showSources, dataMode],
+    [baseGraph, viewMode, kinds],
   );
 
-  useEffect(() => {
-    if (!onboarding) return;
-    const t = window.setTimeout(() => primaryModalBtnRef.current?.focus(), 0);
-    return () => window.clearTimeout(t);
-  }, [onboarding]);
+  const graphStageLoading = vizLoading && !vizRaw;
+  const graphStageError = !vizRaw && Boolean(vizError);
 
-  useEffect(() => {
-    if (!onboarding) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOnboarding(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onboarding]);
-
-  const startEssential = useCallback(() => {
-    setViewMode("essential");
-    setOnboarding(false);
-  }, []);
-
-  const startFull = useCallback(() => {
-    setViewMode("full");
-    setOnboarding(false);
-  }, []);
-
-  const onDataModeChange = useCallback((next: AtlasDataMode) => {
-    setDataMode(next);
-    setKinds([]);
-    setFocusNodeId(null);
-  }, []);
-
-  const orgChipLabel = dataMode === "demo" ? "Organizations" : "People & orgs";
-  const srcChipLabel = dataMode === "demo" ? "Sources" : "Media & gear";
-  const showSessionControls = dataMode === "session";
-  const showVizStatus = dataMode === "session" || dataMode === "typedb_global";
-  const liveGraphTarget =
-    dataMode === "typedb_global" || (dataMode === "session" && Boolean(sessionId));
-  const graphStageLoading = liveGraphTarget && vizLoading && !vizRaw;
-  const graphStageError = liveGraphTarget && !vizRaw && Boolean(vizError);
-  const graphStagePickSession = dataMode === "session" && !sessionId;
+  const vizLoadProgressUi = useMemo(() => {
+    if (!vizLoading) {
+      return null;
+    }
+    void vizProgressTick;
+    const elapsedMs = Date.now() - vizLoadStartedAtRef.current;
+    return graphVizLoadProgressForElapsed(elapsedMs, focusNodeId !== null);
+  }, [vizLoading, vizProgressTick, focusNodeId]);
 
   const emptyLiveGraphMessage =
-    liveGraphTarget &&
     vizRaw &&
     baseGraph.nodes.length === 0 &&
     filtered.nodes.length === 0
-      ? "No graph entities in this scope. Add entities in the workbench or choose another session or data source."
+      ? "No graph entities in this scope. Add entities in the workbench from TypeDB."
       : undefined;
 
   const rootClass = lightTheme ? "gg-atlas-lineage gg-atlas-lineage--light" : "gg-atlas-lineage";
@@ -369,217 +458,116 @@ export function AtlasLineagePage() {
           <p className="gg-atlas-lineage__kicker">GrooveGraph</p>
           <p className="gg-atlas-lineage__title">Lineage explorer</p>
         </Link>
-        <nav className="gg-atlas-lineage__nav" aria-label="Prototype navigation">
-          <Link className="gg-atlas-lineage__pill" href="/main">
-            Workbench
-          </Link>
-          <Link className="gg-atlas-lineage__pill" href="/viz-check">
-            Viz check
-          </Link>
-          <button
-            type="button"
-            className="gg-atlas-lineage__pill"
-            onClick={() => setOnboarding(true)}
-          >
-            Starting view…
-          </button>
-        </nav>
       </header>
 
-      <div
-        className={`gg-atlas-lineage__backdrop ${onboarding ? "gg-atlas-lineage__backdrop--open" : ""}`}
-        aria-hidden={!onboarding}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) setOnboarding(false);
-        }}
-      >
-        {onboarding ? (
-          <div
-            className="gg-atlas-lineage__modal"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="atlas-onboarding-title"
+      <div className="gg-atlas-lineage__data-strip" role="region" aria-label="Session and graph filters">
+        <div className="gg-atlas-lineage__data-strip-primary">
+          <label htmlFor="atlas-session" className="sr-only">
+            Research session (chat and proposals)
+          </label>
+          <select
+            id="atlas-session"
+            className="gg-atlas-lineage__select gg-atlas-lineage__select--session"
+            value={newSessionDialog ? (sessionBeforeNewRef.current ?? "") : (sessionId ?? "")}
+            disabled={newSessionBusy || newSessionDialog !== null}
+            onChange={(e) => onSessionSelectChange(e.target.value)}
           >
-            <h2 id="atlas-onboarding-title" className="gg-atlas-lineage__modal-title">
-              Choose your starting view
-            </h2>
-            <p className="gg-atlas-lineage__modal-body">
-              Use <strong>Entire database</strong> to load every workbench entity in TypeDB (no session pick). Use{" "}
-              <strong>Live session</strong> for one session’s graph. Use <strong>Demo graph</strong> for the offline sample.
-              Refine with the type filter and <span className="gg-atlas-lineage__modal-tag">search</span> above the canvas.
-            </p>
-            <div className="gg-atlas-lineage__modal-actions">
-              <button
-                ref={primaryModalBtnRef}
-                type="button"
-                className="gg-atlas-lineage__btn-primary"
-                onClick={startEssential}
-              >
-                Essentials only
-                <span className="gg-atlas-lineage__btn-caption">Accepted entities &amp; key links</span>
-              </button>
-              <button type="button" className="gg-atlas-lineage__btn-secondary" onClick={startFull}>
-                Full graph
-                <span className="gg-atlas-lineage__btn-caption">Everything in scope</span>
-              </button>
-            </div>
+            <option value="">Select session…</option>
+            <option value={NEW_SESSION_SELECT_VALUE}>
+              {newSessionBusy ? "Creating session…" : "+ New session…"}
+            </option>
+            {sessions.map((s) => (
+              <option key={s.id} value={s.id}>
+                {(s.title || s.seedQuery || s.id).slice(0, 72)}
+              </option>
+            ))}
+          </select>
+          <div className="gg-atlas-lineage__data-strip-kind" role="toolbar" aria-label="Graph type filters">
+            <span className="sr-only" id="atlas-kind-label">
+              Filter by entity type (multi-select)
+            </span>
+            <AtlasKindMultiselect
+              aria-labelledby="atlas-kind-label"
+              variant="live"
+              value={kinds}
+              onChange={setKinds}
+              kindFamiliesFromGraph={kindFamiliesFromGraph}
+            />
+          </div>
+        </div>
+        {sessionId && detailSession && detailSession.id === sessionId ? (
+          <div className="gg-atlas-lineage__session-title-group">
+            <label htmlFor="atlas-session-name" className="sr-only">
+              Session display name
+            </label>
+            <input
+              id="atlas-session-name"
+              type="text"
+              className="gg-atlas-lineage__session-title-input"
+              value={sessionTitleDraft}
+              onChange={(e) => {
+                sessionTitleDirtyRef.current = true;
+                setSessionTitleDraft(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void saveSessionTitle();
+                }
+              }}
+              disabled={sessionTitleBusy || newSessionBusy || newSessionDialog !== null}
+              placeholder="Session name"
+              autoComplete="off"
+              maxLength={220}
+              aria-invalid={Boolean(sessionTitleError)}
+            />
+            <button
+              type="button"
+              className="gg-atlas-lineage__btn-secondary gg-atlas-lineage__session-title-save"
+              disabled={
+                sessionTitleBusy ||
+                newSessionBusy ||
+                !sessionTitleDraft.trim() ||
+                !sessionTitleDirty
+              }
+              onClick={() => void saveSessionTitle()}
+            >
+              {sessionTitleBusy ? "Saving…" : "Save name"}
+            </button>
           </div>
         ) : null}
-      </div>
-
-      <div className="gg-atlas-lineage__data-strip" role="region" aria-label="Data source">
-        <label htmlFor="atlas-data-mode" className="sr-only">
-          Graph data source
-        </label>
-        <select
-          id="atlas-data-mode"
-          className="gg-atlas-lineage__select gg-atlas-lineage__select--data"
-          value={dataMode}
-          onChange={(e) => onDataModeChange(e.target.value as AtlasDataMode)}
-        >
-          <option value="typedb_global">Entire database (TypeDB)</option>
-          <option value="session">Live session (TypeDB / session)</option>
-          <option value="demo">Demo graph (offline)</option>
-        </select>
-        {showSessionControls ? (
-          <>
-            <label htmlFor="atlas-session" className="sr-only">
-              Research session
-            </label>
-            <select
-              id="atlas-session"
-              className="gg-atlas-lineage__select gg-atlas-lineage__select--session"
-              value={sessionId ?? ""}
-              onChange={(e) => setSessionId(e.target.value || null)}
-            >
-              {sessions.length === 0 ? (
-                <option value="">No sessions — create one in Workbench</option>
-              ) : (
-                <>
-                  <option value="">Select session…</option>
-                  {sessions.map((s) => (
-                    <option key={s.id} value={s.id}>
-                      {(s.title || s.seedQuery || s.id).slice(0, 72)}
-                    </option>
-                  ))}
-                </>
-              )}
-            </select>
-          </>
+        {sessionTitleError ? (
+          <span className="gg-atlas-lineage__status gg-atlas-lineage__status--error" role="alert">
+            {sessionTitleError}
+          </span>
         ) : null}
-        {showVizStatus ? (
-          <>
-            {vizSource ? (
-              <span className="gg-atlas-lineage__source-badge" title="Graph payload origin">
-                Source: {vizSource === "typedb" ? "TypeDB" : "Session file"}
-              </span>
-            ) : null}
-            {vizLoading ? <span className="gg-atlas-lineage__status">Loading…</span> : null}
-            {vizError ? (
-              <span className="gg-atlas-lineage__status gg-atlas-lineage__status--error" role="alert">
-                {vizError}
-              </span>
-            ) : null}
-            {focusNodeId ? (
-              <button
-                type="button"
-                className="gg-atlas-lineage__focus-clear"
-                onClick={() => setFocusNodeId(null)}
-              >
-                Clear focus (full graph)
-              </button>
-            ) : null}
-          </>
-        ) : focusNodeId ? (
-          <button
-            type="button"
-            className="gg-atlas-lineage__focus-clear"
-            onClick={() => setFocusNodeId(null)}
+        {newSessionError ? (
+          <span className="gg-atlas-lineage__status gg-atlas-lineage__status--error" role="alert">
+            {newSessionError}
+          </span>
+        ) : null}
+        {vizLoadProgressUi ? (
+          <div
+            className="gg-atlas-lineage__viz-strip-progress"
+            role="status"
+            aria-live="polite"
+            aria-busy="true"
           >
+            <span className="gg-atlas-lineage__viz-strip-phase">{vizLoadProgressUi.phaseLabel}</span>
+            <span className="gg-atlas-lineage__viz-strip-detail">{vizLoadProgressUi.detailLine}</span>
+            <span className="gg-atlas-lineage__viz-strip-eta">{vizLoadProgressUi.etaLine}</span>
+          </div>
+        ) : null}
+        {vizError ? (
+          <span className="gg-atlas-lineage__status gg-atlas-lineage__status--error" role="alert">
+            {vizError}
+          </span>
+        ) : null}
+        {focusNodeId ? (
+          <button type="button" className="gg-atlas-lineage__focus-clear" onClick={() => setFocusNodeId(null)}>
             Clear focus (full graph)
           </button>
         ) : null}
-      </div>
-
-      <form
-        className="gg-atlas-lineage__new-session-strip"
-        role="region"
-        aria-label="New research session"
-        onSubmit={(e) => void handleCreateSession(e)}
-      >
-        <p className="gg-atlas-lineage__new-session-kicker">New query</p>
-        <label htmlFor="atlas-new-session-seed" className="sr-only">
-          Seed query for a new research session
-        </label>
-        <input
-          id="atlas-new-session-seed"
-          className="gg-atlas-lineage__new-session-input"
-          value={newSessionSeed}
-          onChange={(e) => {
-            setNewSessionSeed(e.target.value);
-            if (createSessionError) setCreateSessionError(null);
-          }}
-          placeholder="Artist, URL, question…"
-          autoComplete="off"
-          disabled={createSessionBusy}
-        />
-        <button
-          type="submit"
-          className="gg-atlas-lineage__btn-create-session"
-          disabled={createSessionBusy || !newSessionSeed.trim()}
-        >
-          {createSessionBusy ? "Creating…" : "Create session"}
-        </button>
-        <Link href="/main" className="gg-atlas-lineage__new-session-link">
-          Open workbench
-        </Link>
-        {createSessionError ? (
-          <p className="gg-atlas-lineage__new-session-error" role="alert">
-            {createSessionError}
-          </p>
-        ) : null}
-      </form>
-
-      <div className="gg-atlas-lineage__filter-strip" role="toolbar" aria-label="Graph filters">
-        <span className="sr-only" id="atlas-kind-label">
-          Filter by entity type (multi-select)
-        </span>
-        <AtlasKindMultiselect
-          aria-labelledby="atlas-kind-label"
-          variant={dataMode === "demo" ? "demo" : "live"}
-          value={kinds}
-          onChange={setKinds}
-        />
-        <button
-          type="button"
-          className={`gg-atlas-lineage__chip ${showOrganizations ? "gg-atlas-lineage__chip--on" : ""}`}
-          onClick={() => setShowOrganizations((v) => !v)}
-          aria-pressed={showOrganizations}
-        >
-          {orgChipLabel} {showOrganizations ? "✓" : ""}
-        </button>
-        <button
-          type="button"
-          className={`gg-atlas-lineage__chip ${showSources ? "gg-atlas-lineage__chip--on" : ""}`}
-          onClick={() => setShowSources((v) => !v)}
-          aria-pressed={showSources}
-        >
-          {srcChipLabel} {showSources ? "✓" : ""}
-        </button>
-        <div className="gg-atlas-lineage__search-wrap">
-          <IconSearch />
-          <label htmlFor="atlas-search" className="sr-only">
-            Search nodes
-          </label>
-          <input
-            id="atlas-search"
-            className="gg-atlas-lineage__search-input"
-            placeholder="Search…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            autoComplete="off"
-          />
-        </div>
       </div>
 
       <main className="gg-atlas-lineage__main">
@@ -587,11 +575,10 @@ export function AtlasLineagePage() {
           <AtlasLineageChatRail
             sessionId={sessionId}
             session={resolvedSession}
-            dataMode={dataMode}
             onSessionUpdated={handleSessionUpdated}
           />
           <div className="gg-atlas-lineage__work-column">
-            {dataMode === "session" && sessionId ? (
+            {sessionId ? (
               <AtlasLineageProposalReview
                 session={detailSession}
                 sessionId={sessionId}
@@ -600,10 +587,11 @@ export function AtlasLineagePage() {
               />
             ) : null}
             <div className="gg-atlas-lineage__stage-wrap">
-              {graphStagePickSession ? (
-                <div className="gg-atlas-lineage__empty" role="status">
-                  Select a research session above, or choose <strong>Entire database</strong> to load all workbench
-                  entities from TypeDB.
+              {graphStageLoading && vizLoadProgressUi ? (
+                <div className="gg-atlas-lineage__empty gg-atlas-lineage__graph-load-progress" role="status">
+                  <p className="gg-atlas-lineage__graph-load-progress-title">{vizLoadProgressUi.phaseLabel}</p>
+                  <p className="gg-atlas-lineage__graph-load-progress-detail">{vizLoadProgressUi.detailLine}</p>
+                  <p className="gg-atlas-lineage__graph-load-progress-eta">{vizLoadProgressUi.etaLine}</p>
                 </div>
               ) : graphStageLoading ? (
                 <div className="gg-atlas-lineage__empty" role="status">
@@ -670,6 +658,23 @@ export function AtlasLineagePage() {
           </div>
         </div>
       </main>
+
+      <SessionCreateNameDialog
+        open={newSessionDialog !== null}
+        mode="prompt-and-name"
+        promptValue={newSessionDialog?.seedDraft ?? ""}
+        onPromptChange={(value) => setNewSessionDialog((d) => (d ? { ...d, seedDraft: value } : d))}
+        nameValue={newSessionDialog?.titleDraft ?? ""}
+        onNameChange={(value) =>
+          setNewSessionDialog((d) => (d ? { ...d, titleDraft: value, titleTouched: true } : d))
+        }
+        suggestBusy={newSessionSuggestBusy}
+        confirmBusy={newSessionBusy}
+        error={newSessionError}
+        onCancel={cancelNewSessionDialog}
+        onConfirm={() => void confirmNewSessionDialog()}
+        variant="light"
+      />
     </div>
   );
 }

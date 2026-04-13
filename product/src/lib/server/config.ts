@@ -83,6 +83,11 @@ export function getExtractionModel(): string {
   return process.env.OPENAI_RESEARCH_EXTRACTION_MODEL ?? "gpt-5.4-mini";
 }
 
+/** Small / fast model for one-line session titles from the seed prompt. */
+export function getSessionTitleSuggestModel(): string {
+  return process.env.OPENAI_SESSION_TITLE_MODEL ?? "gpt-4o-mini";
+}
+
 type TypeDbConnectionConfig = {
   username: string;
   password: string;

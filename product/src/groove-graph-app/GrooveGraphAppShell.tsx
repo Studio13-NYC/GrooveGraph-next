@@ -30,6 +30,7 @@ import {
   TripletEntitySummary,
 } from "@/src/components/research-workbench-widgets";
 import type { GraphBackendStatusPayload } from "@/src/components/research-workbench-model";
+import { SessionCreateNameDialog } from "@/src/components/SessionCreateNameDialog";
 import type { GrooveGraphAppModel } from "./groove-graph-app-model";
 import styles from "./GrooveGraphAppShell.module.css";
 
@@ -83,7 +84,13 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
     tripletCandidates,
     availableKindLabels,
     latestAssistantMessageId,
+    sessionCreateDialog,
+    sessionCreateNamingBusy,
+    sessionCreateConfirmBusy,
     createSession,
+    confirmSessionCreate,
+    cancelSessionCreateDialog,
+    setSessionCreateTitleDraft,
     sendTurn,
     recordDecision,
     beginTripletEdit,
@@ -107,6 +114,19 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
     () => selectedSession?.claims.filter((claim) => claim.status === "proposed") ?? [],
     [selectedSession?.claims],
   );
+
+  const openSessionBusy =
+    isBusy ||
+    sessionCreateNamingBusy ||
+    sessionCreateConfirmBusy ||
+    sessionCreateDialog !== null;
+  const openSessionLabel = sessionCreateConfirmBusy
+    ? "Creating…"
+    : sessionCreateNamingBusy
+      ? "Preparing…"
+      : isBusy
+        ? "Working…"
+        : "Open session";
 
   const sessionVizFallback = useMemo(
     () => (selectedSession ? buildVizGraphFromSession(selectedSession) : null),
@@ -682,7 +702,8 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
               createSession={createSession}
               formatTimestamp={formatTimestamp}
               indexCollapsed={indexCollapsed}
-              isBusy={isBusy}
+              openSessionBusy={openSessionBusy}
+              openSessionLabel={openSessionLabel}
               seedQuery={seedQuery}
               selectedSessionId={selectedSessionId}
               sessions={sessions}
@@ -723,7 +744,8 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
                 createSession={createSession}
                 formatTimestamp={formatTimestamp}
                 indexCollapsed={indexCollapsed}
-                isBusy={isBusy}
+                openSessionBusy={openSessionBusy}
+                openSessionLabel={openSessionLabel}
                 railClassName={styles.gridIndex}
                 seedQuery={seedQuery}
                 selectedSessionId={selectedSessionId}
@@ -840,6 +862,19 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
           </div>
         </div>
       </footer>
+
+      <SessionCreateNameDialog
+        open={sessionCreateDialog !== null}
+        mode="name-only"
+        nameValue={sessionCreateDialog?.titleDraft ?? ""}
+        onNameChange={setSessionCreateTitleDraft}
+        suggestBusy={sessionCreateNamingBusy}
+        confirmBusy={sessionCreateConfirmBusy}
+        error={sessionCreateDialog ? error : null}
+        onCancel={cancelSessionCreateDialog}
+        onConfirm={() => void confirmSessionCreate()}
+        variant="dark"
+      />
     </main>
   );
 }
@@ -859,7 +894,8 @@ function AppIndexRail({
   createSession,
   formatTimestamp,
   indexCollapsed,
-  isBusy,
+  openSessionBusy,
+  openSessionLabel,
   railClassName,
   seedQuery,
   selectedSessionId,
@@ -872,7 +908,8 @@ function AppIndexRail({
   createSession: () => Promise<void>;
   formatTimestamp: TimestampFormatter;
   indexCollapsed: boolean;
-  isBusy: boolean;
+  openSessionBusy: boolean;
+  openSessionLabel: string;
   railClassName?: string;
   seedQuery: string;
   selectedSessionId: string | null;
@@ -906,11 +943,11 @@ function AppIndexRail({
             type="button"
             className="gg-next-cta gg-next-cta--rail-icon"
             onClick={() => void createSession()}
-            disabled={isBusy}
+            disabled={openSessionBusy}
             title="Open session (expand index to edit seed)"
             aria-label="Open session"
           >
-            {isBusy ? "…" : "+"}
+            {openSessionBusy ? "…" : "+"}
           </button>
           <ul className="gg-next-index-collapsed-list" aria-label="Past sessions">
             {sessions.map((session) => {
@@ -984,9 +1021,9 @@ function AppIndexRail({
                 type="button"
                 className="gg-next-cta"
                 onClick={() => void createSession()}
-                disabled={isBusy}
+                disabled={openSessionBusy}
               >
-                {isBusy ? "Opening…" : "Open session"}
+                {openSessionLabel}
               </button>
             </div>
           </div>

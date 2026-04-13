@@ -1,4 +1,5 @@
 import type { ResearchSession } from "@/src/types/research-session";
+import { pruneWorkbenchVizIsolatedNodes } from "@/src/lib/workbench-viz/filter-viz-isolated-nodes";
 import type { WorkbenchVizEdge, WorkbenchVizGraph, WorkbenchVizNode } from "@/src/types/workbench-viz-graph";
 
 /**
@@ -45,8 +46,8 @@ export function buildVizGraphFromSession(session: ResearchSession): WorkbenchViz
     });
   }
 
-  return {
+  return pruneWorkbenchVizIsolatedNodes({
     nodes: [...nodeById.values()],
     edges,
-  };
+  });
 }

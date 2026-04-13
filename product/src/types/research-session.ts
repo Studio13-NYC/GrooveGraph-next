@@ -77,6 +77,7 @@ export interface SessionEvent {
     | "tool_completed"
     | "decision_recorded"
     | "candidate_updated"
+    | "session_metadata_updated"
     | "workflow_failed";
   outcome: "success" | "failure";
   route: string;
@@ -107,6 +108,17 @@ export interface ResearchSession {
 
 export interface CreateSessionRequest {
   seedQuery: string;
+  /** Display title; omit to derive from `seedQuery` only (legacy clients). */
+  title?: string;
+}
+
+export interface SuggestSessionTitleResponse {
+  suggestedTitle: string;
+}
+
+/** PATCH `/api/sessions/:sessionId` — display title only; does not change `seedQuery`. */
+export interface UpdateSessionRequest {
+  title: string;
 }
 
 /** Conversation style for `/api/sessions/:id/turn` (LLM instructions). */

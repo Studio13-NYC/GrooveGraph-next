@@ -1115,6 +1115,13 @@
   margin-top: 4px;
 }
 
+.gg-atlas-lineage__proposal-actions-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
 .gg-atlas-lineage__proposal-actions > .gg-atlas-lineage__btn-primary {
   align-self: flex-end;
 }

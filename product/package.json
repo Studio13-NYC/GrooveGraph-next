@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "tsx --test src/lib/server/graph-persistence/helpers.test.ts",
+    "test": "tsx --test src/lib/server/graph-persistence/helpers.test.ts src/lib/server/session-graph-hygiene.test.ts",
     "import:neo4j-dump": "tsx scripts/import-neo4j-dump-json-to-typedb.ts",
     "typedb:graph-taxonomy": "tsx scripts/typedb-graph-taxonomy-audit.ts"
   },

@@ -103,6 +103,7 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
     graphBackendStatus,
     graphBackendStatusLoading,
     refreshGraphBackendStatus,
+    runGraphHygiene,
   } = model;
 
   const pendingTripletReview = useMemo(
@@ -812,6 +813,17 @@ export function GrooveGraphAppShell({ model }: { model: GrooveGraphAppModel }) {
                   ? `${truncateFoot(selectedSession.title, 36)} · ${formatTimestamp(selectedSession.updatedAt)}`
                   : "—"}
               </span>
+              {selectedSession ? (
+                <button
+                  type="button"
+                  className="gg-next-footer-recheck"
+                  onClick={() => void runGraphHygiene()}
+                  disabled={isBusy}
+                  title="Merge duplicate entity candidates and repair relationship edges"
+                >
+                  Clean graph
+                </button>
+              ) : null}
             </div>
             <div className="gg-next-footer-cell gg-next-footer-cell--styleguide">
               <Link href="/design" className="gg-next-footer-styleguide">

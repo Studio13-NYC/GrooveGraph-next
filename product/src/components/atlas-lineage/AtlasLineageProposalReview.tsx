@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { WorkspaceResponse } from "@/src/components/research-workbench-model";
 import { fetchJson, normalizeAliases } from "@/src/components/research-workbench-utils";
 import { publishToDbProgressForElapsed } from "@/src/lib/research-turn-progress-ui";
+import type { GraphHygieneReport } from "@/src/lib/server/session-graph-hygiene";
 import { isNovelProvisionalKind } from "@/src/lib/workbench-viz/graph-viz-styles";
 import type { EntityCandidate, RelationshipCandidate, ResearchSession } from "@/src/types/research-session";
 
@@ -84,6 +85,9 @@ export function AtlasLineageProposalReview({
   /** Provisional kind string key (same as kindRows) being renamed via table row. */
   const [kindRowEditing, setKindRowEditing] = useState<string | null>(null);
 
+  const [hygieneBusy, setHygieneBusy] = useState(false);
+  const [hygieneError, setHygieneError] = useState<string | null>(null);
+
   const proposedEntities = useMemo(
     () => session?.entityCandidates.filter((e) => e.status === "proposed") ?? [],
     [session],
@@ -153,6 +157,7 @@ export function AtlasLineageProposalReview({
       setKindRowEditing(null);
       setRowError(null);
       setRowBusyKey(null);
+      setHygieneError(null);
     }
   }, [sessionId]);
 
@@ -205,6 +210,25 @@ export function AtlasLineageProposalReview({
     },
     [sessionId, renameDrafts, onSessionUpdated],
   );
+
+  const runGraphHygiene = useCallback(async () => {
+    if (!sessionId) {
+      return;
+    }
+    setHygieneError(null);
+    setHygieneBusy(true);
+    try {
+      const data = await fetchJson<SessionPayload & { report: GraphHygieneReport }>(
+        `/api/sessions/${encodeURIComponent(sessionId)}/hygiene`,
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" },
+      );
+      onSessionUpdated(data.session);
+    } catch (err: unknown) {
+      setHygieneError(err instanceof Error ? err.message : "Graph hygiene failed.");
+    } finally {
+      setHygieneBusy(false);
+    }
+  }, [sessionId, onSessionUpdated]);
 
   const publish = useCallback(async () => {
     if (!sessionId) return;
@@ -888,10 +912,28 @@ export function AtlasLineageProposalReview({
             <p className="gg-atlas-lineage__proposal-publish-progress-eta">{publishProgressUi.etaLine}</p>
           </div>
         ) : null}
+        <div className="gg-atlas-lineage__proposal-actions-row">
+          <button
+            type="button"
+            className="gg-atlas-lineage__btn-secondary"
+            disabled={
+              !sessionId || hygieneBusy || publishBusy || rowBusy || kindTableLocksUi || renameBusyKind !== null
+            }
+            onClick={() => void runGraphHygiene()}
+            title="Merge duplicate entities (same name, alias, or external id) and remove bad edges"
+          >
+            {hygieneBusy ? "Cleaning graph…" : "Clean graph (dedupe)"}
+          </button>
+        </div>
+        {hygieneError ? (
+          <p className="gg-atlas-lineage__proposal-inline-error" role="alert">
+            {hygieneError}
+          </p>
+        ) : null}
         <button
           type="button"
           className="gg-atlas-lineage__btn-primary"
-          disabled={!sessionId || !hasProposals || publishBusy || rowBusy || kindTableLocksUi}
+          disabled={!sessionId || !hasProposals || publishBusy || rowBusy || kindTableLocksUi || hygieneBusy}
           onClick={() => void publish()}
         >
           {publishBusy && publishProgressUi ? `${publishProgressUi.phaseLabel}…` : publishBusy ? "Publishing…" : "Publish to TypeDB"}

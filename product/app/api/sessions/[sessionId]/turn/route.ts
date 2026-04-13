@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getOpenAIClient } from "@/src/lib/server/openai-client";
 import { logResearchInteraction, truncateForLog } from "@/src/lib/server/research-interaction-log";
 import { runResearchTurn } from "@/src/lib/server/research-runtime";
+import { applySessionGraphHygiene } from "@/src/lib/server/session-graph-hygiene";
 import { appendMessage, createEvent, readSession, saveSession } from "@/src/lib/server/session-store";
 import type { TurnRequest } from "@/src/types/research-session";
 
@@ -57,6 +58,8 @@ export async function POST(
         response_id: response.id,
       }),
     );
+
+    applySessionGraphHygiene(session);
 
     await saveSession(session);
     logResearchInteraction(sessionId, "http_turn_success", {

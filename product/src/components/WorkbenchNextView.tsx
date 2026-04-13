@@ -95,6 +95,7 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
     graphBackendStatus,
     graphBackendStatusLoading,
     refreshGraphBackendStatus,
+    runGraphHygiene,
   } = model;
 
   const pendingTripletReview = useMemo(
@@ -819,6 +820,17 @@ export function WorkbenchNextView({ model }: { model: ResearchWorkbenchModel }) 
                   ? `${truncateFoot(selectedSession.title, 36)} · ${formatTimestamp(selectedSession.updatedAt)}`
                   : "—"}
               </span>
+              {selectedSession ? (
+                <button
+                  type="button"
+                  className="gg-next-footer-recheck"
+                  onClick={() => void runGraphHygiene()}
+                  disabled={isBusy}
+                  title="Merge duplicate entity candidates and repair relationship edges"
+                >
+                  Clean graph
+                </button>
+              ) : null}
             </div>
             <div className="gg-next-footer-cell">
               <span className="gg-next-footer-k">Map</span>

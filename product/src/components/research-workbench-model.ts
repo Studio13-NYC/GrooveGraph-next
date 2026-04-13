@@ -108,4 +108,6 @@ export type ResearchWorkbenchModel = {
   graphBackendStatus: GraphBackendStatusPayload | null;
   graphBackendStatusLoading: boolean;
   refreshGraphBackendStatus: () => Promise<void>;
+  /** POST graph hygiene (dedupe entities, repair edges) for the selected session. */
+  runGraphHygiene: () => Promise<void>;
 };

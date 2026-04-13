@@ -577,6 +577,35 @@ export function useGrooveGraphAppModel(): GrooveGraphAppModel {
     return latestAssistant?.id ?? null;
   }, [selectedSession]);
 
+  type HygieneResponse = WorkspaceResponse & {
+    report: {
+      entitiesRemoved: number;
+      relationshipsRemoved: number;
+      relationshipsRewritten: number;
+    };
+  };
+
+  async function runGraphHygiene() {
+    if (!selectedSession) {
+      return;
+    }
+    setError(null);
+    setIsBusy(true);
+    try {
+      const data = await fetchJson<HygieneResponse>(
+        `/api/sessions/${encodeURIComponent(selectedSession.id)}/hygiene`,
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" },
+      );
+      setSessions((current) =>
+        current.map((session) => (session.id === data.session.id ? data.session : session)),
+      );
+    } catch (nextError) {
+      setError(nextError instanceof Error ? nextError.message : "Graph hygiene failed.");
+    } finally {
+      setIsBusy(false);
+    }
+  }
+
   return {
     sessions,
     selectedSessionId,
@@ -619,5 +648,6 @@ export function useGrooveGraphAppModel(): GrooveGraphAppModel {
     graphBackendStatus,
     graphBackendStatusLoading,
     refreshGraphBackendStatus,
+    runGraphHygiene,
   };
 }
